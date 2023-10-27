@@ -5,7 +5,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import hpDB from "../modules/HPDatabase";
 
 interface Props {
     name: string;
@@ -26,12 +25,7 @@ export default class MemberPicture extends React.Component<Props, State> {
             }
         };
 
-        let img_dir: string;
-        if (Number(hpDB.memberName2ID(this.props.name)) < 9000) {
-            img_dir = "member_pics/";
-        } else {
-            img_dir = "extra_pics/";
-        }
+        let img_dir = "member_pics/";
 
         return (
             <Card onClick={this.props.onClick} style={styles.card}>
@@ -48,7 +42,6 @@ export default class MemberPicture extends React.Component<Props, State> {
                             {this.props.name}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            {hpDB.groupNameByMemberName(this.props.name)}
                         </Typography>
                     </CardContent>
                 </CardActionArea>

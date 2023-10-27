@@ -5,7 +5,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { Box, GridSize } from "@material-ui/core";
-import hpDB from "../modules/HPDatabase";
 
 interface Props {
     name: string;
@@ -16,18 +15,13 @@ interface State { }
 
 export default class ResultPicture extends React.Component<Props, State> {
     render() {
-        let img_dir: string;
-        if (Number(hpDB.memberName2ID(this.props.name)) < 9000) {
-            img_dir = "member_pics/";
-        } else {
-            img_dir = "extra_pics/";
-        }
+        let img_dir = "member_pics/";
 
         const styles =
         {
             media: {
                 width: 96,
-                height: 80,
+                height: 96,
                 zoom: 1
             }
         };

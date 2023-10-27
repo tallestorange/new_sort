@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
 
-import hpDB from "../modules/HPDatabase";
+import npDB from "../modules/NPDatabase";
 
 interface Props {
   members: string[];
@@ -46,8 +46,7 @@ export default class SortPage extends React.Component<Props, State> {
       }
 
       for (let i of this.sort.array) {
-        let groupname = hpDB.groupNameByMemberName(i);
-        rankTable.push(<TableRow key={i}><TableCell align="left">{this.sort.rank(i)}位</TableCell><TableCell align="left">{i}</TableCell><TableCell><span style={{ color: hpDB.groupName2ColorCode(hpDB.groupNameByMemberName(i)) }}><FontAwesomeIcon icon={faUserFriends} /></span> {groupname}</TableCell></TableRow>);
+        rankTable.push(<TableRow key={i}><TableCell align="left">{this.sort.rank(i)}位</TableCell><TableCell align="left">{i}</TableCell></TableRow>);
         if (this.sort.rank(i) <= max_output) {
           tweet_url += encodeURI(`${this.sort.rank(i)}位: ${i}\n`);
         }
@@ -96,7 +95,6 @@ export default class SortPage extends React.Component<Props, State> {
                 <TableRow style={{ backgroundColor: "#444" }}>
                   <TableCell style={{ color: "white", fontWeight: "bold" }}>順位</TableCell>
                   <TableCell style={{ color: "white", fontWeight: "bold" }}>名前</TableCell>
-                  <TableCell style={{ color: "white", fontWeight: "bold" }}>所属グループ</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
