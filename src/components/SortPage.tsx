@@ -13,12 +13,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
-import { faTwitter } from '@fortawesome/free-brands-svg-icons'
-
-import npDB from "../modules/NPDatabase";
-
 interface Props {
   members: string[];
   sortName: string;
@@ -105,9 +99,9 @@ export default class SortPage extends React.Component<Props, State> {
         </Grid>
         <Grid container item xs={12} justifyContent="center">
           <br />
-          <p>
+          {/* <p>
             <Button href={tweet_url} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}><FontAwesomeIcon icon={faTwitter} />&nbsp;結果をツイート</Button>
-          </p>
+          </p> */}
         </Grid>
       </Grid>
     } else {

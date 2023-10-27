@@ -23,7 +23,7 @@ class NPDatabase {
     get allStars(): string[] {
         let members: string[] = [];
         let result: string[] = [];
-        for (let i of this._members.slice(0,5)) {
+        for (let i of this._members) {
             result.push(i.name);
         }
         return result;
