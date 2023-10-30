@@ -59,6 +59,7 @@ export default function SearchPage(props: Props) {
 
     useEffect(() => {
         props.onSubmit(members)
+        // eslint-disable-next-line
     },[members])
 
     return (
@@ -133,7 +134,7 @@ export default function SearchPage(props: Props) {
                 <Button 
                 to="np"
                 component={Link}
-                disabled={members.length == 0}
+                disabled={members.length === 0}
                 color="secondary"
                 >
                     ソート開始
