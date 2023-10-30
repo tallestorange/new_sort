@@ -78,23 +78,34 @@ class NPDatabase {
     }
 
     get allHeights(): string[] {
-        let bp = new Set<string>();
+        let data = new Set<string>();
         for (let i of this._members) {
-            bp.add(i.height);
+            data.add(i.height);
         }
-        let result = Array.from( bp );
+        let result = Array.from( data );
         result.sort();
         return result;
     }
 
-    search(mbti: string[], birthplaces: string[], heights: string[]): string[] {
+    get allYears(): string[] {
+        let data = new Set<string>();
+        for (let i of this._members) {
+            data.add(i.birth_date.split('/')[0]);
+        }
+        let result = Array.from( data );
+        result.sort();
+        return result;
+    }
+
+    search(mbti: string[], birthplaces: string[], heights: string[], years: string[]): string[] {
         let mbti_set = new Set(mbti);
         let birthplace_set = new Set(birthplaces);
         let heights_set = new Set(heights);
+        let years_set = new Set(years);
 
         let result: string[] = [];
         for (let i of this._members) {
-            if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height)) {
+            if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
                 result.push(i.name);
             }
         }

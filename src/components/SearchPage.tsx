@@ -13,11 +13,12 @@ export default function SearchPage(props: Props) {
     const [mbtis, setMBTIs] = React.useState<string[]>(npDB.allMBTI);
     const [birthplaces, setBirthPlaces] = React.useState<string[]>(npDB.allBirthPlace);
     const [heights, setHeights] = React.useState<string[]>(npDB.allHeights);
+    const [years, setYears] = React.useState<string[]>(npDB.allYears);
     const [members, setMembers] = React.useState<string[]>([]);
 
     useEffect(() => {
-      setMembers(npDB.search(mbtis, birthplaces, heights));
-    },[mbtis, birthplaces, heights])
+      setMembers(npDB.search(mbtis, birthplaces, heights, years));
+    },[mbtis, birthplaces, heights, years])
 
     useEffect(() => {
       props.onUpdated(members)
@@ -34,6 +35,9 @@ export default function SearchPage(props: Props) {
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
               <SearchSelect title="身長" items={npDB.allHeights} onSubmit={setHeights}></SearchSelect>
+            </Grid>
+            <Grid container item xs={12} justifyContent="center" spacing={0}>
+              <SearchSelect title="生まれ年" items={npDB.allYears} onSubmit={setYears}></SearchSelect>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
               該当者 {members.length}名

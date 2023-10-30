@@ -28,7 +28,7 @@ export default class App extends React.Component<Props, State> {
         <Router basename={process.env.PUBLIC_URL}>
           <Routes>
             <Route path="/" element={<Home onSubmit={(val) => {this.setState({target_members: val})}}></Home>} />
-            <Route path="/np" element={<div><SortPage members={this.state.target_members} sortName="日プソート" /></div>} />
+            <Route path="/np" element={<div><SortPage members={this.state.target_members} sortName={TITLE} /></div>} />
           </Routes>
         </Router>
       </Layout>
