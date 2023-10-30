@@ -33,6 +33,10 @@ export default class Sorter {
     }
 
     get progress() {
+        if (this._array.length == 1) {
+            return 100;
+        }
+
         const rounds = this._array.length * (this._array.length - 1);
         let current = 0;
         for (let name of this._array) {
