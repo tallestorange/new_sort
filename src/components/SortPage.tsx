@@ -14,7 +14,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 interface Props {
