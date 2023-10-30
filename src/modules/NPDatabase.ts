@@ -39,11 +39,41 @@ class NPDatabase {
     }
 
     get allBirthPlace(): string[] {
-        let bp = new Set<string>();
-        for (let i of this._members) {
-            bp.add(i.birth_place);
-        }
-        let result = Array.from( bp );
+        // let bp = new Set<string>();
+        // for (let i of this._members) {
+        //     bp.add(i.birth_place);
+        // }
+        // let result = Array.from( bp );
+        let result: string[] = [
+            '北海道',
+            '岩手',
+            '宮城',
+            '福島',
+            '栃木',
+            '群馬',
+            '埼玉',
+            '千葉',
+            '東京',
+            '神奈川',
+            '新潟',
+            '石川',
+            '長野',
+            '愛知',
+            '三重',
+            '京都',
+            '大阪',
+            '兵庫',
+            '奈良',
+            '岡山',
+            '広島',
+            '徳島',
+            '香川',
+            '福岡',
+            '熊本',
+            '宮崎',
+            'アメリカ',
+            'インドネシア'
+        ];
         return result;
     }
 

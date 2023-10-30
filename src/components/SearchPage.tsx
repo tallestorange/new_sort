@@ -62,7 +62,7 @@ export default function SearchPage(props: Props) {
     },[members])
 
     return (
-        <div>
+        <Grid container item xs={12} justifyContent="center" spacing={1}>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
                 <FormControl className={classes.formControl}>
                     <InputLabel id="mutiple-mbti-label">MBTI</InputLabel>
@@ -139,6 +139,6 @@ export default function SearchPage(props: Props) {
                     ソート開始
                 </Button>
             </Grid>
-        </div>
+        </Grid>
     );
 }
