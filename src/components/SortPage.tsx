@@ -13,6 +13,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
+import { faTwitter } from '@fortawesome/free-brands-svg-icons'
+
 interface Props {
   members: string[];
   sortName: string;
@@ -58,8 +62,7 @@ export default class SortPage extends React.Component<Props, State> {
         return result;
       }
 
-      tweet_url += "&hashtags=" + encodeURI("ハロプロソート") + "&url=" + encodeURI("https://16be.at/sort/");
-      console.log(tweet_url);
+      tweet_url += "&hashtags=" + encodeURI("日プソート") + "&url=" + encodeURI("https://np-sort.web.app/");
       return <Grid container alignItems="flex-start">
         <Grid container item xs={12} justifyContent="center">
           <h2 style={{ marginBottom: 0 }}>{this.props.sortName}結果</h2>
@@ -99,9 +102,9 @@ export default class SortPage extends React.Component<Props, State> {
         </Grid>
         <Grid container item xs={12} justifyContent="center">
           <br />
-          {/* <p>
+          <p>
             <Button href={tweet_url} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}><FontAwesomeIcon icon={faTwitter} />&nbsp;結果をツイート</Button>
-          </p> */}
+          </p>
         </Grid>
       </Grid>
     } else {
