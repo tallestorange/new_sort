@@ -24,7 +24,7 @@ export default class Home extends React.Component<Props, State> {
             <p>(最終更新:23/10/30 絞り込み機能追加)</p>
           </Grid>
           <Grid container item xs={12} justifyContent="center" spacing={0}>
-            <SearchPage onSubmit={this.props.onSubmit}></SearchPage>
+            <SearchPage onUpdated={this.props.onSubmit}></SearchPage>
           </Grid>
           <Grid container item xs={12} justifyContent="center" spacing={0}>
             <p><a href="https://github.com/emolga587/hpsort2">ハロプロソート(updated)</a>ベースで開発しています</p>
