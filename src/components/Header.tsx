@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography";
 import HomeIcon from '@material-ui/icons/Home';
 
 interface Props { }
-
 interface State { }
 
 export default class Header extends React.Component<Props, State> {
@@ -19,7 +18,7 @@ export default class Header extends React.Component<Props, State> {
             aria-controls="menu-appbar"
             aria-haspopup="true"
             color="inherit"
-            href="./home"
+            href="/"
           >
             <HomeIcon />
           </IconButton>

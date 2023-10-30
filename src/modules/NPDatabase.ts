@@ -22,9 +22,51 @@ class NPDatabase {
 
     get allStars(): string[] {
         let members: string[] = [];
+        for (let i of this._members) {
+            members.push(i.name);
+        }
+        return members;
+    }
+
+    get allMBTI(): string[] {
+        let mbti = new Set<string>();
+        for (let i of this._members) {
+            mbti.add(i.mbti);
+        }
+        let result = Array.from( mbti );
+        result.sort();
+        return result;
+    }
+
+    get allBirthPlace(): string[] {
+        let bp = new Set<string>();
+        for (let i of this._members) {
+            bp.add(i.birth_place);
+        }
+        let result = Array.from( bp );
+        return result;
+    }
+
+    get allHeights(): string[] {
+        let bp = new Set<string>();
+        for (let i of this._members) {
+            bp.add(i.height);
+        }
+        let result = Array.from( bp );
+        result.sort();
+        return result;
+    }
+
+    search(mbti: string[], birthplaces: string[], heights: string[]): string[] {
+        let mbti_set = new Set(mbti);
+        let birthplace_set = new Set(birthplaces);
+        let heights_set = new Set(heights);
+
         let result: string[] = [];
         for (let i of this._members) {
-            result.push(i.name);
+            if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height)) {
+                result.push(i.name);
+            }
         }
         return result;
     }
