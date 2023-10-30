@@ -2,7 +2,7 @@ import parse from "csv-parse/lib/sync";
 import NP_DB_MEMBERS from "../NP_DB/members.csv";
 
 // インターフェイス
-interface Member {
+export interface Member {
     member_id: string;
     name: string;
     birth_date: string;
@@ -112,14 +112,18 @@ class NPDatabase {
         return result;
     }
 
-    memberName2ID = (membername: string): string => {
+    memberName2ID = (membername: string): number => {
         let result = 0;
         for (let i of this._members) {
             if (i.name === membername) {
                 result = Number(i.member_id);
             }
         }
-        return result.toString();
+        return result.valueOf();
+    }
+
+    id2member = (id: number): Member => {
+        return this._members[id - 1];
     }
 
     // CSVを取得する

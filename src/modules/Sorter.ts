@@ -33,7 +33,7 @@ export default class Sorter {
     }
 
     get progress() {
-        if (this._array.length == 1) {
+        if (this._array.length === 1) {
             return 100;
         }
 

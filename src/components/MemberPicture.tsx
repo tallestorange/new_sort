@@ -5,6 +5,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import npDB, {Member} from "../modules/NPDatabase";
 
 interface Props {
     name: string;
@@ -26,6 +27,7 @@ export default class MemberPicture extends React.Component<Props, State> {
         };
 
         let img_dir = "member_pics/";
+        let member_info = npDB.id2member(npDB.memberName2ID(this.props.name))
 
         return (
             <Card onClick={this.props.onClick} style={styles.card}>
@@ -42,6 +44,13 @@ export default class MemberPicture extends React.Component<Props, State> {
                             {this.props.name}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
+                            出身地: {member_info.birth_place}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            生年月日: {member_info.birth_date}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            身長: {member_info.height}cm
                         </Typography>
                     </CardContent>
                 </CardActionArea>
