@@ -20,7 +20,7 @@ export default class Home extends React.Component<Props, State> {
             <h1>{TITLE}</h1>
           </Grid>
           <Grid container item xs={12} justifyContent="center" spacing={0}>
-            <p>(最終更新:23/10/31 生まれ年での絞り込み機能追加)</p>
+            <p>(最終更新:23/10/31 各種処理の最適化)</p>
           </Grid>
           <Grid container item xs={12} justifyContent="center" spacing={0}>
             <SearchPage onUpdated={this.props.onSubmit}></SearchPage>
