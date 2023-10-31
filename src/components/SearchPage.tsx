@@ -27,7 +27,6 @@ export default function SearchPage(props: Props) {
     },[mbtis, birthplaces, heights, years])
 
     useEffect(() => {
-      console.log(members)
       props.onUpdated(members)
       // eslint-disable-next-line
     },[members])
