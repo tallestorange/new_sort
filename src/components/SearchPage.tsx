@@ -70,7 +70,7 @@ export default function SearchPage(props: Props) {
               <SearchSelect title="出身地" items={all_birthplaces} default_selected={all_birthplaces_stored} onSubmit={setBirthPlaces}></SearchSelect>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
-              <SearchSelect title="身長" items={all_heights} default_selected={all_birthyears_stored} onSubmit={setHeights}></SearchSelect>
+              <SearchSelect title="身長" items={all_heights} default_selected={all_heights_stored} onSubmit={setHeights}></SearchSelect>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
               <SearchSelect title="生まれ年" items={all_birthyears} default_selected={all_birthyears_stored} onSubmit={setYears}></SearchSelect>
