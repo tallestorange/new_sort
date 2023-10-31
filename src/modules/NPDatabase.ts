@@ -1,5 +1,5 @@
 import parse from "csv-parse/lib/sync";
-import NP_DB_MEMBERS from "../NP_DB/members.csv";
+import NP_DB_MEMBERS from "../NP_DB/members_l.csv";
 
 // インターフェイス
 export interface Member {
