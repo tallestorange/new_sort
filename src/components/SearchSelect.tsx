@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import Select from '@material-ui/core/Select';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -45,24 +45,22 @@ export default function SearchSelect(props: Props) {
     const [items, setItems] = useState<string[]>(props.items);
     const targetLength = props.items.length;
     const targets = props.items;
-    const isAllSelected = items.length === targetLength;
+    const isAllSelected = useMemo(() => items.length === targetLength, [items, targetLength])
 
     const classes = useStyles();
   
     const handleChange = (event: any) => {
       const value = event.target.value;
+      let items_after: string[] = [];
       if (value[value.length - 1] === 'all') {
-        setItems(items.length === targetLength ? [] : targets);
+        items_after = items.length === targetLength ? [] : targets;        
       }
       else {
-        setItems(value);
+        items_after = value;
       }
+      setItems(items_after);
+      props.onSubmit(items_after);
     };
-
-    useEffect(() => {
-      props.onSubmit(items)
-      // eslint-disable-next-line
-    },[items])
 
     return (
         <FormControl className={classes.formControl} fullWidth>

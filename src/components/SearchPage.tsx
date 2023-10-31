@@ -23,13 +23,11 @@ export default function SearchPage(props: Props) {
     const [members, setMembers] = useState<string[]>([]);
 
     useEffect(() => {
-      setMembers(npDB.search(mbtis, birthplaces, heights, years));
-    },[mbtis, birthplaces, heights, years])
-
-    useEffect(() => {
-      props.onUpdated(members)
+      const members_result = npDB.search(mbtis, birthplaces, heights, years);
+      setMembers(members_result);
+      props.onUpdated(members_result)
       // eslint-disable-next-line
-    },[members])
+    },[mbtis, birthplaces, heights, years])
 
     return (
         <Grid container item xs={12} justifyContent="center" spacing={1}>
