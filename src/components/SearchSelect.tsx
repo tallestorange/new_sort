@@ -11,6 +11,7 @@ interface Props {
   title: string;
   items: string[];
   default_selected: string[];
+  sort: boolean;
   onSubmit: (items: string[]) => void;
 }
 
@@ -70,7 +71,13 @@ export default function SearchSelect(props: Props) {
             id="select"
             value={items}
             multiple
-            renderValue={(selected: any) => selected.join(', ')}
+            renderValue={(selected: any) => {
+              let result = selected;
+              if (props.sort) {
+                result.sort();
+              }
+              return result.join(', ');
+            }}
             onChange={handleChange}
             >
                 <MenuItem

@@ -52,16 +52,36 @@ export default function SearchPage(props: Props) {
     return (
         <Grid container item xs={12} justifyContent="center" spacing={1}>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
-              <SearchSelect title="MBTI" items={all_mbtis} default_selected={props.mbtis_stored} onSubmit={setMBTIs}></SearchSelect>
+              <SearchSelect 
+              title="MBTI" 
+              items={all_mbtis} 
+              default_selected={props.mbtis_stored}
+              sort={true}
+              onSubmit={setMBTIs}/>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
-              <SearchSelect title="出身地" items={all_birthplaces} default_selected={props.all_birthplaces_stored} onSubmit={setBirthPlaces}></SearchSelect>
+              <SearchSelect 
+              title="出身地" 
+              items={all_birthplaces} 
+              default_selected={props.all_birthplaces_stored} 
+              sort={false}
+              onSubmit={setBirthPlaces}/>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
-              <SearchSelect title="身長" items={all_heights} default_selected={props.all_heights_stored} onSubmit={setHeights}></SearchSelect>
+              <SearchSelect 
+              title="身長" 
+              items={all_heights} 
+              default_selected={props.all_heights_stored}
+              sort={true}
+              onSubmit={setHeights}/>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
-              <SearchSelect title="生まれ年" items={all_birthyears} default_selected={props.all_birthyears_stored} onSubmit={setYears}></SearchSelect>
+              <SearchSelect 
+              title="生まれ年" 
+              items={all_birthyears}
+              default_selected={props.all_birthyears_stored}
+              sort={true}
+              onSubmit={setYears}/>
             </Grid>
             <Grid container item xs={12} justifyContent="center" spacing={0}>
               <Typography variant="h6" component="h2">
