@@ -36,10 +36,14 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home 
           onUpdated={(val) => {setMembers(val)}}
-          mbtis_stored={mbtis_stored}
-          all_birthplaces_stored={all_birthplaces_stored}
-          all_heights_stored={all_heights_stored}
-          all_birthyears_stored={all_birthyears_stored}
+          initial_mbtis={mbtis_stored}
+          initial_birthplaces={all_birthplaces_stored}
+          initial_heights={all_heights_stored}
+          initial_birthyears={all_birthyears_stored}
+          all_mbtis={all_mbtis}
+          all_birthplaces={all_birthplaces}
+          all_heights={all_heights}
+          all_birthyears={all_birthyears}
           ></Home>} />
         <Route path="/np" element={<SortPage members={members} sortName={TITLE} />} />
       </Routes>
