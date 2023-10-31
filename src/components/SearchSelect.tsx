@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Select from '@material-ui/core/Select';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   
 
 export default function SearchSelect(props: Props) {
-    const [items, setItems] = React.useState<string[]>(props.items);
+    const [items, setItems] = useState<string[]>(props.items);
     const targetLength = props.items.length;
     const targets = props.items;
     const isAllSelected = items.length === targetLength;
