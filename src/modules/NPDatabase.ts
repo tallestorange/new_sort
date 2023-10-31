@@ -15,36 +15,27 @@ export interface Member {
 
 class NPDatabase {
     private _members: Member[] = [];
+    
+    private _MBTIs: Set<string> = new Set<string>();
+    private _Heights: Set<string> = new Set<string>();
+    private _Years: Set<string> = new Set<string>();
+
+    public allStars: string[] = [];
+    public allMBTI: string[] = [];
+    public allBirthPlace: string[] = [];
+    public allHeights: string[] = [];
+    public allYears: string[] = [];
 
     constructor() {
         this._members = this.fetchCSV(NP_DB_MEMBERS);
-    }
-
-    get allStars(): string[] {
-        let members: string[] = [];
-        for (let i of this._members) {
-            members.push(i.name);
+        for (let member of this._members) {
+            this.allStars.push(member.name);
+            this._MBTIs.add(member.mbti);
+            this._Heights.add(member.height);
+            this._Years.add(member.birth_date.split('/')[0]);
         }
-        return members;
-    }
 
-    get allMBTI(): string[] {
-        let mbti = new Set<string>();
-        for (let i of this._members) {
-            mbti.add(i.mbti);
-        }
-        let result = Array.from( mbti );
-        result.sort();
-        return result;
-    }
-
-    get allBirthPlace(): string[] {
-        // let bp = new Set<string>();
-        // for (let i of this._members) {
-        //     bp.add(i.birth_place);
-        // }
-        // let result = Array.from( bp );
-        let result: string[] = [
+        this.allBirthPlace = [
             '北海道',
             '岩手',
             '宮城',
@@ -74,27 +65,15 @@ class NPDatabase {
             'アメリカ',
             'インドネシア'
         ];
-        return result;
-    }
 
-    get allHeights(): string[] {
-        let data = new Set<string>();
-        for (let i of this._members) {
-            data.add(i.height);
-        }
-        let result = Array.from( data );
-        result.sort();
-        return result;
-    }
+        this.allMBTI = Array.from( this._MBTIs );
+        this.allMBTI.sort();
 
-    get allYears(): string[] {
-        let data = new Set<string>();
-        for (let i of this._members) {
-            data.add(i.birth_date.split('/')[0]);
-        }
-        let result = Array.from( data );
-        result.sort();
-        return result;
+        this.allHeights = Array.from( this._Heights );
+        this.allHeights.sort();
+
+        this.allYears = Array.from( this._Years );
+        this.allYears.sort();
     }
 
     search(mbti: string[], birthplaces: string[], heights: string[], years: string[]): string[] {
