@@ -15,7 +15,8 @@ export interface Member {
 
 class NPDatabase {
     private _members: Member[] = [];
-    
+
+    private _membersMap: Map<string, Member> = new Map<string, Member>();
     private _MBTIs: Set<string> = new Set<string>();
     private _Heights: Set<string> = new Set<string>();
     private _Years: Set<string> = new Set<string>();
@@ -28,8 +29,12 @@ class NPDatabase {
 
     constructor() {
         this._members = this.fetchCSV(NP_DB_MEMBERS);
+
         for (let member of this._members) {
             this.allStars.push(member.name);
+
+            this._membersMap.set(member.name, member);
+
             this._MBTIs.add(member.mbti);
             this._Heights.add(member.height);
             this._Years.add(member.birth_date.split('/')[0]);
@@ -91,18 +96,8 @@ class NPDatabase {
         return result;
     }
 
-    memberName2ID = (membername: string): number => {
-        let result = 0;
-        for (let i of this._members) {
-            if (i.name === membername) {
-                result = Number(i.member_id);
-            }
-        }
-        return result.valueOf();
-    }
-
-    id2member = (id: number): Member => {
-        return this._members[id - 1];
+    search_member = (name: string): Member => {
+        return this._membersMap.get(name)!;
     }
 
     // CSVを取得する

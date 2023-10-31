@@ -27,7 +27,7 @@ export default class MemberPicture extends React.Component<Props, State> {
         };
 
         let img_dir = "member_pics/";
-        let member_info = npDB.id2member(npDB.memberName2ID(this.props.name))
+        let member_info = npDB.search_member(this.props.name)
 
         return (
             <Card onClick={this.props.onClick} style={styles.card}>
