@@ -44,10 +44,13 @@ export default class MemberPicture extends React.Component<Props, State> {
                             {this.props.name}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
+                            生年月日: {member_info.birth_date}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
                             出身地: {member_info.birth_place}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            生年月日: {member_info.birth_date}
+                            MBTI: {member_info.mbti}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
                             身長: {member_info.height}cm

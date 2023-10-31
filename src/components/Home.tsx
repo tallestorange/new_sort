@@ -56,7 +56,7 @@ export default function SearchPage(props: Props) {
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/10/31 各種処理の最適化)</p>
+        <p>(最終更新:23/11/1 ソート時にMBTIを表示)</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
