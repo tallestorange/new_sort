@@ -4,6 +4,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import HomeIcon from '@material-ui/icons/Home';
+import { Link } from "react-router-dom";
 
 interface Props { }
 interface State { }
@@ -18,7 +19,8 @@ export default class Header extends React.Component<Props, State> {
             aria-controls="menu-appbar"
             aria-haspopup="true"
             color="inherit"
-            href="/"
+            to="/"
+            component={Link}
           >
             <HomeIcon />
           </IconButton>

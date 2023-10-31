@@ -24,14 +24,16 @@ export default class App extends React.Component<Props, State> {
 
   render() {
     return (
-      <Layout title={TITLE}>
+      
         <Router basename={process.env.PUBLIC_URL}>
+          <Layout title={TITLE}>
           <Routes>
             <Route path="/" element={<Home onSubmit={(val) => {this.setState({target_members: val})}}></Home>} />
             <Route path="/np" element={<SortPage members={this.state.target_members} sortName={TITLE} />} />
           </Routes>
+          </Layout>
         </Router>
-      </Layout>
+      
     );
   }
 }
