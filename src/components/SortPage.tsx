@@ -12,6 +12,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { SortSetting } from './Home';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
@@ -19,6 +20,7 @@ import { faTwitter } from '@fortawesome/free-brands-svg-icons'
 interface Props {
   members: string[];
   sortName: string;
+  sortConfig: SortSetting;
 }
 interface State {
   result: boolean;
@@ -118,6 +120,7 @@ export default class SortPage extends React.Component<Props, State> {
             </Grid>
             <Grid container item xs={6} justifyContent="center">
               <MemberPicture name={this.sort.lastChallenge[0]}
+                sortConfig={this.props.sortConfig}
                 onClick={() => {
                   this.sort.backable = true;
                   this.sort.prev_items = JSON.parse(JSON.stringify(this.sort.items));
@@ -127,6 +130,7 @@ export default class SortPage extends React.Component<Props, State> {
             </Grid>
             <Grid container item xs={6} justifyContent="center">
               <MemberPicture name={this.sort.lastChallenge[1]}
+                sortConfig={this.props.sortConfig}
                 onClick={() => {
                   this.sort.backable = true;
                   this.sort.prev_items = JSON.parse(JSON.stringify(this.sort.items));

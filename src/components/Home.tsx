@@ -7,9 +7,13 @@ import Button from "@material-ui/core/Button";
 import npDB from "../modules/NPDatabase";
 import SearchSelect from "./SearchSelect";
 import Typography from '@material-ui/core/Typography';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 interface Props {
-  onUpdated: (members: string[]) => void;
+  onMemberUpdated?: (members: string[]) => void;
+  onSortSettingsUpdated?: (setting: SortSetting) => void;
   initial_mbtis: string[];
   initial_birthplaces: string[];
   initial_heights: string[];
@@ -20,6 +24,11 @@ interface Props {
   all_birthyears: string[];
 }
 
+export interface SortSetting {
+  show_hobby: boolean;
+  show_skill: boolean;
+}
+
 export default function SearchPage(props: Props) {
   const [mbtis, setMBTIs] = useState<string[]>(props.initial_mbtis);
   const [birthplaces, setBirthPlaces] = useState<string[]>(props.initial_birthplaces);
@@ -27,10 +36,13 @@ export default function SearchPage(props: Props) {
   const [years, setYears] = useState<string[]>(props.initial_birthyears);
   const [members, setMembers] = useState<string[]>([]);
 
+  const [showHobby, setShowHobby] = useState<boolean>(false);
+  const [showSkill, setShowSkill] = useState<boolean>(false);
+
   useEffect(() => {
     const members_result = npDB.search(mbtis, birthplaces, heights, years);
     setMembers(members_result);
-    props.onUpdated(members_result)
+    props.onMemberUpdated?.(members_result);
     // eslint-disable-next-line
   },[mbtis, birthplaces, heights, years])
 
@@ -49,6 +61,11 @@ export default function SearchPage(props: Props) {
   useEffect(() => {
     localStorage.setItem("years", JSON.stringify(years))
   },[years])
+
+  useEffect(() => {
+    props.onSortSettingsUpdated?.({show_hobby: showHobby, show_skill: showSkill})
+    // eslint-disable-next-line
+  },[showHobby, showSkill])
 
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={3}>
@@ -95,6 +112,12 @@ export default function SearchPage(props: Props) {
           <Typography variant="h6" component="h2">
             該当者: {members.length}名
           </Typography>
+        </Grid>
+        <Grid>
+          <FormGroup>
+            <FormControlLabel control={<Checkbox checked={showHobby} onChange={(event) => {setShowHobby(event.target.checked)}} />} label="ソート時に趣味欄を表示する" />
+            <FormControlLabel control={<Checkbox checked={showSkill} onChange={(event) => {setShowSkill(event.target.checked)}} />} label="ソート時に特技欄を表示する" />
+          </FormGroup>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Button 

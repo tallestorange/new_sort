@@ -6,9 +6,11 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import npDB from "../modules/NPDatabase";
+import { SortSetting } from './Home';
 
 interface Props {
     name: string;
+    sortConfig: SortSetting;
     onClick?: any;
 }
 
@@ -55,6 +57,13 @@ export default class MemberPicture extends React.Component<Props, State> {
                         <Typography variant="body2" color="textSecondary" component="p">
                             身長: {member_info.height}cm
                         </Typography>
+                        
+                        {this.props.sortConfig.show_hobby && <Typography variant="body2" color="textSecondary" component="p">
+                            趣味: {member_info.hobby}
+                        </Typography>}
+                        {this.props.sortConfig.show_skill && <Typography variant="body2" color="textSecondary" component="p">
+                            特技: {member_info.special_skill}
+                        </Typography>}
                     </CardContent>
                 </CardActionArea>
             </Card>
