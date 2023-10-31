@@ -2,6 +2,7 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import SearchPage from "./SearchPage";
 import "../App.css";
+import {TITLE} from './Constants';
 
 interface State {
 }
@@ -9,8 +10,6 @@ interface State {
 interface Props {
   onSubmit: (members: string[]) => void;
 }
-
-const TITLE = "日プソート";
 
 export default class Home extends React.Component<Props, State> {
     render() {

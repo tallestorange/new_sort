@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 interface Props {
   title: string;
   items: string[];
+  default_selected: string[];
   onSubmit: (items: string[]) => void;
 }
 
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   
 
 export default function SearchSelect(props: Props) {
-    const [items, setItems] = useState<string[]>(props.items);
+    const [items, setItems] = useState<string[]>(props.default_selected);
     const targetLength = props.items.length;
     const targets = props.items;
     const isAllSelected = useMemo(() => items.length === targetLength, [items, targetLength])

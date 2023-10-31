@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from './components/Home';
+import {TITLE} from './components/Constants'
 
 import "./App.css";
 
@@ -12,8 +13,6 @@ interface State {
   target_members: string[];
 }
 
-const TITLE = "日プソート";
-
 export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -24,7 +23,6 @@ export default class App extends React.Component<Props, State> {
 
   render() {
     return (
-      
         <Router basename={process.env.PUBLIC_URL}>
           <Layout title={TITLE}>
           <Routes>
@@ -33,7 +31,6 @@ export default class App extends React.Component<Props, State> {
           </Routes>
           </Layout>
         </Router>
-      
     );
   }
 }
