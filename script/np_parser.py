@@ -2,6 +2,8 @@ import requests
 import bs4
 import csv
 from urllib.parse import urljoin
+from PIL import Image
+import os
 
 
 def parse_profile(url):
@@ -20,7 +22,7 @@ res = requests.get(urljoin(base_url, '/profile/list/'))
 html_text = bs4.BeautifulSoup(res.content, 'html.parser')
 members = html_text.select('#page--profile > section > div.inner > div > ul > li > div')
 
-with open('members.csv', 'w') as f:
+with open('../src/NP_DB/members.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['member_id', 'name', 'birth_date', 'birth_place', 'mbti', 'height', 'hobby', 'special_skill'])
     identifier = 1
@@ -37,5 +39,8 @@ with open('members.csv', 'w') as f:
         identifier += 1
 
         data = requests.get(member_img_url).content
-        with open(name + '.jpg', mode='wb') as f2:
+        with open('../public/member_pics/' + name + '.jpg', mode='wb') as f2:
             f2.write(data)
+        img = Image.open('../public/member_pics/' + name + '.jpg')
+        img.save('../public/member_pics/' + name + '.webp', quality=70)
+        os.remove('../public/member_pics/' + name + '.jpg')
