@@ -1,36 +1,49 @@
-import React from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from './components/Home';
-import {TITLE} from './components/Constants'
-
-import "./App.css";
-
+import {TITLE, VERSION} from './components/Constants'
+import npDB from "./modules/NPDatabase";
 import Layout from "./components/Layout";
 import SortPage from "./components/SortPage";
 
-interface Props { }
-interface State {
-  target_members: string[];
-}
+import "./App.css";
 
-export default class App extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      target_members: [],
-    };
-  }
+export default function App() {
+  const all_mbtis = npDB.allMBTI;
+  const all_birthplaces = npDB.allBirthPlace;
+  const all_heights = npDB.allHeights;
+  const all_birthyears = npDB.allYears;
 
-  render() {
-    return (
-        <Router basename={process.env.PUBLIC_URL}>
-          <Layout title={TITLE}>
-          <Routes>
-            <Route path="/" element={<Home onSubmit={(val) => {this.setState({target_members: val})}}></Home>} />
-            <Route path="/np" element={<SortPage members={this.state.target_members} sortName={TITLE} />} />
-          </Routes>
-          </Layout>
-        </Router>
-    );
+  const storaged_version = localStorage.getItem("VERSION")
+  if (storaged_version !== VERSION) {
+    localStorage.setItem("mbtis", JSON.stringify(all_mbtis))
+    localStorage.setItem("birthplaces", JSON.stringify(all_birthplaces))
+    localStorage.setItem("heights", JSON.stringify(all_heights))
+    localStorage.setItem("years", JSON.stringify(all_birthyears))
   }
+  localStorage.setItem("VERSION", VERSION);
+
+  let mbtis_stored: string[] = JSON.parse(localStorage.getItem("mbtis") || "");
+  let all_birthplaces_stored: string[] = JSON.parse(localStorage.getItem("birthplaces") || "");
+  let all_heights_stored: string[] = JSON.parse(localStorage.getItem("heights") || "");
+  let all_birthyears_stored: string[] = JSON.parse(localStorage.getItem("years") || "");
+  
+  const [members, setMembers] = useState<string[]>(npDB.search(mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored));
+
+  return (
+    <Router basename={process.env.PUBLIC_URL}>
+      <Layout title={TITLE}>
+      <Routes>
+        <Route path="/" element={<Home 
+          onUpdated={(val) => {setMembers(val)}}
+          mbtis_stored={mbtis_stored}
+          all_birthplaces_stored={all_birthplaces_stored}
+          all_heights_stored={all_heights_stored}
+          all_birthyears_stored={all_birthyears_stored}
+          ></Home>} />
+        <Route path="/np" element={<SortPage members={members} sortName={TITLE} />} />
+      </Routes>
+      </Layout>
+    </Router>
+  );
 }
