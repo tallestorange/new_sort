@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
       margin: theme.spacing(1),
       minWidth: 120,
-      maxWidth: 300,
+      maxWidth: 450,
     },
     chips: {
       display: 'flex',
@@ -65,7 +65,7 @@ export default function SearchSelect(props: Props) {
     },[items])
 
     return (
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} fullWidth>
             <InputLabel id="mutiple-select-label">{props.title}</InputLabel>
             <Select
             id="select"
