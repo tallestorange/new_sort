@@ -5,6 +5,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import npDB from "../modules/NPDatabase";
 import { SortSetting } from './Home';
+import { IMAGE_DIR } from './Constants';
 
 interface Props {
   name: string;
@@ -23,8 +24,7 @@ export default function MemberPicture(props: Props) {
     }
   };
 
-  let img_dir = "member_pics/";
-  let member_info = npDB.search_member(props.name)
+  const member_info = npDB.search_member(props.name)
 
   return (
     <Card onClick={props.onClick} style={styles.card}>
@@ -32,7 +32,7 @@ export default function MemberPicture(props: Props) {
         <CardMedia
           component="img"
           alt={props.name}
-          image={`${img_dir}${props.name}.webp`}
+          image={`${IMAGE_DIR}${props.name}.webp`}
           title="Contemplative Reptile"
           style={styles.media}
         />

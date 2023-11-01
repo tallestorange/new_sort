@@ -4,6 +4,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { Box, GridSize } from "@material-ui/core";
+import { IMAGE_DIR } from "./Constants";
 
 interface Props {
   name: string;
@@ -11,8 +12,6 @@ interface Props {
 }
 
 export default function ResultPicture(props: Props) {
-  let img_dir = "member_pics/";
-
   const styles =
   {
     media: {
@@ -48,8 +47,8 @@ export default function ResultPicture(props: Props) {
           <CardMedia
             component="img"
             alt={props.name}
-            image={`${img_dir}${props.name}.webp`}
-            title="Contemplative Reptile"
+            image={`${IMAGE_DIR}${props.name}.webp`}
+            title={props.name}
             style={styles.media}
           />
           <CardContent style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 5, paddingRight: 5, textAlign: "center" }}>

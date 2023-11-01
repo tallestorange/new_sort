@@ -16,32 +16,31 @@ interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-      maxWidth: 450,
-    },
-    chips: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    chip: {
-      margin: 2,
-    },
-    noLabel: {
-      marginTop: theme.spacing(3),
-    },
-    selectAllText: {
-      fontWeight: 700
-    },
-    selectedAll: {
-      backgroundColor: "rgba(0, 0, 0, 0.08)",
-      "&:hover": {
-        backgroundColor: "rgba(0, 0, 0, 0.08)"
-      }
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 450,
+  },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
+  selectAllText: {
+    fontWeight: 700
+  },
+  selectedAll: {
+    backgroundColor: "rgba(0, 0, 0, 0.08)",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.08)"
     }
-  }));
-  
+  }
+}));  
 
 export default function SearchSelect(props: Props) {
   const [items, setItems] = useState<string[]>(props.default_selected);
