@@ -109,6 +109,7 @@ class NPDatabase {
     }
 
     sort_count_estimate = (size: number): number => {
+        if (size === 0) {return 0;}
         return this.sortCountEstimates[size-1];
     }
 
