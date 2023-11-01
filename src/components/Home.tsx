@@ -115,11 +115,11 @@ export default function Home(props: Props) {
             該当者: {membersCount}名
           </Typography>
         </Grid>
-        {membersCount > 0 && <Grid container item xs={12} justifyContent="center" spacing={0}>
+        {/* {membersCount > 0 && <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Typography variant="h6" component="h2">
             ソート回数: 〜{npDB.sort_count_estimate(membersCount)}回
           </Typography>
-        </Grid>}
+        </Grid>} */}
         <Grid>
           <FormGroup>
             <FormControlLabel control={<Checkbox checked={showHobby} onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
