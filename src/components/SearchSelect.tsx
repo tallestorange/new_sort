@@ -44,62 +44,62 @@ const useStyles = makeStyles((theme) => ({
   
 
 export default function SearchSelect(props: Props) {
-    const [items, setItems] = useState<string[]>(props.default_selected);
-    const targetLength = props.items.length;
-    const targets = props.items;
-    const isAllSelected = useMemo(() => items.length === targetLength, [items, targetLength])
+  const [items, setItems] = useState<string[]>(props.default_selected);
+  const targetLength = props.items.length;
+  const targets = props.items;
+  const isAllSelected = useMemo(() => items.length === targetLength, [items, targetLength])
 
-    const classes = useStyles();
-  
-    const handleChange = (event: any) => {
-      const value = event.target.value;
-      let items_after: string[] = [];
-      if (value[value.length - 1] === 'all') {
-        items_after = items.length === targetLength ? [] : targets;        
-      }
-      else {
-        items_after = value;
-      }
-      setItems(items_after);
-      props.onSubmit(items_after);
-    };
+  const classes = useStyles();
 
-    return (
-        <FormControl className={classes.formControl} fullWidth>
-            <InputLabel id="mutiple-select-label">{props.title}</InputLabel>
-            <Select
-            id="select"
-            value={items}
-            multiple
-            renderValue={(selected: any) => {
-              let result = selected;
-              if (props.sort) {
-                result.sort();
-              }
-              return result.join(', ');
-            }}
-            onChange={handleChange}
-            >
-                <MenuItem
-                value="all"
-                classes={{
-                    root: isAllSelected ? classes.selectedAll : ""
-                }}
-                >
-                    <Checkbox checked={isAllSelected} />
-                    <ListItemText
-                    classes={{ primary: classes.selectAllText }}
-                    primary="すべて選択する"
-                    />
-                </MenuItem>
-                {props.items.map((val) => {
-                    return (
-                    <MenuItem key={val} value={val}>
-                        <Checkbox checked={items.indexOf(val) > -1} />
-                        <ListItemText primary={val} />
-                    </MenuItem>)
-                })}
-            </Select>
-        </FormControl>
-    );
+  const handleChange = (event: any) => {
+    const value = event.target.value;
+    let items_after: string[] = [];
+    if (value[value.length - 1] === 'all') {
+      items_after = items.length === targetLength ? [] : targets;        
+    }
+    else {
+      items_after = value;
+    }
+    setItems(items_after);
+    props.onSubmit(items_after);
+  };
+
+  return (
+    <FormControl className={classes.formControl} fullWidth>
+      <InputLabel id="mutiple-select-label">{props.title}</InputLabel>
+      <Select
+      id="select"
+      value={items}
+      multiple
+      renderValue={(selected: any) => {
+        let result = selected;
+        if (props.sort) {
+          result.sort();
+        }
+        return result.join(', ');
+      }}
+      onChange={handleChange}
+      >
+        <MenuItem
+        value="all"
+        classes={{
+            root: isAllSelected ? classes.selectedAll : ""
+        }}
+        >
+          <Checkbox checked={isAllSelected} />
+          <ListItemText
+          classes={{ primary: classes.selectAllText }}
+          primary="すべて選択する"
+          />
+        </MenuItem>
+        {props.items.map((val) => {
+        return (
+        <MenuItem key={val} value={val}>
+          <Checkbox checked={items.indexOf(val) > -1} />
+          <ListItemText primary={val} />
+        </MenuItem>)
+        })}
+      </Select>
+    </FormControl>
+  );
 }
