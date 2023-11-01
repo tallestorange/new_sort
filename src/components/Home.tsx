@@ -29,7 +29,7 @@ export interface SortSetting {
   show_skill: boolean;
 }
 
-export default function SearchPage(props: Props) {
+export default function Home(props: Props) {
   const [mbtis, setMBTIs] = useState<string[]>(props.initial_mbtis);
   const [birthplaces, setBirthPlaces] = useState<string[]>(props.initial_birthplaces);
   const [heights, setHeights] = useState<string[]>(props.initial_heights);
