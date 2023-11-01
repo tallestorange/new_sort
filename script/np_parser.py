@@ -4,6 +4,7 @@ import csv
 from urllib.parse import urljoin
 from PIL import Image
 import os
+import math
 
 
 def parse_profile(url):
@@ -56,6 +57,13 @@ def generate_csv(save_pictures):
     with open('../src/NP_DB/members_minimal.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerows([i[1:-4] for i in items])
+
+
+def estimate_sort_count(n):
+    ans = 0
+    for k in range(1, n+1):
+        ans += math.ceil(math.log2(3 * k / 4))
+    return ans
 
 
 if __name__ == '__main__':
