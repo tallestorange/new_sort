@@ -27,6 +27,8 @@ class NPDatabase {
     public allHeights: string[] = [];
     public allYears: string[] = [];
 
+    private sortCountEstimates: number[] = new Array<number>(100);
+
     constructor() {
         this._members = this.fetchCSV(NP_DB_MEMBERS);
 
@@ -79,6 +81,12 @@ class NPDatabase {
 
         this.allYears = Array.from( this._Years );
         this.allYears.sort();
+
+        let sortCountEstimate: number = 0;
+        for (let k=1;k<=100;k++) {
+            sortCountEstimate += Math.ceil(Math.log2(3 * k / 4));
+            this.sortCountEstimates[k-1] = sortCountEstimate;
+        }
     }
 
     search(mbti: string[], birthplaces: string[], heights: string[], years: string[]): string[] {
@@ -98,6 +106,10 @@ class NPDatabase {
 
     search_member = (name: string): Member => {
         return this._membersMap.get(name)!;
+    }
+
+    sort_count_estimate = (size: number): number => {
+        return this.sortCountEstimates[size-1];
     }
 
     // CSVを取得する
