@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import {TITLE} from './Constants';
+import { TITLE } from './Constants';
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -46,28 +46,28 @@ export default function Home(props: Props) {
     setMembers(members_result);
     props.onMemberUpdated?.(members_result);
     // eslint-disable-next-line
-  },[mbtis, birthplaces, heights, years])
+  }, [mbtis, birthplaces, heights, years])
 
   useEffect(() => {
     localStorage.setItem("mbtis", JSON.stringify(mbtis))
-  },[mbtis])
+  }, [mbtis])
 
   useEffect(() => {
     localStorage.setItem("birthplaces", JSON.stringify(birthplaces))
-  },[birthplaces])
+  }, [birthplaces])
 
   useEffect(() => {
     localStorage.setItem("heights", JSON.stringify(heights))
-  },[heights])
+  }, [heights])
 
   useEffect(() => {
     localStorage.setItem("years", JSON.stringify(years))
-  },[years])
+  }, [years])
 
   useEffect(() => {
-    props.onSortSettingsUpdated?.({show_hobby: showHobby, show_skill: showSkill})
+    props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill })
     // eslint-disable-next-line
-  },[showHobby, showSkill])
+  }, [showHobby, showSkill])
 
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={3}>
@@ -79,36 +79,36 @@ export default function Home(props: Props) {
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-          title="MBTI" 
-          items={props.all_mbtis} 
-          default_selected={props.initial_mbtis}
-          sort={true}
-          onSubmit={setMBTIs}/>
+          <SearchSelect
+            title="MBTI"
+            items={props.all_mbtis}
+            default_selected={props.initial_mbtis}
+            sort={true}
+            onSubmit={setMBTIs} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-          title="出身地" 
-          items={props.all_birthplaces} 
-          default_selected={props.initial_birthplaces} 
-          sort={false}
-          onSubmit={setBirthPlaces}/>
+          <SearchSelect
+            title="出身地"
+            items={props.all_birthplaces}
+            default_selected={props.initial_birthplaces}
+            sort={false}
+            onSubmit={setBirthPlaces} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-          title="身長" 
-          items={props.all_heights} 
-          default_selected={props.initial_heights}
-          sort={true}
-          onSubmit={setHeights}/>
+          <SearchSelect
+            title="身長"
+            items={props.all_heights}
+            default_selected={props.initial_heights}
+            sort={true}
+            onSubmit={setHeights} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-          title="生まれ年" 
-          items={props.all_birthyears}
-          default_selected={props.initial_birthyears}
-          sort={true}
-          onSubmit={setYears}/>
+          <SearchSelect
+            title="生まれ年"
+            items={props.all_birthyears}
+            default_selected={props.initial_birthyears}
+            sort={true}
+            onSubmit={setYears} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Typography variant="h6" component="h2">
@@ -122,16 +122,16 @@ export default function Home(props: Props) {
         </Grid>}
         <Grid>
           <FormGroup>
-            <FormControlLabel control={<Checkbox checked={showHobby} onChange={(event) => {setShowHobby(event.target.checked)}} />} label="ソート時に趣味欄を表示する" />
-            <FormControlLabel control={<Checkbox checked={showSkill} onChange={(event) => {setShowSkill(event.target.checked)}} />} label="ソート時に特技欄を表示する" />
+            <FormControlLabel control={<Checkbox checked={showHobby} onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
+            <FormControlLabel control={<Checkbox checked={showSkill} onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
           </FormGroup>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <Button 
-          to="np"
-          component={Link}
-          disabled={members.length === 0}
-          color="secondary"
+          <Button
+            to="np"
+            component={Link}
+            disabled={members.length === 0}
+            color="secondary"
           >
             ソート開始
           </Button>

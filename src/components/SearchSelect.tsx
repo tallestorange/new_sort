@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "rgba(0, 0, 0, 0.08)"
     }
   }
-}));  
+}));
 
 export default function SearchSelect(props: Props) {
   const [items, setItems] = useState<string[]>(props.default_selected);
@@ -54,7 +54,7 @@ export default function SearchSelect(props: Props) {
     const value = event.target.value;
     let items_after: string[] = [];
     if (value[value.length - 1] === 'all') {
-      items_after = items.length === targetLength ? [] : targets;        
+      items_after = items.length === targetLength ? [] : targets;
     }
     else {
       items_after = value;
@@ -67,36 +67,36 @@ export default function SearchSelect(props: Props) {
     <FormControl className={classes.formControl} fullWidth>
       <InputLabel id="mutiple-select-label">{props.title}</InputLabel>
       <Select
-      id="select"
-      value={items}
-      multiple
-      renderValue={(selected: any) => {
-        let result = selected;
-        if (props.sort) {
-          result.sort();
-        }
-        return result.join(', ');
-      }}
-      onChange={handleChange}
+        id="select"
+        value={items}
+        multiple
+        renderValue={(selected: any) => {
+          let result = selected;
+          if (props.sort) {
+            result.sort();
+          }
+          return result.join(', ');
+        }}
+        onChange={handleChange}
       >
         <MenuItem
-        value="all"
-        classes={{
+          value="all"
+          classes={{
             root: isAllSelected ? classes.selectedAll : ""
-        }}
+          }}
         >
           <Checkbox checked={isAllSelected} />
           <ListItemText
-          classes={{ primary: classes.selectAllText }}
-          primary="すべて選択する"
+            classes={{ primary: classes.selectAllText }}
+            primary="すべて選択する"
           />
         </MenuItem>
         {props.items.map((val) => {
-        return (
-        <MenuItem key={val} value={val}>
-          <Checkbox checked={items.indexOf(val) > -1} />
-          <ListItemText primary={val} />
-        </MenuItem>)
+          return (
+            <MenuItem key={val} value={val}>
+              <Checkbox checked={items.indexOf(val) > -1} />
+              <ListItemText primary={val} />
+            </MenuItem>)
         })}
       </Select>
     </FormControl>

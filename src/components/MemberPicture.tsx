@@ -52,7 +52,7 @@ export default function MemberPicture(props: Props) {
           <Typography variant="body2" color="textSecondary" component="p">
             身長: {member_info.height}cm
           </Typography>
-          
+
           {props.sortConfig.show_hobby && <Typography variant="body2" color="textSecondary" component="p">
             趣味: {member_info.hobby}
           </Typography>}

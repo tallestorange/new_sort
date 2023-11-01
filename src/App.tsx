@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home, { SortSetting } from './components/Home';
-import {TITLE, VERSION} from './components/Constants'
+import { TITLE, VERSION } from './components/Constants'
 import npDB from "./modules/NPDatabase";
 import Layout from "./components/Layout";
 import SortPage from "./components/SortPage";
@@ -27,28 +27,28 @@ export default function App() {
   let all_birthplaces_stored: string[] = JSON.parse(localStorage.getItem("birthplaces") || "");
   let all_heights_stored: string[] = JSON.parse(localStorage.getItem("heights") || "");
   let all_birthyears_stored: string[] = JSON.parse(localStorage.getItem("years") || "");
-  
+
   const [members, setMembers] = useState<string[]>(npDB.search(mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored));
-  const [sortConfig, setSortConfig] = useState<SortSetting>({show_hobby: false, show_skill: false});
+  const [sortConfig, setSortConfig] = useState<SortSetting>({ show_hobby: false, show_skill: false });
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Layout title={TITLE}>
-      <Routes>
-        <Route path="/" element={<Home 
-          onMemberUpdated={(val) => {setMembers(val)}}
-          onSortSettingsUpdated={(val) => {setSortConfig(val)}}
-          initial_mbtis={mbtis_stored}
-          initial_birthplaces={all_birthplaces_stored}
-          initial_heights={all_heights_stored}
-          initial_birthyears={all_birthyears_stored}
-          all_mbtis={all_mbtis}
-          all_birthplaces={all_birthplaces}
-          all_heights={all_heights}
-          all_birthyears={all_birthyears}
+        <Routes>
+          <Route path="/" element={<Home
+            onMemberUpdated={(val) => { setMembers(val) }}
+            onSortSettingsUpdated={(val) => { setSortConfig(val) }}
+            initial_mbtis={mbtis_stored}
+            initial_birthplaces={all_birthplaces_stored}
+            initial_heights={all_heights_stored}
+            initial_birthyears={all_birthyears_stored}
+            all_mbtis={all_mbtis}
+            all_birthplaces={all_birthplaces}
+            all_heights={all_heights}
+            all_birthyears={all_birthyears}
           ></Home>} />
-        <Route path="/np" element={<SortPage members={members} sortName={TITLE} sortConfig={sortConfig} />} />
-      </Routes>
+          <Route path="/np" element={<SortPage members={members} sortName={TITLE} sortConfig={sortConfig} />} />
+        </Routes>
       </Layout>
     </Router>
   );

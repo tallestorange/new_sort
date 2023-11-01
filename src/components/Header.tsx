@@ -6,15 +6,15 @@ import Typography from "@material-ui/core/Typography";
 import HomeIcon from '@material-ui/icons/Home';
 import { Link } from "react-router-dom";
 
-interface Props { 
+interface Props {
   children: React.ReactNode;
 }
 
 export default function Header(props: Props) {
   return (
-    <AppBar position="static" style={{color: 'white', backgroundColor: "rgb(255, 105, 180)", boxShadow: "none"}}>
+    <AppBar position="static" style={{ color: 'white', backgroundColor: "rgb(255, 105, 180)", boxShadow: "none" }}>
       <Toolbar>
-        <Typography variant="h5" style={{flexGrow: 1, fontWeight: 500}}>{props.children}</Typography>
+        <Typography variant="h5" style={{ flexGrow: 1, fontWeight: 500 }}>{props.children}</Typography>
         <IconButton
           aria-controls="menu-appbar"
           aria-haspopup="true"
