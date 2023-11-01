@@ -36,8 +36,8 @@ export default function App() {
       <Layout title={TITLE}>
         <Routes>
           <Route path="/" element={<Home
-            onMemberUpdated={(val) => { setMembers(val) }}
-            onSortSettingsUpdated={(val) => { setSortConfig(val) }}
+            onMemberUpdated={setMembers}
+            onSortSettingsUpdated={setSortConfig}
             initial_mbtis={mbtis_stored}
             initial_birthplaces={all_birthplaces_stored}
             initial_heights={all_heights_stored}
