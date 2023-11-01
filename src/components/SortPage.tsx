@@ -15,9 +15,6 @@ import Paper from '@material-ui/core/Paper';
 import { SortSetting } from './Home';
 import { TITLE } from "./Constants";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTwitter } from '@fortawesome/free-brands-svg-icons'
-
 interface Props {
   members: string[];
   sortName: string;
@@ -105,7 +102,7 @@ export default class SortPage extends React.Component<Props, State> {
         <Grid container item xs={12} justifyContent="center">
           <br />
           <p>
-            <Button href={tweet_url} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}><FontAwesomeIcon icon={faTwitter} />&nbsp;結果をツイート</Button>
+            <Button href={tweet_url} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
           </p>
         </Grid>
       </Grid>

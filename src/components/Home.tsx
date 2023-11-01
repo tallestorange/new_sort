@@ -1,7 +1,7 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
 import { TITLE } from './Constants';
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import npDB from "../modules/NPDatabase";
@@ -38,8 +38,6 @@ export default function Home(props: Props) {
 
   const [showHobby, setShowHobby] = useState<boolean>(false);
   const [showSkill, setShowSkill] = useState<boolean>(false);
-
-  const membersCount = useMemo(() => members.length, [members]);
 
   useEffect(() => {
     const members_result = npDB.search(mbtis, birthplaces, heights, years);
@@ -112,12 +110,12 @@ export default function Home(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Typography variant="h6" component="h2">
-            該当者: {membersCount}名
+            該当者: {members.length}名
           </Typography>
         </Grid>
-        {/* {membersCount > 0 && <Grid container item xs={12} justifyContent="center" spacing={0}>
+        {/* {members.length > 0 && <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Typography variant="h6" component="h2">
-            ソート回数: 〜{npDB.sort_count_estimate(membersCount)}回
+            ソート回数: 〜{npDB.sort_count_estimate(members.length)}回
           </Typography>
         </Grid>} */}
         <Grid>

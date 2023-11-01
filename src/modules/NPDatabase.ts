@@ -82,11 +82,11 @@ class NPDatabase {
     this.allYears = Array.from(this._Years);
     this.allYears.sort();
 
-    let sortCountEstimate: number = 0;
-    for (let k = 1; k <= 100; k++) {
-      sortCountEstimate += Math.ceil(Math.log2(3 * k / 4));
-      this.sortCountEstimates[k - 1] = sortCountEstimate;
-    }
+    // let sortCountEstimate: number = 0;
+    // for (let k = 1; k <= 100; k++) {
+    //   sortCountEstimate += Math.ceil(Math.log2(3 * k / 4));
+    //   this.sortCountEstimates[k - 1] = sortCountEstimate;
+    // }
   }
 
   search(mbti: string[], birthplaces: string[], heights: string[], years: string[]): string[] {
