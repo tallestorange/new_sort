@@ -32,7 +32,7 @@ def parse_profile(url):
   return (birth_date, birth_place, mbti, height, hobby, special_skill)
 
 
-def generate_csv(save_pictures):
+def generate_base_csv_data(save_pictures):
   base_url = "https://produce101.jp/"
   res = requests.get(urljoin(base_url, "/profile/list/"))
   html_text = bs4.BeautifulSoup(res.content, "html.parser")
@@ -40,78 +40,100 @@ def generate_csv(save_pictures):
     "#page--profile > section > div.inner > div > ul > li > div"
   )
 
-  for file in glob.glob("../public/member_pics/*.webp"):
-    os.remove(file)
-
   items = []
+  urls = [["image_url", "profile_url"]]
+  header = [
+    "member_id",
+    "name",
+    "birth_date",
+    "birth_place",
+    "mbti",
+    "height",
+    "hobby",
+    "special_skill",
+  ]
+  items.append(header)
+  identifier = 1
+
+  for member in members:
+    if member.find("div", class_="name").a == None:
+      continue
+    name = member.find("div", class_="name").a.text
+    member_profile_url = urljoin(
+      base_url, member.find("div", class_="photo").a["href"]
+    )
+    member_img_url = urljoin(
+      base_url, member.find("div", class_="photo").img["src"]
+    )
+    birth_date, birth_place, mbti, height, hobby, special_skill = parse_profile(
+      member_profile_url
+    )
+
+    item = [
+      identifier,
+      name,
+      birth_date,
+      birth_place,
+      mbti,
+      height,
+      hobby,
+      special_skill
+    ]
+    urls.append([member_img_url, member_profile_url])
+    items.append(item)
+    print(*item)
+    identifier += 1
+  return items, urls
+
+
+def add_ranking(data):
+  base_url = "https://produce101.jp/"
+  res = requests.get(urljoin(base_url, "/rank/index.php"))
+  html_text = bs4.BeautifulSoup(res.content, "html.parser")
+  weeks = [i.attrs["value"] for i in html_text.select("#select > option")]
+
+  for week in weeks:
+    week_int = int(week.split("=")[-1])
+    url = urljoin(base_url, "/rank/index.php"+week)
+    res = requests.get(url)
+    html_text = bs4.BeautifulSoup(res.content, "html.parser")
+    ranks = html_text.find_all("li", class_="list--ranking__item")
+    data[0].append(f"week_{week_int}_rank")
+    for rank in ranks:
+      name = rank.find("div", class_="name").text
+      ranking = int(rank.find("div", class_="icon-rank").text)
+
+      for (i, val) in enumerate(data):
+        if val[1] == name:
+          data[i].append(ranking)
+          break
+  return data
+
+
+def generate(save_pictures):
+  items, urls = generate_base_csv_data(True)
+  items = add_ranking(items)
+  for (i, url_item) in enumerate(urls):
+    items[i] += url_item
   with open("../src/NP_DB/members_full.csv", "w") as f:
     writer = csv.writer(f)
-    header = [
-      "member_id",
-      "name",
-      "birth_date",
-      "birth_place",
-      "mbti",
-      "height",
-      "hobby",
-      "special_skill",
-      "icon_url",
-      "profile_url",
-    ]
-    items.append(header)
-    writer.writerow(header)
-    identifier = 1
-
-    for member in members:
-      if member.find("div", class_="name").a == None:
-        continue
-      name = member.find("div", class_="name").a.text
-      member_profile_url = urljoin(
-        base_url, member.find("div", class_="photo").a["href"]
-      )
-      member_img_url = urljoin(
-        base_url, member.find("div", class_="photo").img["src"]
-      )
-      birth_date, birth_place, mbti, height, hobby, special_skill = parse_profile(
-        member_profile_url
-      )
-
-      item = [
-        identifier,
-        name,
-        birth_date,
-        birth_place,
-        mbti,
-        height,
-        hobby,
-        special_skill,
-        member_img_url,
-        member_profile_url,
-      ]
-      writer.writerow(item)
-      items.append(item)
-      print(*item)
-      identifier += 1
-
-      if save_pictures:
-        data = requests.get(member_img_url).content
-        with open("../public/member_pics/" + name + ".jpg", mode="wb") as f2:
-          f2.write(data)
-        img = Image.open("../public/member_pics/" + name + ".jpg")
-        img.save("../public/member_pics/" + name + ".webp", quality=70)
-        os.remove("../public/member_pics/" + name + ".jpg")
-
+    writer.writerows(items)
   with open("../src/NP_DB/members_minimal.csv", "w") as f:
     writer = csv.writer(f)
     writer.writerows([i[1:-2] for i in items])
 
-
-def estimate_sort_count(n):
-  ans = 0
-  for k in range(1, n + 1):
-    ans += math.ceil(math.log2(3 * k / 4))
-  return ans
+  if save_pictures:
+    for file in glob.glob("../public/member_pics/*.webp"):
+      os.remove(file)
+    for (i, (member_img_url, _)) in enumerate(urls[1:]):
+      data = requests.get(member_img_url).content
+      name = items[i+1][1]
+      with open("../public/member_pics/" + name + ".jpg", mode="wb") as f2:
+        f2.write(data)
+      img = Image.open("../public/member_pics/" + name + ".jpg")
+      img.save("../public/member_pics/" + name + ".webp", quality=70)
+      os.remove("../public/member_pics/" + name + ".jpg")
 
 
 if __name__ == "__main__":
-  generate_csv(True)
+  generate(True)
