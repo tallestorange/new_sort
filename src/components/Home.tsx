@@ -27,6 +27,7 @@ interface Props {
 export interface SortSetting {
   show_hobby: boolean;
   show_skill: boolean;
+  show_ranking: boolean;
 }
 
 export default function Home(props: Props) {
@@ -37,6 +38,7 @@ export default function Home(props: Props) {
   const [members, setMembers] = useState<string[]>([]);
 
   const [showHobby, setShowHobby] = useState<boolean>(false);
+  const [showRanking, setShowRanking] = useState<boolean>(false);
   const [showSkill, setShowSkill] = useState<boolean>(false);
   const [canVote, setCanVote] = useState<boolean>(false);
 
@@ -64,9 +66,9 @@ export default function Home(props: Props) {
   }, [years])
 
   useEffect(() => {
-    props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill })
+    props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill, show_ranking: showRanking })
     // eslint-disable-next-line
-  }, [showHobby, showSkill])
+  }, [showHobby, showSkill, showRanking])
 
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={3}>
@@ -74,7 +76,7 @@ export default function Home(props: Props) {
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/11/3 投票対象者のみに絞り込む機能の追加)</p>
+        <p>(最終更新:23/11/3 順位変動を表示する機能の追加)</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -123,6 +125,7 @@ export default function Home(props: Props) {
             <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={canVote} id="checkbox-vote" onChange={(event) => { setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
             <FormControlLabel id="checkbox-form-hobby" control={<Checkbox checked={showHobby} id="checkbox-hobby" onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
             <FormControlLabel id="checkbox-form-skill" control={<Checkbox checked={showSkill} id="checkbox-skill" onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
+            <FormControlLabel id="checkbox-form-ranking" control={<Checkbox checked={showRanking} id="checkbox-ranking" onChange={(event) => { setShowRanking(event.target.checked) }} />} label="ソート時に順位変動を表示する" />
           </FormGroup>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>

@@ -59,6 +59,9 @@ export default function MemberPicture(props: Props) {
           {props.sortConfig.show_skill && <Typography variant="body2" color="textSecondary" component="p">
             特技: {member_info.special_skill}
           </Typography>}
+          {props.sortConfig.show_ranking && <Typography variant="body2" color="textSecondary" component="p">
+            順位: {member_info.week_2_rank}位→{member_info.week_3_rank}位→{member_info.week_5_rank}位
+          </Typography>}
         </CardContent>
       </CardActionArea>
     </Card>
