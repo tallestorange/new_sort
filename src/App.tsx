@@ -28,7 +28,7 @@ export default function App() {
   let all_heights_stored: string[] = JSON.parse(localStorage.getItem("heights") || "");
   let all_birthyears_stored: string[] = JSON.parse(localStorage.getItem("years") || "");
 
-  const [members, setMembers] = useState<string[]>(npDB.search(mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored));
+  const [members, setMembers] = useState<string[]>(npDB.search(mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored, false));
   const [sortConfig, setSortConfig] = useState<SortSetting>({ show_hobby: false, show_skill: false });
 
   return (

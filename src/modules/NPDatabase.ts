@@ -1,5 +1,6 @@
 import parse from "csv-parse/lib/sync";
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
+import { BOARDER } from '../components/Constants';
 
 // インターフェイス
 export interface Member {
@@ -10,6 +11,9 @@ export interface Member {
   height: string;
   hobby: string;
   special_skill: string;
+  week_2_rank: number;
+  week_3_rank: number;
+  week_5_rank: number;
 }
 
 class NPDatabase {
@@ -80,15 +84,9 @@ class NPDatabase {
 
     this.allYears = Array.from(this._Years);
     this.allYears.sort();
-
-    // let sortCountEstimate: number = 0;
-    // for (let k = 1; k <= 100; k++) {
-    //   sortCountEstimate += Math.ceil(Math.log2(3 * k / 4));
-    //   this.sortCountEstimates[k - 1] = sortCountEstimate;
-    // }
   }
 
-  search(mbti: string[], birthplaces: string[], heights: string[], years: string[]): string[] {
+  search(mbti: string[], birthplaces: string[], heights: string[], years: string[], can_vote_only: boolean): string[] {
     let mbti_set = new Set(mbti);
     let birthplace_set = new Set(birthplaces);
     let heights_set = new Set(heights);
@@ -96,6 +94,7 @@ class NPDatabase {
 
     let result: string[] = [];
     for (let i of this._members) {
+      if (can_vote_only && i.week_5_rank > BOARDER) { continue; }
       if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
         result.push(i.name);
       }

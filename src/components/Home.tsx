@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE } from './Constants';
+import { TITLE, BOARDER } from './Constants';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -38,13 +38,14 @@ export default function Home(props: Props) {
 
   const [showHobby, setShowHobby] = useState<boolean>(false);
   const [showSkill, setShowSkill] = useState<boolean>(false);
+  const [canVote, setCanVote] = useState<boolean>(false);
 
   useEffect(() => {
-    const members_result = npDB.search(mbtis, birthplaces, heights, years);
+    const members_result = npDB.search(mbtis, birthplaces, heights, years, canVote);
     setMembers(members_result);
     props.onMemberUpdated?.(members_result);
     // eslint-disable-next-line
-  }, [mbtis, birthplaces, heights, years])
+  }, [mbtis, birthplaces, heights, years, canVote])
 
   useEffect(() => {
     localStorage.setItem("mbtis", JSON.stringify(mbtis))
@@ -119,6 +120,7 @@ export default function Home(props: Props) {
         </Grid>
         <Grid>
           <FormGroup>
+            <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={canVote} id="checkbox-vote" onChange={(event) => { setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
             <FormControlLabel id="checkbox-form-hobby" control={<Checkbox checked={showHobby} id="checkbox-hobby" onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
             <FormControlLabel id="checkbox-form-skill" control={<Checkbox checked={showSkill} id="checkbox-skill" onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
           </FormGroup>
