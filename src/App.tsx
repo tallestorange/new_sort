@@ -20,6 +20,7 @@ export default function App() {
     localStorage.setItem("birthplaces", JSON.stringify(all_birthplaces))
     localStorage.setItem("heights", JSON.stringify(all_heights))
     localStorage.setItem("years", JSON.stringify(all_birthyears))
+    localStorage.setItem("can_vote_only", JSON.stringify("false"))
   }
   localStorage.setItem("VERSION", VERSION);
 
@@ -27,9 +28,10 @@ export default function App() {
   let all_birthplaces_stored: string[] = JSON.parse(localStorage.getItem("birthplaces") || "");
   let all_heights_stored: string[] = JSON.parse(localStorage.getItem("heights") || "");
   let all_birthyears_stored: string[] = JSON.parse(localStorage.getItem("years") || "");
+  let can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
 
-  const [members, setMembers] = useState<string[]>(npDB.search(mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored, false));
-  const [sortConfig, setSortConfig] = useState<SortSetting>({ show_hobby: false, show_skill: false, show_ranking: false });
+  const [members, setMembers] = useState<string[]>(npDB.search(mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored, can_vote_only));
+  const [sortConfig, setSortConfig] = useState<SortSetting>({ show_hobby: false, show_skill: false, show_ranking: can_vote_only });
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -46,6 +48,7 @@ export default function App() {
             all_birthplaces={all_birthplaces}
             all_heights={all_heights}
             all_birthyears={all_birthyears}
+            can_vote_only={can_vote_only}
           ></Home>} />
           <Route path="/np" element={<SortPage members={members} sortName={TITLE} sortConfig={sortConfig} />} />
         </Routes>

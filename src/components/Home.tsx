@@ -22,6 +22,7 @@ interface Props {
   all_birthplaces: string[];
   all_heights: string[];
   all_birthyears: string[];
+  can_vote_only: boolean;
 }
 
 export interface SortSetting {
@@ -40,7 +41,7 @@ export default function Home(props: Props) {
   const [showHobby, setShowHobby] = useState<boolean>(false);
   const [showRanking, setShowRanking] = useState<boolean>(false);
   const [showSkill, setShowSkill] = useState<boolean>(false);
-  const [canVote, setCanVote] = useState<boolean>(false);
+  const [canVote, setCanVote] = useState<boolean>(props.can_vote_only);
 
   useEffect(() => {
     const members_result = npDB.search(mbtis, birthplaces, heights, years, canVote);
@@ -64,6 +65,10 @@ export default function Home(props: Props) {
   useEffect(() => {
     localStorage.setItem("years", JSON.stringify(years))
   }, [years])
+
+  useEffect(() => {
+    localStorage.setItem("can_vote_only", JSON.stringify(canVote))
+  }, [canVote])
 
   useEffect(() => {
     props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill, show_ranking: showRanking })
