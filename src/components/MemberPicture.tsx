@@ -33,7 +33,7 @@ export default function MemberPicture(props: Props) {
           component="img"
           alt={props.name}
           image={`${IMAGE_DIR}${props.name}.webp`}
-          title="Contemplative Reptile"
+          title={props.name}
           style={styles.media}
         />
         <CardContent>

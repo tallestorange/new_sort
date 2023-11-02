@@ -1,9 +1,8 @@
 import parse from "csv-parse/lib/sync";
-import NP_DB_MEMBERS from "../NP_DB/members_full.csv";
+import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 
 // インターフェイス
 export interface Member {
-  member_id: string;
   name: string;
   birth_date: string;
   birth_place: string;
