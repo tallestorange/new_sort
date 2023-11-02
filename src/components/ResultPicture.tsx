@@ -3,7 +3,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { Box, GridSize } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import {GridSize} from "@material-ui/core/Grid";
 import { IMAGE_DIR } from "./Constants";
 
 interface Props {

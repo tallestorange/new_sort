@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
-import { Box, Container } from "@material-ui/core/";
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
 
 interface Props {
   title?: string;

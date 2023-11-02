@@ -21,6 +21,7 @@ export default function Header(props: Props) {
           color="inherit"
           to="/"
           component={Link}
+          aria-label="Move to Home"
         >
           <HomeIcon />
         </IconButton>
