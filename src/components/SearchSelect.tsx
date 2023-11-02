@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 interface Props {
   title: string;
+  id: string;
   items: string[];
   default_selected: string[];
   sort: boolean;
@@ -65,9 +66,11 @@ export default function SearchSelect(props: Props) {
 
   return (
     <FormControl className={classes.formControl} fullWidth>
-      <InputLabel id="mutiple-select-label">{props.title}</InputLabel>
+      <InputLabel id={props.id + "-select-label"}>{props.title}</InputLabel>
       <Select
-        id="select"
+        label={props.title}
+        labelId={props.id + "-select-label"}
+        id={props.id + "-select"}
         value={items}
         multiple
         renderValue={(selected: any) => {
@@ -78,24 +81,27 @@ export default function SearchSelect(props: Props) {
           return result.join(', ');
         }}
         onChange={handleChange}
+        inputProps={{id: props.id + "-select"}}
       >
         <MenuItem
           value="all"
           classes={{
             root: isAllSelected ? classes.selectedAll : ""
           }}
+          id={props.id + "-item-selectall"}
         >
-          <Checkbox checked={isAllSelected} />
+          <Checkbox checked={isAllSelected} id={props.id + "-checkbox-selectall"}/>
           <ListItemText
             classes={{ primary: classes.selectAllText }}
             primary="すべて選択する"
+            id={props.id + "-text-selectall"}
           />
         </MenuItem>
-        {props.items.map((val) => {
+        {props.items.map((val, index) => {
           return (
-            <MenuItem key={val} value={val}>
-              <Checkbox checked={items.indexOf(val) > -1} />
-              <ListItemText primary={val} />
+            <MenuItem key={val} value={val} id={props.id + "-item-" + index}>
+              <Checkbox checked={items.indexOf(val) > -1} id={props.id + "-checkbox-"+index} />
+              <ListItemText primary={val} id={props.id + "-text-" + index} />
             </MenuItem>)
         })}
       </Select>

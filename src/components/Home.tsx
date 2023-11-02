@@ -79,6 +79,7 @@ export default function Home(props: Props) {
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect
             title="MBTI"
+            id="mbti"
             items={props.all_mbtis}
             default_selected={props.initial_mbtis}
             sort={true}
@@ -87,6 +88,7 @@ export default function Home(props: Props) {
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect
             title="出身地"
+            id="birthplace"
             items={props.all_birthplaces}
             default_selected={props.initial_birthplaces}
             sort={false}
@@ -95,6 +97,7 @@ export default function Home(props: Props) {
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect
             title="身長"
+            id="height"
             items={props.all_heights}
             default_selected={props.initial_heights}
             sort={true}
@@ -103,6 +106,7 @@ export default function Home(props: Props) {
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect
             title="生まれ年"
+            id="birthyear"
             items={props.all_birthyears}
             default_selected={props.initial_birthyears}
             sort={true}
@@ -115,8 +119,8 @@ export default function Home(props: Props) {
         </Grid>
         <Grid>
           <FormGroup>
-            <FormControlLabel control={<Checkbox checked={showHobby} onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
-            <FormControlLabel control={<Checkbox checked={showSkill} onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
+            <FormControlLabel id="checkbox-form-hobby" control={<Checkbox checked={showHobby} id="checkbox-hobby" onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
+            <FormControlLabel id="checkbox-form-skill" control={<Checkbox checked={showSkill} id="checkbox-skill" onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
           </FormGroup>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
