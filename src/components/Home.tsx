@@ -75,6 +75,10 @@ export default function Home(props: Props) {
     // eslint-disable-next-line
   }, [showHobby, showSkill, showRanking])
 
+  useEffect(() => {
+    console.log("笠原桃奈さん1位おめでとうございます!!");
+  }, [])
+
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={3}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
