@@ -13,7 +13,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { SortSetting } from './Home';
-import { HASHTAGS } from "./Constants";
+import { HASHTAGS, PAGE_URL } from "./Constants";
 
 interface Props {
   members: string[];
@@ -59,7 +59,7 @@ export default class SortPage extends React.Component<Props, State> {
         return result;
       }
 
-      tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI("https://np-sort.web.app/");
+      tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
       return <Grid container alignItems="flex-start">
         <Grid container item xs={12} justifyContent="center">
           <h2 style={{ marginBottom: 0 }}>{this.props.sortName}結果</h2>
