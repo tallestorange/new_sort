@@ -85,7 +85,7 @@ export default function Home(props: Props) {
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/11/3 順位変動を表示する機能の追加)</p>
+        <p>(最終更新:23/11/5 結果をツイートする際に上位11人をツイートする仕様に変更)</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
