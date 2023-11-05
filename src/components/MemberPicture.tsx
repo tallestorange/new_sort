@@ -19,9 +19,6 @@ export default function MemberPicture(props: Props) {
     card: {
       maxWidth: 345,
     },
-    media: {
-      height: "300px"
-    }
   };
 
   const member_info = npDB.search_member(props.name)
@@ -34,7 +31,6 @@ export default function MemberPicture(props: Props) {
           alt={props.name}
           image={`${IMAGE_DIR}${props.name}.webp`}
           title={props.name}
-          style={styles.media}
         />
         <CardContent>
           <Typography gutterBottom variant="h6" component="h2">
