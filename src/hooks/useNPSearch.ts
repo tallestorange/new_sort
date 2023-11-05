@@ -8,12 +8,6 @@ interface NPSearch {
   setBirthPlaces: Dispatch<SetStateAction<string[]>>,
   setHeights: Dispatch<SetStateAction<string[]>>,
   setYears: Dispatch<SetStateAction<string[]>>,
-  showHobby: boolean,
-  setShowHobby: Dispatch<SetStateAction<boolean>>,
-  showRanking: boolean,
-  setShowRanking: Dispatch<SetStateAction<boolean>>,
-  showSkill: boolean,
-  setShowSkill: Dispatch<SetStateAction<boolean>>,
   canVote: boolean,
   setCanVote: Dispatch<SetStateAction<boolean>>
 }
@@ -24,10 +18,6 @@ export default function useNPSearch(current_params: SearchParams): NPSearch {
   const [heights, setHeights] = useState<string[]>(current_params.heights);
   const [years, setYears] = useState<string[]>(current_params.birthyears);
   const [members, setMembers] = useState<string[]>([]);
-
-  const [showHobby, setShowHobby] = useState<boolean>(false);
-  const [showRanking, setShowRanking] = useState<boolean>(false);
-  const [showSkill, setShowSkill] = useState<boolean>(false);
   const [canVote, setCanVote] = useState<boolean>(current_params.can_vote_only);
 
   useEffect(() => {
@@ -56,5 +46,5 @@ export default function useNPSearch(current_params: SearchParams): NPSearch {
     localStorage.setItem("can_vote_only", JSON.stringify(canVote))
   }, [canVote])
 
-  return {members, setMBTIs, setBirthPlaces, setHeights, setYears, showHobby, setShowHobby, showRanking, setShowRanking, showSkill, setShowSkill, canVote, setCanVote}
+  return {members, setMBTIs, setBirthPlaces, setHeights, setYears, canVote, setCanVote}
 }

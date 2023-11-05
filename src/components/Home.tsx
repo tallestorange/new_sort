@@ -11,6 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { SearchParams } from "../hooks/useNPDatabase";
 import useNPSearch from "../hooks/useNPSearch";
+import SearchConfig from "./SearchConfig";
 
 interface Props {
   onMemberUpdated?: (members: string[]) => void;
@@ -26,17 +27,12 @@ export interface SortSetting {
 }
 
 export default function Home(props: Props) {
-  const {members, setMBTIs, setBirthPlaces, setHeights, setYears, showHobby, setShowHobby, showRanking, setShowRanking, showSkill, setShowSkill, canVote, setCanVote} = useNPSearch(props.current_params);
+  const {members, setMBTIs, setBirthPlaces, setHeights, setYears, canVote, setCanVote} = useNPSearch(props.current_params);
 
   useEffect(() => {
     props.onMemberUpdated?.(members);
     // eslint-disable-next-line
   }, [members])
-
-  useEffect(() => {
-    props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill, show_ranking: showRanking })
-    // eslint-disable-next-line
-  }, [showHobby, showSkill, showRanking])
 
   useEffect(() => {
     console.log("笠原桃奈さん1位おめでとうございます!!");
@@ -95,9 +91,9 @@ export default function Home(props: Props) {
         <Grid>
           <FormGroup>
             <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={canVote} id="checkbox-vote" onChange={(event) => { setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
-            <FormControlLabel id="checkbox-form-hobby" control={<Checkbox checked={showHobby} id="checkbox-hobby" onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
-            <FormControlLabel id="checkbox-form-skill" control={<Checkbox checked={showSkill} id="checkbox-skill" onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
-            <FormControlLabel id="checkbox-form-ranking" control={<Checkbox checked={showRanking} id="checkbox-ranking" onChange={(event) => { setShowRanking(event.target.checked) }} />} label="ソート時に順位変動を表示する" />
+          </FormGroup>
+          <FormGroup>
+            <SearchConfig onSortSettingsUpdated={(config) => props.onSortSettingsUpdated?.(config)} />
           </FormGroup>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
