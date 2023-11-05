@@ -139,7 +139,7 @@ export default function Home(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Button
-            to="np"
+            to="sort"
             component={Link}
             disabled={members.length === 0}
             color="secondary"
