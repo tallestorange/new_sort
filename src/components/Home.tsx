@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE, BOARDER } from './Constants';
+import { TITLE, BOARDER, SORT_PATH } from './Constants';
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -98,7 +98,7 @@ export default function Home(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <Button
-            to="sort"
+            to={SORT_PATH}
             component={Link}
             disabled={members.length === 0}
             color="secondary"

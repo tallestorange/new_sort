@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home, { SortSetting } from './components/Home';
-import { TITLE } from './components/Constants'
+import { SORT_PATH, TITLE } from './components/Constants'
 import Layout from "./components/Layout";
 import SortPage from "./components/SortPage";
 import useNPDatabase from "./hooks/useNPDatabase";
@@ -22,7 +22,7 @@ export default function App() {
             initial_params={initial_params}
             current_params={current_params}
           ></Home>} />
-          <Route path="/sort" element={<SortPage members={members} sortName={TITLE} sortConfig={sortConfig} />} />
+          <Route path={`/${SORT_PATH}`} element={<SortPage members={members} sortName={TITLE} sortConfig={sortConfig} />} />
         </Routes>
       </Layout>
     </Router>
