@@ -1,28 +1,22 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
 import { TITLE, BOARDER } from './Constants';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import npDB from "../modules/NPDatabase";
 import SearchSelect from "./SearchSelect";
 import Typography from '@material-ui/core/Typography';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { SearchParams } from "../hooks/useNPDatabase";
+import useNPSearch from "../hooks/useNPSearch";
 
 interface Props {
   onMemberUpdated?: (members: string[]) => void;
   onSortSettingsUpdated?: (setting: SortSetting) => void;
-  initial_mbtis: string[];
-  initial_birthplaces: string[];
-  initial_heights: string[];
-  initial_birthyears: string[];
-  all_mbtis: string[];
-  all_birthplaces: string[];
-  all_heights: string[];
-  all_birthyears: string[];
-  can_vote_only: boolean;
+  initial_params: SearchParams,
+  current_params: SearchParams
 }
 
 export interface SortSetting {
@@ -32,43 +26,12 @@ export interface SortSetting {
 }
 
 export default function Home(props: Props) {
-  const [mbtis, setMBTIs] = useState<string[]>(props.initial_mbtis);
-  const [birthplaces, setBirthPlaces] = useState<string[]>(props.initial_birthplaces);
-  const [heights, setHeights] = useState<string[]>(props.initial_heights);
-  const [years, setYears] = useState<string[]>(props.initial_birthyears);
-  const [members, setMembers] = useState<string[]>([]);
-
-  const [showHobby, setShowHobby] = useState<boolean>(false);
-  const [showRanking, setShowRanking] = useState<boolean>(false);
-  const [showSkill, setShowSkill] = useState<boolean>(false);
-  const [canVote, setCanVote] = useState<boolean>(props.can_vote_only);
+  const {members, setMBTIs, setBirthPlaces, setHeights, setYears, showHobby, setShowHobby, showRanking, setShowRanking, showSkill, setShowSkill, canVote, setCanVote} = useNPSearch(props.current_params);
 
   useEffect(() => {
-    const members_result = npDB.search(mbtis, birthplaces, heights, years, canVote);
-    setMembers(members_result);
-    props.onMemberUpdated?.(members_result);
+    props.onMemberUpdated?.(members);
     // eslint-disable-next-line
-  }, [mbtis, birthplaces, heights, years, canVote])
-
-  useEffect(() => {
-    localStorage.setItem("mbtis", JSON.stringify(mbtis))
-  }, [mbtis])
-
-  useEffect(() => {
-    localStorage.setItem("birthplaces", JSON.stringify(birthplaces))
-  }, [birthplaces])
-
-  useEffect(() => {
-    localStorage.setItem("heights", JSON.stringify(heights))
-  }, [heights])
-
-  useEffect(() => {
-    localStorage.setItem("years", JSON.stringify(years))
-  }, [years])
-
-  useEffect(() => {
-    localStorage.setItem("can_vote_only", JSON.stringify(canVote))
-  }, [canVote])
+  }, [members])
 
   useEffect(() => {
     props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill, show_ranking: showRanking })
@@ -92,8 +55,8 @@ export default function Home(props: Props) {
           <SearchSelect
             title="MBTI"
             id="mbti"
-            items={props.all_mbtis}
-            default_selected={props.initial_mbtis}
+            items={props.initial_params.mbtis}
+            default_selected={props.current_params.mbtis}
             sort={true}
             onSubmit={setMBTIs} />
         </Grid>
@@ -101,8 +64,8 @@ export default function Home(props: Props) {
           <SearchSelect
             title="出身地"
             id="birthplace"
-            items={props.all_birthplaces}
-            default_selected={props.initial_birthplaces}
+            items={props.initial_params.birthplaces}
+            default_selected={props.current_params.birthplaces}
             sort={false}
             onSubmit={setBirthPlaces} />
         </Grid>
@@ -110,8 +73,8 @@ export default function Home(props: Props) {
           <SearchSelect
             title="身長"
             id="height"
-            items={props.all_heights}
-            default_selected={props.initial_heights}
+            items={props.initial_params.heights}
+            default_selected={props.current_params.heights}
             sort={true}
             onSubmit={setHeights} />
         </Grid>
@@ -119,8 +82,8 @@ export default function Home(props: Props) {
           <SearchSelect
             title="生まれ年"
             id="birthyear"
-            items={props.all_birthyears}
-            default_selected={props.initial_birthyears}
+            items={props.initial_params.birthyears}
+            default_selected={props.current_params.birthyears}
             sort={true}
             onSubmit={setYears} />
         </Grid>
