@@ -12,6 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { SearchParams } from "../hooks/useNPDatabase";
 import useNPSearch from "../hooks/useNPSearch";
 import SearchConfig from "./SearchConfig";
+import React from "react";
 
 interface Props {
   onMemberUpdated?: (members: string[]) => void;
@@ -25,6 +26,22 @@ export interface SortSetting {
   show_skill: boolean;
   show_ranking: boolean;
 }
+
+const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {
+  return (
+    <FormGroup>
+      <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
+    </FormGroup>
+  )
+})
+
+const ResultText = React.memo((props: { count: number }) => {
+  return (
+    <Typography variant="h6" component="h2">
+      該当者: {props.count}名
+    </Typography>
+  )
+});
 
 export default function Home(props: Props) {
   const {members, setMBTIs, setBirthPlaces, setHeights, setYears, canVote, setCanVote} = useNPSearch(props.current_params);
@@ -48,50 +65,22 @@ export default function Home(props: Props) {
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="MBTI"
-            id="mbti"
-            items={props.initial_params.mbtis}
-            default_selected={props.current_params.mbtis}
-            sort={true}
-            onSubmit={setMBTIs} />
+          <SearchSelect title="MBTI" id="mbti" sort={true} items={props.initial_params.mbtis} default_selected={props.current_params.mbtis} onSubmit={setMBTIs} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="出身地"
-            id="birthplace"
-            items={props.initial_params.birthplaces}
-            default_selected={props.current_params.birthplaces}
-            sort={false}
-            onSubmit={setBirthPlaces} />
+          <SearchSelect title="出身地" id="birthplace" sort={false} items={props.initial_params.birthplaces} default_selected={props.current_params.birthplaces} onSubmit={setBirthPlaces} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="身長"
-            id="height"
-            items={props.initial_params.heights}
-            default_selected={props.current_params.heights}
-            sort={true}
-            onSubmit={setHeights} />
+          <SearchSelect title="身長" id="height" sort={true} items={props.initial_params.heights} default_selected={props.current_params.heights} onSubmit={setHeights} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="生まれ年"
-            id="birthyear"
-            items={props.initial_params.birthyears}
-            default_selected={props.current_params.birthyears}
-            sort={true}
-            onSubmit={setYears} />
+          <SearchSelect title="生まれ年" id="birthyear" sort={true} items={props.initial_params.birthyears} default_selected={props.current_params.birthyears} onSubmit={setYears} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <Typography variant="h6" component="h2">
-            該当者: {members.length}名
-          </Typography>
+          <ResultText count={members.length} />
         </Grid>
         <Grid>
-          <FormGroup>
-            <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={canVote} id="checkbox-vote" onChange={(event) => { setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
-          </FormGroup>
+          <CanVoteCheckBox canVote={canVote} setCanVote={setCanVote} />
           <FormGroup>
             <SearchConfig onSortSettingsUpdated={(config) => props.onSortSettingsUpdated?.(config)} />
           </FormGroup>

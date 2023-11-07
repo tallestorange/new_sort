@@ -3,10 +3,21 @@ import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabe
 import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 import { useEffect, useState } from "react";
 import { SortSetting } from "./Home";
+import React from "react";
 
 interface Props {
   onSortSettingsUpdated?: (setting: SortSetting) => void;
 }
+
+const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void; form_id: string, checkbox_id: string, label: string}) => {
+  return (
+    <FormGroup>
+      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked(event.target.checked) }} />} label={props.label} />
+    </FormGroup>
+  )
+}, (before, after) => {
+  return before.checked === after.checked;
+});
 
 export default function SearchConfig(props: Props) {
   const [showHobby, setShowHobby] = useState<boolean>(false);
@@ -20,9 +31,9 @@ export default function SearchConfig(props: Props) {
 
   return (
     <FormGroup>
-      <FormControlLabel id="checkbox-form-hobby" control={<Checkbox checked={showHobby} id="checkbox-hobby" onChange={(event) => { setShowHobby(event.target.checked) }} />} label="ソート時に趣味欄を表示する" />
-      <FormControlLabel id="checkbox-form-skill" control={<Checkbox checked={showSkill} id="checkbox-skill" onChange={(event) => { setShowSkill(event.target.checked) }} />} label="ソート時に特技欄を表示する" />
-      <FormControlLabel id="checkbox-form-ranking" control={<Checkbox checked={showRanking} id="checkbox-ranking" onChange={(event) => { setShowRanking(event.target.checked) }} />} label="ソート時に順位変動を表示する" />
+      <LabelCheckBox checked={showHobby} setChecked={setShowHobby} form_id="checkbox-form-hobby" checkbox_id="checkbox-hobby" label="ソート時に趣味欄を表示する" />
+      <LabelCheckBox checked={showSkill} setChecked={setShowSkill} form_id="checkbox-form-skill" checkbox_id="checkbox-skill" label="ソート時に特技欄を表示する" />
+      <LabelCheckBox checked={showRanking} setChecked={setShowRanking} form_id="checkbox-form-ranking" checkbox_id="checkbox-rankings" label="ソート時に順位変動を表示する" />
     </FormGroup>
   );
 }

@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
+import React from "react";
 
 interface Props {
   title: string;
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function SearchSelect(props: Props) {
+function SearchSelect(props: Props) {
   const [items, setItems] = useState<string[]>(props.default_selected);
   const targetLength = props.items.length;
   const targets = props.items;
@@ -108,3 +109,40 @@ export default function SearchSelect(props: Props) {
     </FormControl>
   );
 }
+
+const CustomSelect = React.memo((props: { title: string, id: string, items: string[], default_selected: string[], sort: boolean, onSubmit: (members: string[]) => void }) => {
+  return (    
+    <SearchSelect
+      title={props.title}
+      id={props.id}
+      items={props.items}
+      default_selected={props.default_selected}
+      sort={props.sort}
+      onSubmit={props.onSubmit} />
+    );
+}, (before, after) => {
+  if (before.title !== after.title) {
+    return false;
+  }
+  if (before.id !== after.id) {
+    return false;
+  }
+  if (before.onSubmit !== after.onSubmit) {
+    return false;
+  }
+  if (before.items.length !== after.items.length) return false;
+  for (let i = 0, n = before.items.length; i < n; ++i) {
+    if (before.items[i] !== after.items[i]) return false;
+  }
+  if (before.items.length !== after.items.length) return false;
+  for (let i = 0, n = before.items.length; i < n; ++i) {
+    if (before.items[i] !== after.items[i]) return false;
+  }
+  if (before.default_selected.length !== after.default_selected.length) return false;
+  for (let i = 0, n = before.default_selected.length; i < n; ++i) {
+    if (before.default_selected[i] !== after.default_selected[i]) return false;
+  }
+  return true;
+});
+
+export default CustomSelect;
