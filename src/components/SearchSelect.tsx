@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Select from '@material-ui/core/Select';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -44,11 +44,27 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const CustomListItemText = React.memo((props: { title: string, id: string, index: number}) => {
+  return (
+    <ListItemText primary={props.title} id={props.id + "-text-" + props.index} />
+  )
+}, (before, after) => {
+  return before.title === after.title;
+})
+
+const CustomCheckbox = React.memo((props: {id: string, index: number, checked: boolean}) => {
+  return (
+    <Checkbox checked={props.checked} id={props.id + "-checkbox-" + props.index} />
+  )
+}, (before, after) => {
+  return before.checked === after.checked;
+})
+
 function SearchSelect(props: Props) {
   const [items, setItems] = useState<string[]>(props.default_selected);
   const targetLength = props.items.length;
   const targets = props.items;
-  const isAllSelected = useMemo(() => items.length === targetLength, [items, targetLength])
+  const isAllSelected = items.length === targetLength;
 
   const classes = useStyles();
 
@@ -100,9 +116,9 @@ function SearchSelect(props: Props) {
         </MenuItem>
         {props.items.map((val, index) => {
           return (
-            <MenuItem key={val} value={val} id={props.id + "-item-" + index}>
-              <Checkbox checked={items.indexOf(val) > -1} id={props.id + "-checkbox-"+index} />
-              <ListItemText primary={val} id={props.id + "-text-" + index} />
+            <MenuItem key={index} value={val} id={props.id + "-item-" + index}>
+              <CustomCheckbox id={props.id} index={index} checked={items.indexOf(val) > -1} />
+              <CustomListItemText title={val} id={props.id} index={index} />
             </MenuItem>)
         })}
       </Select>

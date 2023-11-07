@@ -33,6 +33,8 @@ const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canV
       <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
     </FormGroup>
   )
+}, (before, after) => {
+  return before.canVote === after.canVote
 })
 
 const ResultText = React.memo((props: { count: number }) => {
@@ -40,6 +42,19 @@ const ResultText = React.memo((props: { count: number }) => {
     <Typography variant="h6" component="h2">
       該当者: {props.count}名
     </Typography>
+  )
+});
+
+const SortStartButton = React.memo((props: { enabled: boolean }) => {
+  return (
+    <Button
+      to={SORT_PATH}
+      component={Link}
+      disabled={!props.enabled}
+      color="secondary"
+    >
+      ソート開始
+    </Button>
   )
 });
 
@@ -56,7 +71,7 @@ export default function Home(props: Props) {
   }, [])
 
   return (
-    <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={3}>
+    <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <h1>{TITLE}</h1>
       </Grid>
@@ -81,24 +96,16 @@ export default function Home(props: Props) {
         </Grid>
         <Grid>
           <CanVoteCheckBox canVote={canVote} setCanVote={setCanVote} />
-          <FormGroup>
-            <SearchConfig onSortSettingsUpdated={(config) => props.onSortSettingsUpdated?.(config)} />
-          </FormGroup>
+          <SearchConfig onSortSettingsUpdated={(config) => props.onSortSettingsUpdated?.(config)} />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <Button
-            to={SORT_PATH}
-            component={Link}
-            disabled={members.length === 0}
-            color="secondary"
-          >
-            ソート開始
-          </Button>
-        </Grid>
+      </Grid>
+      <Grid container item xs={12} justifyContent="center" spacing={0}>
+        <SortStartButton enabled={members.length > 0} />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <p><a href="https://github.com/emolga587/hpsort2">ハロプロソート(updated)</a>ベースで開発しています</p>
       </Grid>
     </Grid>
+
   );
 }

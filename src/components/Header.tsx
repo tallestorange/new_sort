@@ -10,7 +10,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function Header(props: Props) {
+function Header(props: Props) {
   return (
     <AppBar position="static" style={{ color: 'white', backgroundColor: "rgb(237, 114, 176)", boxShadow: "none" }}>
       <Toolbar>
@@ -29,3 +29,6 @@ export default function Header(props: Props) {
     </AppBar>
   );
 }
+
+const HeaderMemo = React.memo(Header);
+export default HeaderMemo;
