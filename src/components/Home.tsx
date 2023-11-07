@@ -61,7 +61,7 @@ export default function Home(props: Props) {
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/11/5 結果をツイートする際に上位11人をツイートする仕様に変更)</p>
+        <p>(最終更新:23/11/7 余計な再描画処理の抑制)</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
