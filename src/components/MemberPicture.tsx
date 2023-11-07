@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import npDB from "../modules/NPDatabase";
 import { SortSetting } from './Home';
 import { IMAGE_DIR } from './Constants';
+import React from 'react';
 
 interface Props {
   name: string;
@@ -21,45 +22,53 @@ export default function MemberPicture(props: Props) {
     },
   };
 
-  const member_info = npDB.search_member(props.name)
-
   return (
     <Card onClick={props.onClick} style={styles.card}>
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          alt={props.name}
-          image={`${IMAGE_DIR}${props.name}.webp`}
-          title={props.name}
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h6" component="h2">
-            {props.name}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            生年月日: {member_info.birth_date}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            出身地: {member_info.birth_place}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            MBTI: {member_info.mbti}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            身長: {member_info.height}cm
-          </Typography>
-
-          {props.sortConfig.show_hobby && <Typography variant="body2" color="textSecondary" component="p">
-            趣味: {member_info.hobby}
-          </Typography>}
-          {props.sortConfig.show_skill && <Typography variant="body2" color="textSecondary" component="p">
-            特技: {member_info.special_skill}
-          </Typography>}
-          {props.sortConfig.show_ranking && <Typography variant="body2" color="textSecondary" component="p">
-            順位: {member_info.week_2_rank}位→{member_info.week_3_rank}位→{member_info.week_5_rank}位
-          </Typography>}
-        </CardContent>
-      </CardActionArea>
+      <MemberPictureContent name={props.name} sortConfig={props.sortConfig} />
     </Card>
   );
 }
+
+const MemberPictureContent = React.memo((props: {name: string, sortConfig: SortSetting}) => {
+  const member_info = npDB.search_member(props.name)
+
+  return (
+    <CardActionArea>
+      <CardMedia
+        component="img"
+        alt={props.name}
+        image={`${IMAGE_DIR}${props.name}.webp`}
+        title={props.name}
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h6" component="h2">
+          {props.name}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          生年月日: {member_info.birth_date}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          出身地: {member_info.birth_place}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          MBTI: {member_info.mbti}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          身長: {member_info.height}cm
+        </Typography>
+
+        {props.sortConfig.show_hobby && <Typography variant="body2" color="textSecondary" component="p">
+          趣味: {member_info.hobby}
+        </Typography>}
+        {props.sortConfig.show_skill && <Typography variant="body2" color="textSecondary" component="p">
+          特技: {member_info.special_skill}
+        </Typography>}
+        {props.sortConfig.show_ranking && <Typography variant="body2" color="textSecondary" component="p">
+          順位: {member_info.week_2_rank}位→{member_info.week_3_rank}位→{member_info.week_5_rank}位
+        </Typography>}
+      </CardContent>
+    </CardActionArea>
+  );
+}, (before, after) => {
+  return before.name === after.name;
+})
