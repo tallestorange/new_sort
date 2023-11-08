@@ -66,10 +66,6 @@ export default function Home(props: Props) {
     // eslint-disable-next-line
   }, [members])
 
-  useEffect(() => {
-    console.log("笠原桃奈さん1位おめでとうございます!!");
-  }, [])
-
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -130,6 +126,5 @@ export default function Home(props: Props) {
         <p><a href="https://github.com/emolga587/hpsort2">ハロプロソート(updated)</a>ベースで開発しています</p>
       </Grid>
     </Grid>
-
   );
 }
