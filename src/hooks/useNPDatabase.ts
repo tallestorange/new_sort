@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { VERSION } from '../components/Constants'
 import { SortSettings } from "../components/Home";
 import npDB from "../modules/NPDatabase";
@@ -46,38 +46,48 @@ export default function useNPDatabase(): NPDatabase {
   let can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
 
   const [members, setMembers] = useState<string[]>(npDB.search(all_mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored, can_vote_only));
-  const [mbtis, setMBTIs] = useState<string[]>(all_mbtis_stored);
-  const [birthplaces, setBirthPlaces] = useState<string[]>(all_birthplaces_stored);
-  const [heights, setHeights] = useState<string[]>(all_heights_stored);
-  const [years, setYears] = useState<string[]>(all_birthyears_stored);
+  
+  const mbtis = useRef<string[]>(all_mbtis_stored);
+  const birthplaces = useRef<string[]>(all_birthplaces_stored);
+  const heights = useRef<string[]>(all_heights_stored);
+  const years = useRef<string[]>(all_birthyears_stored);
   const [canVote, setCanVote] = useState<boolean>(can_vote_only);
   const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
 
-  useEffect(() => {
-    const members_result = npDB.search(mbtis, birthplaces, heights, years, canVote);
+  const setMBTIs = (mbtis_after: string[]) => {
+    mbtis.current = mbtis_after;
+    localStorage.setItem("mbtis", JSON.stringify(mbtis.current))
+    const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
     setMembers(members_result);
-    // eslint-disable-next-line
-  }, [mbtis, birthplaces, heights, years, canVote])
+  }
 
-  useEffect(() => {
-    localStorage.setItem("mbtis", JSON.stringify(mbtis))
-  }, [mbtis])
+  const setBirthPlaces = (birthplaces_after: string[]) => {
+    birthplaces.current = birthplaces_after;
+    localStorage.setItem("birthplaces", JSON.stringify(birthplaces.current))
+    const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+    setMembers(members_result);
+  }
 
-  useEffect(() => {
-    localStorage.setItem("birthplaces", JSON.stringify(birthplaces))
-  }, [birthplaces])
+  const setHeights = (heights_after: string[]) => {
+    heights.current = heights_after;
+    localStorage.setItem("heights", JSON.stringify(heights.current))
+    const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+    setMembers(members_result);
+  }
 
-  useEffect(() => {
-    localStorage.setItem("heights", JSON.stringify(heights))
-  }, [heights])
+  const setYears = (years_after: string[]) => {
+    years.current = years_after;
+    localStorage.setItem("years", JSON.stringify(years.current))
+    const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+    setMembers(members_result);
+  }
 
-  useEffect(() => {
-    localStorage.setItem("years", JSON.stringify(years))
-  }, [years])
-
-  useEffect(() => {
-    localStorage.setItem("can_vote_only", JSON.stringify(canVote))
-  }, [canVote])
+  const setCanVoteOnly = (can_vote_only: boolean) => {
+    setCanVote(can_vote_only);
+    localStorage.setItem("can_vote_only", JSON.stringify(can_vote_only))
+    const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, can_vote_only);
+    setMembers(members_result);
+  }
 
   return {
     initial_mbtis: all_mbtis,
@@ -93,7 +103,7 @@ export default function useNPDatabase(): NPDatabase {
     setBirthPlaces: setBirthPlaces,
     setHeights: setHeights,
     setYears: setYears,
-    setCanVote: setCanVote,
+    setCanVote: setCanVoteOnly,
     members: members,
     sort_settings: sortConfig,
     setSortSettings: setSortConfig
