@@ -14,7 +14,7 @@ interface Props {
   items: string[];
   default_selected: string[];
   sort: boolean;
-  onSubmit: (items: string[]) => void;
+  onValueChanged: (items: string[]) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -77,7 +77,7 @@ function SearchSelect(props: Props) {
       items_after = value;
     }
     setItems(items_after);
-    props.onSubmit(items_after);
+    props.onValueChanged(items_after);
   };
 
   return (
@@ -134,7 +134,7 @@ const CustomSelect = React.memo(
   if (before.id !== after.id) {
     return false;
   }
-  if (before.onSubmit !== after.onSubmit) {
+  if (before.onValueChanged !== after.onValueChanged) {
     return false;
   }
   if (before.items.length !== after.items.length) return false;

@@ -2,11 +2,11 @@ import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 import { useEffect, useState } from "react";
-import { SortSetting } from "./Home";
+import { SortSettings } from "./Home";
 import React from "react";
 
 interface Props {
-  onSortSettingsUpdated?: (setting: SortSetting) => void;
+  onSortSettingsUpdated?: (setting: SortSettings) => void;
 }
 
 const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void; form_id: string, checkbox_id: string, label: string}) => {

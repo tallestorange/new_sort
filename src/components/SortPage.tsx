@@ -12,13 +12,13 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { SortSetting } from './Home';
+import { SortSettings } from './Home';
 import { HASHTAGS, PAGE_URL } from "./Constants";
 
 interface Props {
   members: string[];
   sortName: string;
-  sortConfig: SortSetting;
+  sortConfig: SortSettings;
 }
 interface State {
   result: boolean;

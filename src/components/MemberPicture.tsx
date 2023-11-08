@@ -4,13 +4,13 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import npDB from "../modules/NPDatabase";
-import { SortSetting } from './Home';
+import { SortSettings } from './Home';
 import { IMAGE_DIR } from './Constants';
 import React from 'react';
 
 interface Props {
   name: string;
-  sortConfig: SortSetting;
+  sortConfig: SortSettings;
   onClick?: any;
 }
 
@@ -29,7 +29,7 @@ export default function MemberPicture(props: Props) {
   );
 }
 
-const MemberPictureContent = React.memo((props: {name: string, sortConfig: SortSetting}) => {
+const MemberPictureContent = React.memo((props: {name: string, sortConfig: SortSettings}) => {
   const member_info = npDB.search_member(props.name)
 
   return (
