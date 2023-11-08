@@ -46,13 +46,13 @@ export default function useNPDatabase(): NPDatabase {
   let can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
 
   const [members, setMembers] = useState<string[]>(npDB.search(all_mbtis_stored, all_birthplaces_stored, all_heights_stored, all_birthyears_stored, can_vote_only));
-  
+  const [canVote, setCanVote] = useState<boolean>(can_vote_only);
+  const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
+
   const mbtis = useRef<string[]>(all_mbtis_stored);
   const birthplaces = useRef<string[]>(all_birthplaces_stored);
   const heights = useRef<string[]>(all_heights_stored);
   const years = useRef<string[]>(all_birthyears_stored);
-  const [canVote, setCanVote] = useState<boolean>(can_vote_only);
-  const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
 
   const setMBTIs = (mbtis_after: string[]) => {
     mbtis.current = mbtis_after;

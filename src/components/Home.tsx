@@ -74,7 +74,7 @@ export default function Home(props: Props) {
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/11/8 余計な再描画処理の抑制)</p>
+        <p>(最終更新:23/11/9 描画処理の最適化)</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
