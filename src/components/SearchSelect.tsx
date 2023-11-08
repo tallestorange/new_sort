@@ -65,7 +65,6 @@ function SearchSelect(props: Props) {
   const targetLength = props.items.length;
   const targets = props.items;
   const isAllSelected = items.length === targetLength;
-
   const classes = useStyles();
 
   const handleChange = (event: any) => {
@@ -126,17 +125,9 @@ function SearchSelect(props: Props) {
   );
 }
 
-const CustomSelect = React.memo((props: { title: string, id: string, items: string[], default_selected: string[], sort: boolean, onSubmit: (members: string[]) => void }) => {
-  return (    
-    <SearchSelect
-      title={props.title}
-      id={props.id}
-      items={props.items}
-      default_selected={props.default_selected}
-      sort={props.sort}
-      onSubmit={props.onSubmit} />
-    );
-}, (before, after) => {
+const CustomSelect = React.memo(
+  SearchSelect,
+  (before, after) => {
   if (before.title !== after.title) {
     return false;
   }
