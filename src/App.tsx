@@ -50,8 +50,13 @@ export default function App() {
               setYears={setYears}
               setCanVote={setCanVote}
               onSortSettingsUpdated={setSortSettings}
-            />} />
-          <Route path={`/${SORT_PATH}`} element={<SortPage members={members} sortName={TITLE} sortConfig={sort_settings} />} />
+          />} />
+          <Route path={`/${SORT_PATH}`} element={
+            <SortPage 
+              members={members} 
+              sortName={TITLE} 
+              sortConfig={sort_settings} 
+          />} />
         </Routes>
       </Layout>
     </Router>
