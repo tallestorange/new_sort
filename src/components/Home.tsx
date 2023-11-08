@@ -1,7 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
 import { TITLE, BOARDER, SORT_PATH } from './Constants';
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import SearchSelect from "./SearchSelect";
@@ -9,19 +8,29 @@ import Typography from '@material-ui/core/Typography';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { SearchParams } from "../hooks/useNPDatabase";
-import useNPSearch from "../hooks/useNPSearch";
-import SearchConfig from "./SearchConfig";
 import React from "react";
+import SearchConfig from "./SearchConfig";
 
 interface Props {
-  onMemberUpdated?: (members: string[]) => void;
-  onSortSettingsUpdated?: (setting: SortSetting) => void;
-  initial_params: SearchParams,
-  current_params: SearchParams
+  initial_mbtis: string[];
+  initial_birthplaces: string[];
+  initial_heights: string[];
+  initial_birthyears: string[];
+  current_mbtis: string[];
+  current_birthplaces: string[];
+  current_heights: string[];
+  current_birthyears: string[];
+  can_vote_only: boolean;
+  target_members_count: number;
+  setMBTIs: (members: string[]) => void;
+  setBirthPlaces: (members: string[]) => void;
+  setHeights: (members: string[]) => void;
+  setYears: (members: string[]) => void;
+  setCanVote: (can_vote_only: boolean) => void;
+  onSortSettingsUpdated: (settings: SortSettings) => void;
 }
 
-export interface SortSetting {
+export interface SortSettings {
   show_hobby: boolean;
   show_skill: boolean;
   show_ranking: boolean;
@@ -59,20 +68,13 @@ const SortStartButton = React.memo((props: { enabled: boolean }) => {
 });
 
 export default function Home(props: Props) {
-  const {members, setMBTIs, setBirthPlaces, setHeights, setYears, canVote, setCanVote} = useNPSearch(props.current_params);
-
-  useEffect(() => {
-    props.onMemberUpdated?.(members);
-    // eslint-disable-next-line
-  }, [members])
-
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/11/8 余計な再描画処理の抑制)</p>
+        <p>(最終更新:23/11/9 描画処理の最適化)</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -80,47 +82,47 @@ export default function Home(props: Props) {
             title="MBTI" 
             id="mbti" 
             sort={true}
-            items={props.initial_params.mbtis}
-            default_selected={props.current_params.mbtis} 
-            onSubmit={setMBTIs} />
+            items={props.initial_mbtis}
+            default_selected={props.current_mbtis} 
+            onValueChanged={props.setMBTIs} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect 
             title="出身地" 
             id="birthplace" 
             sort={false}
-            items={props.initial_params.birthplaces}
-            default_selected={props.current_params.birthplaces} 
-            onSubmit={setBirthPlaces} />
+            items={props.initial_birthplaces}
+            default_selected={props.current_birthplaces} 
+            onValueChanged={props.setBirthPlaces} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect 
             title="身長"
             id="height" 
             sort={true} 
-            items={props.initial_params.heights} 
-            default_selected={props.current_params.heights} 
-            onSubmit={setHeights} />
+            items={props.initial_heights} 
+            default_selected={props.current_heights} 
+            onValueChanged={props.setHeights} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect 
             title="生まれ年" 
             id="birthyear" 
             sort={true} 
-            items={props.initial_params.birthyears} 
-            default_selected={props.current_params.birthyears} 
-            onSubmit={setYears} />
+            items={props.initial_birthyears} 
+            default_selected={props.current_birthyears} 
+            onValueChanged={props.setYears} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <ResultText count={members.length} />
+          <ResultText count={props.target_members_count} />
         </Grid>
         <Grid>
-          <CanVoteCheckBox canVote={canVote} setCanVote={setCanVote} />
-          <SearchConfig onSortSettingsUpdated={(config) => props.onSortSettingsUpdated?.(config)} />
+          <CanVoteCheckBox canVote={props.can_vote_only} setCanVote={props.setCanVote} />
+          <SearchConfig onSortSettingsUpdated={props.onSortSettingsUpdated} />
         </Grid>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <SortStartButton enabled={members.length > 0} />
+        <SortStartButton enabled={props.target_members_count > 0} />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <p><a href="https://github.com/emolga587/hpsort2">ハロプロソート(updated)</a>ベースで開発しています</p>
