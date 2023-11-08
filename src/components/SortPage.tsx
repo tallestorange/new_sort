@@ -36,14 +36,13 @@ export default class SortPage extends React.Component<Props, State> {
       let rankTable: JSX.Element[] = [];
       let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${this.props.sortName}結果\n`);
       let max_output = 11;
-      if (this.props.members.length < 10) {
-        max_output = 5;
-      }
 
+      let count = 1;
       for (let i of this.sort.array) {
         rankTable.push(<TableRow key={i}><TableCell align="left">{this.sort.rank(i)}位</TableCell><TableCell align="left">{i}</TableCell></TableRow>);
-        if (this.sort.rank(i) <= max_output) {
+        if (count <= max_output) {
           tweet_url += encodeURI(`${this.sort.rank(i)}位: ${i}\n`);
+          count++;
         }
       }
 
