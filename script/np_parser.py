@@ -131,7 +131,7 @@ def generate(save_pictures):
       with open("../public/member_pics/" + name + ".jpg", mode="wb") as f2:
         f2.write(data)
       img = Image.open("../public/member_pics/" + name + ".jpg")
-      img.save("../public/member_pics/" + name + ".webp", quality=70)
+      img.save("../public/member_pics/" + name + ".webp", quality=60)
       os.remove("../public/member_pics/" + name + ".jpg")
 
 
