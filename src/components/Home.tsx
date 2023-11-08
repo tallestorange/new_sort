@@ -80,16 +80,40 @@ export default function Home(props: Props) {
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect title="MBTI" id="mbti" sort={true} items={props.initial_params.mbtis} default_selected={props.current_params.mbtis} onSubmit={setMBTIs} />
+          <SearchSelect 
+            title="MBTI" 
+            id="mbti" 
+            sort={true}
+            items={props.initial_params.mbtis}
+            default_selected={props.current_params.mbtis} 
+            onSubmit={setMBTIs} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect title="出身地" id="birthplace" sort={false} items={props.initial_params.birthplaces} default_selected={props.current_params.birthplaces} onSubmit={setBirthPlaces} />
+          <SearchSelect 
+            title="出身地" 
+            id="birthplace" 
+            sort={false}
+            items={props.initial_params.birthplaces}
+            default_selected={props.current_params.birthplaces} 
+            onSubmit={setBirthPlaces} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect title="身長" id="height" sort={true} items={props.initial_params.heights} default_selected={props.current_params.heights} onSubmit={setHeights} />
+          <SearchSelect 
+            title="身長"
+            id="height" 
+            sort={true} 
+            items={props.initial_params.heights} 
+            default_selected={props.current_params.heights} 
+            onSubmit={setHeights} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect title="生まれ年" id="birthyear" sort={true} items={props.initial_params.birthyears} default_selected={props.current_params.birthyears} onSubmit={setYears} />
+          <SearchSelect 
+            title="生まれ年" 
+            id="birthyear" 
+            sort={true} 
+            items={props.initial_params.birthyears} 
+            default_selected={props.current_params.birthyears} 
+            onSubmit={setYears} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <ResultText count={members.length} />
