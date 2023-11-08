@@ -89,6 +89,12 @@ export default function useNPDatabase(): NPDatabase {
     setMembers(members_result);
   }
 
+  const updateSortSetting = (val: SortSettings) => {
+    if (val.show_hobby !== sortConfig.show_hobby || val.show_ranking !== sortConfig.show_ranking || val.show_skill !== sortConfig.show_skill) {
+      setSortConfig(val);
+    }
+  }
+
   return {
     initial_mbtis: all_mbtis,
     initial_birthplaces: all_birthplaces,
@@ -106,6 +112,6 @@ export default function useNPDatabase(): NPDatabase {
     setCanVote: setCanVoteOnly,
     members: members,
     sort_settings: sortConfig,
-    setSortSettings: setSortConfig
+    setSortSettings: updateSortSetting
   }
 }
