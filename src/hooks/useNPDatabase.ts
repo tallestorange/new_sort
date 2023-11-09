@@ -80,7 +80,9 @@ export default function useNPDatabase(): NPDatabase {
   const members_map = useRef<Map<string, Member>>(new Map<string, Member>());
 
   const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
-  const [canVote, setCanVote] = useState<boolean>(getCanVoteFromLocalStorage());
+  const [canVote, setCanVote] = useState<boolean>(getCanVoteFromLocalStorage(() => {
+    setCanVoteToLocalStorage(false);
+  }));
   const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
   const [initialState, setInitialState] = useState<InitialState>({ 
     initial_mbtis: { items: [NOW_LOADING], initialized: false},
@@ -242,22 +244,30 @@ export default function useNPDatabase(): NPDatabase {
     }
     localStorage.setItem("VERSION", VERSION);
 
-    const mbtis_stored = getMBTIsFromLocalStorage();
+    const mbtis_stored = getMBTIsFromLocalStorage(() => {
+      setMBTIsToLocalStorage([]);
+    });
     all_mbtis_stored.current.items = mbtis_stored;
     all_mbtis_stored.current.initialized = true;
     mbtis.current = mbtis_stored;
 
-    const birthplaces_stored = getBirthPlacesFromLocalStorage();
+    const birthplaces_stored = getBirthPlacesFromLocalStorage(() => {
+      setBirthPlacesToLocalStorage([]);
+    });
     all_birthplaces_stored.current.items = birthplaces_stored;
     all_birthplaces_stored.current.initialized = true;
     birthplaces.current = birthplaces_stored;
 
-    const heights_stored = getHeightsFromLocalStorage();
+    const heights_stored = getHeightsFromLocalStorage(() => {
+      setHeightsToLocalStorage([]);
+    });
     all_heights_stored.current.items = heights_stored;
     all_heights_stored.current.initialized = true;
     heights.current = heights_stored;
 
-    const birthyears_stored = getYearsFromLocalStorage();
+    const birthyears_stored = getYearsFromLocalStorage(() => {
+      setYearsToLocalStorage([]);
+    });
     all_birthyears_stored.current.items = birthyears_stored;
     all_birthyears_stored.current.initialized = true;
     years.current = birthyearsArray;
@@ -272,8 +282,8 @@ export default function useNPDatabase(): NPDatabase {
       initial_birthyears: all_birthyears.current,
       current_mbtis: all_mbtis_stored.current,
       current_birthplaces: all_birthplaces_stored.current,
-      current_heights: all_heights.current,
-      current_birthyears: all_birthyears.current
+      current_heights: all_heights_stored.current,
+      current_birthyears: all_birthyears_stored.current
     })
   }
 

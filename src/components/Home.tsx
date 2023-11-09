@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE, BOARDER, SORT_PATH } from './Constants';
+import { TITLE, BOARDER, SORT_PATH, LATEST_CHANGE_LOG } from './Constants';
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import SearchSelect from "./SearchSelect";
@@ -62,47 +62,47 @@ export default function Home(props: Props) {
         <h1>{TITLE}</h1>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>(最終更新:23/11/9 低速回線向けの最適化)</p>
+        <p>{LATEST_CHANGE_LOG}</p>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect 
-            title="MBTI" 
-            id="mbti" 
+            title="MBTI"
+            id="mbti"
             sort={true}
             enabled={props.initial_state.initial_mbtis.initialized && props.initial_state.current_mbtis.initialized}
             items={props.initial_state.initial_mbtis.items}
-            default_selected={props.initial_state.current_mbtis.items} 
+            default_selected={props.initial_state.current_mbtis.items}
             onValueChanged={props.setMBTIs} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-            title="出身地" 
-            id="birthplace" 
+          <SearchSelect
+            title="出身地"
+            id="birthplace"
             sort={false}
             enabled={props.initial_state.initial_birthplaces.initialized && props.initial_state.current_birthplaces.initialized}
             items={props.initial_state.initial_birthplaces.items}
-            default_selected={props.initial_state.current_birthplaces.items} 
+            default_selected={props.initial_state.current_birthplaces.items}
             onValueChanged={props.setBirthPlaces} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
+          <SearchSelect
             title="身長"
-            id="height" 
-            sort={true} 
+            id="height"
+            sort={true}
             enabled={props.initial_state.initial_heights.initialized && props.initial_state.current_heights.initialized}
             items={props.initial_state.initial_heights.items}
             default_selected={props.initial_state.current_heights.items}
             onValueChanged={props.setHeights} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-            title="生まれ年" 
-            id="birthyear" 
+          <SearchSelect
+            title="生まれ年"
+            id="birthyear"
             sort={true}
             enabled={props.initial_state.initial_birthyears.initialized && props.initial_state.current_birthyears.initialized}
-            items={props.initial_state.initial_birthyears.items} 
-            default_selected={props.initial_state.current_birthyears.items} 
+            items={props.initial_state.initial_birthyears.items}
+            default_selected={props.initial_state.current_birthyears.items}
             onValueChanged={props.setYears} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>

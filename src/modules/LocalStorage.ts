@@ -1,44 +1,75 @@
-export const getMBTIsFromLocalStorage = (): string[] => {
-  const all_mbtis_stored: string[] = JSON.parse(localStorage.getItem("mbtis") || "[]");
-  return all_mbtis_stored;
+const LOCALSTORAGE_KEY_MBTIS : string = "mbtis";
+const LOCALSTORAGE_KEY_BIRTHPLACES : string = "birthplaces";
+const LOCALSTORAGE_KEY_HEIGHTS : string = "heights";
+const LOCALSTORAGE_KEY_YEARS : string = "years";
+const LOCALSTORAGE_KEY_CAN_VOTE : string = "can_vote_only";
+
+export const getMBTIsFromLocalStorage = (onError?: () => void): string[] => {
+  let result = []
+  try {
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_MBTIS) || "[]");
+  } catch (error) {
+    onError?.();
+  }
+  return result;
 }
 
 export const setMBTIsToLocalStorage = (mbtis: string[]): void => {
-  localStorage.setItem("mbtis", JSON.stringify(mbtis))
+  localStorage.setItem(LOCALSTORAGE_KEY_MBTIS, JSON.stringify(mbtis))
 }
 
-export const getBirthPlacesFromLocalStorage = (): string[] => {
-  const all_birthplaces_stored: string[] = JSON.parse(localStorage.getItem("birthplaces") || "[]");
-  return all_birthplaces_stored;
+export const getBirthPlacesFromLocalStorage = (onError?: () => void): string[] => {
+  let result = []
+  try {
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_BIRTHPLACES) || "[]");
+  } catch (error) {
+    onError?.();
+  }
+  return result;
 }
 
 export const setBirthPlacesToLocalStorage = (birthplaces: string[]): void => {
-  localStorage.setItem("birthplaces", JSON.stringify(birthplaces))
+  localStorage.setItem(LOCALSTORAGE_KEY_BIRTHPLACES, JSON.stringify(birthplaces))
 }
 
-export const getHeightsFromLocalStorage = (): string[] => {
-  const all_heights_stored: string[] = JSON.parse(localStorage.getItem("heights") || "[]");
-  return all_heights_stored;
+export const getHeightsFromLocalStorage = (onError?: () => void): string[] => {
+  let result = []
+  try {
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_HEIGHTS) || "[]");
+  } catch (error) {
+    onError?.();
+  }
+  return result;
 }
 
 export const setHeightsToLocalStorage = (heights: string[]): void => {
-  localStorage.setItem("heights", JSON.stringify(heights))
+  localStorage.setItem(LOCALSTORAGE_KEY_HEIGHTS, JSON.stringify(heights))
 }
 
-export const getYearsFromLocalStorage = (): string[] => {
-  const all_birthyears_stored: string[] = JSON.parse(localStorage.getItem("years") || "[]");
-  return all_birthyears_stored;
+export const getYearsFromLocalStorage = (onError?: () => void): string[] => {
+  let result = []
+  try {
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_YEARS) || "[]");
+  } catch (error) {
+    onError?.();
+  }
+  return result;
 }
 
 export const setYearsToLocalStorage = (years: string[]): void => {
-  localStorage.setItem("years", JSON.stringify(years))
+  localStorage.setItem(LOCALSTORAGE_KEY_YEARS, JSON.stringify(years))
 }
 
-export const getCanVoteFromLocalStorage = (): boolean => {
-  const can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
-  return can_vote_only;
+export const getCanVoteFromLocalStorage = (onError?: () => void): boolean => {
+  let result = false
+  try {
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_CAN_VOTE) || "false");
+  } catch (error) {
+    onError?.();
+  }
+  return result;
 }
 
 export const setCanVoteToLocalStorage = (can_vote_only: boolean): void => {
-  localStorage.setItem("can_vote_only", JSON.stringify(can_vote_only))
+  localStorage.setItem(LOCALSTORAGE_KEY_CAN_VOTE, JSON.stringify(can_vote_only))
 }
