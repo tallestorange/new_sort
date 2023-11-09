@@ -75,6 +75,10 @@ export default function useNPDatabase(): NPDatabase {
   const all_birthyears_stored = useRef<StoredItems>({items: [], initialized: false});
   const members_map = useRef<Map<string, Member>>(new Map<string, Member>());
 
+  const can_vote = useRef<boolean>(getCanVoteFromLocalStorage(() => {
+    setCanVoteToLocalStorage(false);
+  }));
+
   const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
   const [canVote, setCanVote] = useState<boolean>(getCanVoteFromLocalStorage(() => {
     setCanVoteToLocalStorage(false);
@@ -116,23 +120,19 @@ export default function useNPDatabase(): NPDatabase {
     return result;
   }, []);
 
-  const updateMembers = useCallback(() => {
-    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, canVote);
-    setMembers(members_result);
-    // eslint-disable-next-line
-  }, []);
-
   const setMBTIs = useCallback((mbtis_after: string[]) => {
     all_mbtis_stored.current.items = mbtis_after;
     setMBTIsToLocalStorage(all_mbtis_stored.current.items);
-    updateMembers();
+    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, can_vote.current);
+    setMembers(members_result);
     // eslint-disable-next-line
   }, []);
 
   const setBirthPlaces = useCallback((birthplaces_after: string[]) => {
     all_birthplaces_stored.current.items = birthplaces_after;
     setBirthPlacesToLocalStorage(all_birthplaces_stored.current.items);
-    updateMembers();
+    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, can_vote.current);
+    setMembers(members_result);
     // eslint-disable-next-line
   }, []);
 
@@ -140,21 +140,25 @@ export default function useNPDatabase(): NPDatabase {
     all_heights_stored.current.items = heights_after;
     console.log(heights_after)
     setHeightsToLocalStorage(all_heights_stored.current.items);
-    updateMembers();
+    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, can_vote.current);
+    setMembers(members_result);
     // eslint-disable-next-line
   }, []);
 
   const setYears = useCallback((years_after: string[]) => {
     all_birthyears_stored.current.items = years_after;
     setYearsToLocalStorage(all_birthyears_stored.current.items);
-    updateMembers();
+    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, can_vote.current);
+    setMembers(members_result);
     // eslint-disable-next-line
   }, []);
 
   const setCanVoteOnly = useCallback((can_vote_only: boolean) => {
+    can_vote.current = can_vote_only;
     setCanVote(can_vote_only);
     setCanVoteToLocalStorage(can_vote_only);
-    updateMembers();
+    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, can_vote.current);
+    setMembers(members_result);
     // eslint-disable-next-line
   }, []);
 
