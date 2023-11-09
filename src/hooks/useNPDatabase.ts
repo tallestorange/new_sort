@@ -72,6 +72,15 @@ const setYearsToLocalStorage = (years: string[]): void => {
   localStorage.setItem("years", JSON.stringify(years))
 }
 
+const getCanVoteFromLocalStorage = (): boolean => {
+  const can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
+  return can_vote_only;
+}
+
+const setCanVoteToLocalStorage = (can_vote_only: boolean): void => {
+  localStorage.setItem("can_vote_only", JSON.stringify(can_vote_only))
+}
+
 interface StoredItems {
   items: string[],
   initialized: boolean
@@ -96,11 +105,10 @@ export default function useNPDatabase(): NPDatabase {
   const heights = useRef<string[]>([]);
   const years = useRef<string[]>([]);
 
-  let can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
   // const members_map: Map<string, Member> = new Map<string, Member>();
 
   const [members, setMembers] = useState<string[]>([]);
-  const [canVote, setCanVote] = useState<boolean>(can_vote_only);
+  const [canVote, setCanVote] = useState<boolean>(getCanVoteFromLocalStorage());
   const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
   const [initialState, setInitialState] = useState<InitialState>({ 
     initial_mbtis: { items: [], initialized: false},
@@ -159,7 +167,7 @@ export default function useNPDatabase(): NPDatabase {
 
   const setCanVoteOnly = (can_vote_only: boolean, update_members: boolean = true) => {
     setCanVote(can_vote_only);
-    localStorage.setItem("can_vote_only", JSON.stringify(can_vote_only))
+    setCanVoteToLocalStorage(can_vote_only);
     if (update_members) {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, can_vote_only);
       setMembers(members_result);
@@ -292,7 +300,6 @@ export default function useNPDatabase(): NPDatabase {
         result.push(i.name);
       }
     }
-    console.log(result, mbti, birthplaces, heights, years, can_vote_only)
     return result;
   }, [members_array]);
 
