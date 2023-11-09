@@ -14,6 +14,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { HASHTAGS, PAGE_URL } from "../modules/Constants";
 import { Member, SortSettings } from "../hooks/useNPDatabase";
+import { useLocation } from 'react-router-dom';
+
+export default function SortPage(props: {members: Map<string, Member>, sortName: string, initialized: boolean}) {
+  const location = useLocation();
+  const sort_settings = location.state as SortSettings;
+  console.log(sort_settings);
+  return (<SortPageOld members={props.members} sortName={props.sortName} initialized={props.initialized} sortConfig={sort_settings}></SortPageOld>)
+}
 
 interface Props {
   members: Map<string, Member>;
@@ -25,7 +33,7 @@ interface State {
   result: boolean;
 }
 
-export default class SortPage extends React.Component<Props, State> {
+class SortPageOld extends React.Component<Props, State> {
   sort: Sorter;
   constructor(props: Props) {
     super(props);

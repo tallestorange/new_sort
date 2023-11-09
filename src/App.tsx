@@ -18,8 +18,6 @@ export default function App() {
     setYears,
     setCanVote,
     members,
-    sort_settings,
-    setSortSettings
   } = useNPDatabase();
 
   const initialized = useMemo(() => {
@@ -42,13 +40,11 @@ export default function App() {
               setHeights={setHeights}
               setYears={setYears}
               setCanVote={setCanVote}
-              onSortSettingsUpdated={setSortSettings}
           />} />
           <Route path={`/${SORT_PATH}`} element={
             <SortPage 
               members={members}
               sortName={TITLE}
-              sortConfig={sort_settings}
               initialized={initialized}
           />} />
         </Routes>

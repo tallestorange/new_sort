@@ -6,8 +6,7 @@ import React from "react";
 import { SortSettings } from "../hooks/useNPDatabase";
 import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
-import { BOARDER, SORT_PATH } from "../modules/Constants";
-import { Link } from "react-router-dom";
+import { BOARDER } from "../modules/Constants";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 
 export const CustomListItemText = React.memo((props: { title: string, id: string, index: number}) => {
@@ -44,12 +43,11 @@ export const ResultText = React.memo((props: { count: number }) => {
   )
 });
 
-export const SortStartButton = React.memo((props: { enabled: boolean }) => {
+export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: () => void }) => {
   return (
     <Button
-      to={SORT_PATH}
-      component={Link}
       disabled={!props.enabled}
+      onClick={props.onClick}
       color="secondary"
     >
       ソート開始
