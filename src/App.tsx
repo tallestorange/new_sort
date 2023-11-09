@@ -9,14 +9,7 @@ import "./App.css";
 
 export default function App() {
   const {
-    initial_mbtis,
-    initial_birthplaces,
-    initial_heights,
-    initial_birthyears,
-    current_mbtis,
-    current_birthplaces,
-    current_heights,
-    current_birthyears,
+    initial_state,
     can_vote_only,
     setMBTIs,
     setBirthPlaces,
@@ -34,14 +27,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={
             <Home
-              initial_mbtis={initial_mbtis}
-              initial_birthplaces={initial_birthplaces}
-              initial_heights={initial_heights}
-              initial_birthyears={initial_birthyears}
-              current_mbtis={current_mbtis}
-              current_birthplaces={current_birthplaces}
-              current_heights={current_heights}
-              current_birthyears={current_birthyears}
+              initial_state={initial_state}
               can_vote_only={can_vote_only}
               target_members_count={members.length}
               setMBTIs={setMBTIs}

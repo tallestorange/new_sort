@@ -10,16 +10,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import React from "react";
 import SearchConfig from "./SearchConfig";
+import { InitialState } from "../hooks/useNPDatabase";
+
 
 interface Props {
-  initial_mbtis: string[];
-  initial_birthplaces: string[];
-  initial_heights: string[];
-  initial_birthyears: string[];
-  current_mbtis: string[];
-  current_birthplaces: string[];
-  current_heights: string[];
-  current_birthyears: string[];
+  initial_state: InitialState,
   can_vote_only: boolean;
   target_members_count: number;
   setMBTIs: (members: string[]) => void;
@@ -68,6 +63,7 @@ const SortStartButton = React.memo((props: { enabled: boolean }) => {
 });
 
 export default function Home(props: Props) {
+  console.log(props);
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -82,8 +78,8 @@ export default function Home(props: Props) {
             title="MBTI" 
             id="mbti" 
             sort={true}
-            items={props.initial_mbtis}
-            default_selected={props.current_mbtis} 
+            items={props.initial_state.initial_mbtis.items}
+            default_selected={props.initial_state.current_mbtis.items} 
             onValueChanged={props.setMBTIs} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -91,8 +87,8 @@ export default function Home(props: Props) {
             title="出身地" 
             id="birthplace" 
             sort={false}
-            items={props.initial_birthplaces}
-            default_selected={props.current_birthplaces} 
+            items={props.initial_state.initial_birthplaces.items}
+            default_selected={props.initial_state.current_birthplaces.items} 
             onValueChanged={props.setBirthPlaces} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -100,8 +96,8 @@ export default function Home(props: Props) {
             title="身長"
             id="height" 
             sort={true} 
-            items={props.initial_heights} 
-            default_selected={props.current_heights} 
+            items={props.initial_state.initial_heights.items}
+            default_selected={props.initial_state.current_heights.items}
             onValueChanged={props.setHeights} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -109,8 +105,8 @@ export default function Home(props: Props) {
             title="生まれ年" 
             id="birthyear" 
             sort={true} 
-            items={props.initial_birthyears} 
-            default_selected={props.current_birthyears} 
+            items={props.initial_state.initial_birthyears.items} 
+            default_selected={props.initial_state.current_birthyears.items} 
             onValueChanged={props.setYears} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -124,6 +120,7 @@ export default function Home(props: Props) {
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SortStartButton enabled={props.target_members_count > 0} />
       </Grid>
+
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <p><a href="https://github.com/emolga587/hpsort2">ハロプロソート(updated)</a>ベースで開発しています</p>
       </Grid>
