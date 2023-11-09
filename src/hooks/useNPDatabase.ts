@@ -15,6 +15,7 @@ export interface Member {
   week_2_rank: number;
   week_3_rank: number;
   week_5_rank: number;
+  week_6_rank: string;
 }
 
 export interface InitialState {

@@ -29,6 +29,18 @@ export default function MemberPicture(props: Props) {
 }
 
 const MemberPictureContent = React.memo((props: {member: Member, sortConfig: SortSettings}) => {
+  const ranking_change = ():string => {
+    const show_week_6 = props.member.week_6_rank !== ""
+    let result = ""
+    if (show_week_6) {
+      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位`
+    }
+    else {
+      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位`
+    }
+    return result;
+  }
+
   return (
     <CardActionArea>
       <CardMedia
@@ -61,7 +73,7 @@ const MemberPictureContent = React.memo((props: {member: Member, sortConfig: Sor
           特技: {props.member.special_skill}
         </Typography>}
         {props.sortConfig.show_ranking && <Typography variant="body2" color="textSecondary" component="p">
-          順位: {props.member.week_2_rank}位→{props.member.week_3_rank}位→{props.member.week_5_rank}位
+          順位: {ranking_change()}
         </Typography>}
       </CardContent>
     </CardActionArea>
