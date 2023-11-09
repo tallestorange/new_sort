@@ -3,13 +3,13 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import npDB from "../modules/NPDatabase";
 import { SortSettings } from './Home';
 import { IMAGE_DIR } from './Constants';
 import React from 'react';
+import { Member } from '../hooks/useNPDatabase';
 
 interface Props {
-  name: string;
+  member: Member;
   sortConfig: SortSettings;
   onClick?: any;
 }
@@ -24,51 +24,49 @@ export default function MemberPicture(props: Props) {
 
   return (
     <Card onClick={props.onClick} style={styles.card}>
-      <MemberPictureContent name={props.name} sortConfig={props.sortConfig} />
+      <MemberPictureContent member={props.member} sortConfig={props.sortConfig} />
     </Card>
   );
 }
 
-const MemberPictureContent = React.memo((props: {name: string, sortConfig: SortSettings}) => {
-  const member_info = npDB.search_member(props.name)
-
+const MemberPictureContent = React.memo((props: {member: Member, sortConfig: SortSettings}) => {
   return (
     <CardActionArea>
       <CardMedia
         component="img"
-        alt={props.name}
-        image={`${IMAGE_DIR}${props.name}.webp`}
-        title={props.name}
+        alt={props.member.name}
+        image={`${IMAGE_DIR}${props.member.name}.webp`}
+        title={props.member.name}
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="h2">
-          {props.name}
+          {props.member.name}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          生年月日: {member_info.birth_date}
+          生年月日: {props.member.birth_date}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          出身地: {member_info.birth_place}
+          出身地: {props.member.birth_place}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          MBTI: {member_info.mbti}
+          MBTI: {props.member.mbti}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          身長: {member_info.height}cm
+          身長: {props.member.height}cm
         </Typography>
 
         {props.sortConfig.show_hobby && <Typography variant="body2" color="textSecondary" component="p">
-          趣味: {member_info.hobby}
+          趣味: {props.member.hobby}
         </Typography>}
         {props.sortConfig.show_skill && <Typography variant="body2" color="textSecondary" component="p">
-          特技: {member_info.special_skill}
+          特技: {props.member.special_skill}
         </Typography>}
         {props.sortConfig.show_ranking && <Typography variant="body2" color="textSecondary" component="p">
-          順位: {member_info.week_2_rank}位→{member_info.week_3_rank}位→{member_info.week_5_rank}位
+          順位: {props.member.week_2_rank}位→{props.member.week_3_rank}位→{props.member.week_5_rank}位
         </Typography>}
       </CardContent>
     </CardActionArea>
   );
 }, (before, after) => {
-  return before.name === after.name;
+  return before.member.name === after.member.name;
 })

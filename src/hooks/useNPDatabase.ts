@@ -3,7 +3,19 @@ import { BOARDER, VERSION } from '../components/Constants'
 import { SortSettings } from "../components/Home";
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 import parse from "csv-parse/lib/sync";
-import { Member } from "../modules/NPDatabase";
+
+export interface Member {
+  name: string;
+  birth_date: string;
+  birth_place: string;
+  mbti: string;
+  height: string;
+  hobby: string;
+  special_skill: string;
+  week_2_rank: number;
+  week_3_rank: number;
+  week_5_rank: number;
+}
 
 interface NPDatabase {
   initial_state: InitialState; 
@@ -13,7 +25,7 @@ interface NPDatabase {
   setHeights: (members: string[]) => void;
   setYears: (members: string[]) => void;
   setCanVote: (can_vote_only: boolean) => void;
-  members: string[];
+  members: Map<string, Member>;
   sort_settings: SortSettings;
   setSortSettings: (sort_settings: SortSettings) => void;
 }
@@ -104,10 +116,9 @@ export default function useNPDatabase(): NPDatabase {
   const birthplaces = useRef<string[]>([]);
   const heights = useRef<string[]>([]);
   const years = useRef<string[]>([]);
+  const members_map = useRef<Map<string, Member>>(new Map<string, Member>());
 
-  // const members_map: Map<string, Member> = new Map<string, Member>();
-
-  const [members, setMembers] = useState<string[]>([]);
+  const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
   const [canVote, setCanVote] = useState<boolean>(getCanVoteFromLocalStorage());
   const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
   const [initialState, setInitialState] = useState<InitialState>({ 
@@ -188,6 +199,7 @@ export default function useNPDatabase(): NPDatabase {
     const years_set: Set<string> = new Set<string>();
 
     for (let member of members) {
+      members_map.current.set(member.name, member);
       all_members.current.items.push(member.name);
       mbtis_set.add(member.mbti);
       heights_set.add(member.height);
@@ -248,7 +260,7 @@ export default function useNPDatabase(): NPDatabase {
       setBirthPlacesToLocalStorage(all_birthplaces.current.items);
       setHeightsToLocalStorage(all_heights.current.items);
       setYearsToLocalStorage(all_birthyears.current.items);
-      localStorage.setItem("can_vote_only", JSON.stringify("false"))
+      setCanVoteToLocalStorage(false);
     }
     localStorage.setItem("VERSION", VERSION);
 
@@ -287,17 +299,17 @@ export default function useNPDatabase(): NPDatabase {
     })
   }
 
-  const search = useCallback((mbti: string[], birthplaces: string[], heights: string[], years: string[], can_vote_only: boolean): string[] => {
+  const search = useCallback((mbti: string[], birthplaces: string[], heights: string[], years: string[], can_vote_only: boolean): Map<string, Member> => {
     let mbti_set = new Set(mbti);
     let birthplace_set = new Set(birthplaces);
     let heights_set = new Set(heights);
     let years_set = new Set(years);
 
-    let result: string[] = [];
+    let result: Map<string, Member> = new Map<string, Member>();
     for (let i of members_array.current) {
       if (can_vote_only && i.week_5_rank > BOARDER) { continue; }
       if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
-        result.push(i.name);
+        result.set(i.name, i);
       }
     }
     return result;

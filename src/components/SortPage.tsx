@@ -14,9 +14,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { SortSettings } from './Home';
 import { HASHTAGS, PAGE_URL } from "./Constants";
+import { Member } from "../hooks/useNPDatabase";
 
 interface Props {
-  members: string[];
+  members: Map<string, Member>;
   sortName: string;
   sortConfig: SortSettings;
 }
@@ -28,7 +29,7 @@ export default class SortPage extends React.Component<Props, State> {
   sort: Sorter;
   constructor(props: Props) {
     super(props);
-    this.sort = new Sorter(props.members);
+    this.sort = new Sorter(Array.from(props.members.keys()));
     this.state = { result: this.sort.sort() };
   }
   render() {
@@ -114,7 +115,7 @@ export default class SortPage extends React.Component<Props, State> {
               <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{this.sort.currentRound} - {this.sort.progress}%</p>
             </Grid>
             <Grid container item xs={6} justifyContent="center">
-              <MemberPicture name={this.sort.lastChallenge[0]}
+              <MemberPicture member={this.props.members.get(this.sort.lastChallenge[0])!}
                 sortConfig={this.props.sortConfig}
                 onClick={() => {
                   this.sort.backable = true;
@@ -124,7 +125,7 @@ export default class SortPage extends React.Component<Props, State> {
                 }} />
             </Grid>
             <Grid container item xs={6} justifyContent="center">
-              <MemberPicture name={this.sort.lastChallenge[1]}
+              <MemberPicture member={this.props.members.get(this.sort.lastChallenge[1])!}
                 sortConfig={this.props.sortConfig}
                 onClick={() => {
                   this.sort.backable = true;

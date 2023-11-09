@@ -29,7 +29,7 @@ export default function App() {
             <Home
               initial_state={initial_state}
               can_vote_only={can_vote_only}
-              target_members_count={members.length}
+              target_members_count={members.size}
               setMBTIs={setMBTIs}
               setBirthPlaces={setBirthPlaces}
               setHeights={setHeights}
