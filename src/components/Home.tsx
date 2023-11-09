@@ -63,7 +63,6 @@ const SortStartButton = React.memo((props: { enabled: boolean }) => {
 });
 
 export default function Home(props: Props) {
-  console.log(props);
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>

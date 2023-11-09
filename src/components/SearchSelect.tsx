@@ -66,6 +66,11 @@ function SearchSelect(props: Props) {
   const targets = props.items;
   const isAllSelected = items.length === targetLength;
   const classes = useStyles();
+  const { default_selected } = props;
+
+  useEffect(() => {
+    setItems(default_selected);
+  }, [default_selected]);
 
   const handleChange = (event: any) => {
     const value = event.target.value;

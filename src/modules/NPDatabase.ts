@@ -30,20 +30,18 @@ class NPDatabase {
   public allHeights: string[] = [];
   public allYears: string[] = [];
 
-  private sortCountEstimates: number[] = new Array<number>(100);
-
   constructor() {
-    this._members = this.fetchCSV(NP_DB_MEMBERS);
+    // this._members = this.fetchCSV(NP_DB_MEMBERS);
 
-    for (let member of this._members) {
-      this.allStars.push(member.name);
+    // for (let member of this._members) {
+    //   this.allStars.push(member.name);
 
-      this._membersMap.set(member.name, member);
+    //   this._membersMap.set(member.name, member);
 
-      this._MBTIs.add(member.mbti);
-      this._Heights.add(member.height);
-      this._Years.add(member.birth_date.split('/')[0]);
-    }
+    //   this._MBTIs.add(member.mbti);
+    //   this._Heights.add(member.height);
+    //   this._Years.add(member.birth_date.split('/')[0]);
+    // }
 
     this.allBirthPlace = [
       '北海道',
@@ -104,11 +102,6 @@ class NPDatabase {
 
   search_member = (name: string): Member => {
     return this._membersMap.get(name)!;
-  }
-
-  sort_count_estimate = (size: number): number => {
-    if (size === 0) { return 0; }
-    return this.sortCountEstimates[size - 1];
   }
 
   // CSVを取得する

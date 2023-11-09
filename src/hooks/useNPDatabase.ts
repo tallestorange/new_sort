@@ -1,7 +1,6 @@
-import { useRef, useState, useEffect } from "react";
-import { VERSION } from '../components/Constants'
+import { useRef, useState, useEffect, useCallback } from "react";
+import { BOARDER, VERSION } from '../components/Constants'
 import { SortSettings } from "../components/Home";
-import npDB from "../modules/NPDatabase";
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 import parse from "csv-parse/lib/sync";
 import { Member } from "../modules/NPDatabase";
@@ -79,6 +78,8 @@ interface StoredItems {
 }
 
 export default function useNPDatabase(): NPDatabase {
+  const members_array = useRef<Member[]>([]);
+
   const all_members = useRef<StoredItems>({items: [], initialized: false});
   const all_mbtis = useRef<StoredItems>({items: [], initialized: false});
   const all_birthplaces = useRef<StoredItems>({items: [], initialized: false});
@@ -112,11 +113,19 @@ export default function useNPDatabase(): NPDatabase {
     current_birthyears: { items: [], initialized: false},
   });
 
+  // 初期化処理(データベースのcsvを読み込む)
+  useEffect(() => {
+    console.log("start initialize")
+    fetchCSVAsync().then(initializeDatabase).then(() => {
+      console.log("finish initialize");
+    });
+  }, [])
+
   const setMBTIs = (mbtis_after: string[], update_members: boolean = true) => {
     mbtis.current = mbtis_after;
     setMBTIsToLocalStorage(mbtis.current);
     if (update_members) {
-      const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
   }
@@ -125,7 +134,7 @@ export default function useNPDatabase(): NPDatabase {
     birthplaces.current = birthplaces_after;
     setBirthPlacesToLocalStorage(birthplaces.current);
     if (update_members) {
-      const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
   }
@@ -134,7 +143,7 @@ export default function useNPDatabase(): NPDatabase {
     heights.current = heights_after;
     setHeightsToLocalStorage(heights.current);
     if (update_members) {
-      const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
   }
@@ -143,7 +152,7 @@ export default function useNPDatabase(): NPDatabase {
     years.current = years_after;
     setYearsToLocalStorage(years.current);
     if (update_members) {
-      const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
   }
@@ -152,7 +161,7 @@ export default function useNPDatabase(): NPDatabase {
     setCanVote(can_vote_only);
     localStorage.setItem("can_vote_only", JSON.stringify(can_vote_only))
     if (update_members) {
-      const members_result = npDB.search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
+      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, can_vote_only);
       setMembers(members_result);
     }
   }
@@ -164,6 +173,8 @@ export default function useNPDatabase(): NPDatabase {
   }
 
   const initializeDatabase = (members: Member[]) => {
+    members_array.current = members;
+
     const mbtis_set: Set<string> = new Set<string>();
     const heights_set: Set<string> = new Set<string>();
     const years_set: Set<string> = new Set<string>();
@@ -208,19 +219,19 @@ export default function useNPDatabase(): NPDatabase {
     ]
     all_birthplaces.current.initialized = true;
 
-    const mbtis = Array.from(mbtis_set);
-    mbtis.sort();
-    all_mbtis.current.items = mbtis;
+    const mbtisArray = Array.from(mbtis_set);
+    mbtisArray.sort();
+    all_mbtis.current.items = mbtisArray;
     all_mbtis.current.initialized = true;
 
-    const heights = Array.from(heights_set);
-    heights.sort();
-    all_heights.current.items = heights;
+    const heightsArray = Array.from(heights_set);
+    heightsArray.sort();
+    all_heights.current.items = heightsArray;
     all_heights.current.initialized = true;
-
-    const birthyears = Array.from(years_set);
-    birthyears.sort();
-    all_birthyears.current.items = birthyears;
+    
+    const birthyearsArray = Array.from(years_set);
+    birthyearsArray.sort();
+    all_birthyears.current.items = birthyearsArray;
     all_birthyears.current.initialized = true;
 
     const storaged_version = localStorage.getItem("VERSION")
@@ -236,20 +247,24 @@ export default function useNPDatabase(): NPDatabase {
     const mbtis_stored = getMBTIsFromLocalStorage();
     all_mbtis_stored.current.items = mbtis_stored;
     all_mbtis_stored.current.initialized = true;
+    mbtis.current = mbtis_stored;
 
     const birthplaces_stored = getBirthPlacesFromLocalStorage();
     all_birthplaces_stored.current.items = birthplaces_stored;
     all_birthplaces_stored.current.initialized = true;
+    birthplaces.current = birthplaces_stored;
 
     const heights_stored = getHeightsFromLocalStorage();
     all_heights_stored.current.items = heights_stored;
     all_heights_stored.current.initialized = true;
+    heights.current = heights_stored;
 
     const birthyears_stored = getYearsFromLocalStorage();
     all_birthyears_stored.current.items = birthyears_stored;
     all_birthyears_stored.current.initialized = true;
+    years.current = birthyearsArray;
 
-    const members_result = npDB.search(mbtis_stored, birthplaces_stored, heights_stored, birthyears_stored, canVote);
+    const members_result = search(mbtis_stored, birthplaces_stored, heights_stored, birthyears_stored, canVote);
     setMembers(members_result);
 
     setInitialState({
@@ -264,13 +279,22 @@ export default function useNPDatabase(): NPDatabase {
     })
   }
 
-  // 初期化処理(データベースのcsvを読み込む)
-  useEffect(() => {
-    console.log("start initialize")
-    fetchCSVAsync().then(initializeDatabase).then(() => {
-      console.log("finish initialize");
-    });
-  }, [])
+  const search = useCallback((mbti: string[], birthplaces: string[], heights: string[], years: string[], can_vote_only: boolean): string[] => {
+    let mbti_set = new Set(mbti);
+    let birthplace_set = new Set(birthplaces);
+    let heights_set = new Set(heights);
+    let years_set = new Set(years);
+
+    let result: string[] = [];
+    for (let i of members_array.current) {
+      if (can_vote_only && i.week_5_rank > BOARDER) { continue; }
+      if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
+        result.push(i.name);
+      }
+    }
+    console.log(result, mbti, birthplaces, heights, years, can_vote_only)
+    return result;
+  }, [members_array]);
 
   return {
     initial_state: initialState,
