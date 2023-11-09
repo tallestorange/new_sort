@@ -5,3 +5,4 @@ export const IMAGE_DIR: string = "member_pics/";
 export const BOARDER: number = 50;
 export const PAGE_URL: string = "https://np-sort.web.app/";
 export const SORT_PATH: string = "sort";
+export const NOW_LOADING: string = "読み込み中";
