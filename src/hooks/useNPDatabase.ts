@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { BOARDER, VERSION, NOW_LOADING } from '../components/Constants'
+import { BOARDER, VERSION, NOW_LOADING } from '../modules/Constants'
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 import parse from "csv-parse/lib/sync";
 import { getBirthPlacesFromLocalStorage, getCanVoteFromLocalStorage, getHeightsFromLocalStorage, getMBTIsFromLocalStorage, getYearsFromLocalStorage, setBirthPlacesToLocalStorage, setCanVoteToLocalStorage, setHeightsToLocalStorage, setMBTIsToLocalStorage, setYearsToLocalStorage } from "../modules/LocalStorage";

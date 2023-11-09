@@ -4,6 +4,10 @@ import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 import { useEffect, useState } from "react";
 import React from "react";
 import { SortSettings } from "../hooks/useNPDatabase";
+import Typography from "@material-ui/core/Typography/Typography";
+import Button from "@material-ui/core/Button/Button";
+import { BOARDER, SORT_PATH } from "../modules/Constants";
+import { Link } from "react-router-dom";
 
 interface Props {
   onSortSettingsUpdated?: (setting: SortSettings) => void;
@@ -17,6 +21,37 @@ const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote
   )
 }, (before, after) => {
   return before.checked === after.checked;
+});
+
+export const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {
+  return (
+    <FormGroup>
+      <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
+    </FormGroup>
+  )
+}, (before, after) => {
+  return before.canVote === after.canVote
+})
+
+export const ResultText = React.memo((props: { count: number }) => {
+  return (
+    <Typography variant="h6" component="h2">
+      該当者: {props.count}名
+    </Typography>
+  )
+});
+
+export const SortStartButton = React.memo((props: { enabled: boolean }) => {
+  return (
+    <Button
+      to={SORT_PATH}
+      component={Link}
+      disabled={!props.enabled}
+      color="secondary"
+    >
+      ソート開始
+    </Button>
+  )
 });
 
 export default function SearchConfig(props: Props) {

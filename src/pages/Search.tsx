@@ -1,15 +1,8 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE, BOARDER, SORT_PATH, LATEST_CHANGE_LOG } from './Constants';
-import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import SearchSelect from "./SearchSelect";
-import Typography from '@material-ui/core/Typography';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import React from "react";
-import SearchConfig from "./SearchConfig";
+import { TITLE, LATEST_CHANGE_LOG } from '../modules/Constants';
+import SearchSelect from "../components/SearchSelect";
+import SearchConfig, { CanVoteCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { InitialState, SortSettings } from "../hooks/useNPDatabase";
 
 interface Props {
@@ -24,38 +17,7 @@ interface Props {
   onSortSettingsUpdated: (settings: SortSettings) => void;
 }
 
-const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {
-  return (
-    <FormGroup>
-      <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
-    </FormGroup>
-  )
-}, (before, after) => {
-  return before.canVote === after.canVote
-})
-
-const ResultText = React.memo((props: { count: number }) => {
-  return (
-    <Typography variant="h6" component="h2">
-      該当者: {props.count}名
-    </Typography>
-  )
-});
-
-const SortStartButton = React.memo((props: { enabled: boolean }) => {
-  return (
-    <Button
-      to={SORT_PATH}
-      component={Link}
-      disabled={!props.enabled}
-      color="secondary"
-    >
-      ソート開始
-    </Button>
-  )
-});
-
-export default function Home(props: Props) {
+export default function Search(props: Props) {
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>

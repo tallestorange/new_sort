@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from './components/Home';
-import { SORT_PATH, TITLE } from './components/Constants'
+import Search from './pages/Search';
+import { SORT_PATH, TITLE } from './modules/Constants'
 import Layout from "./components/Layout";
-import SortPage from "./components/SortPage";
+import SortPage from "./pages/SortPage";
 import useNPDatabase from "./hooks/useNPDatabase";
 
 import "./App.css";
@@ -33,7 +33,7 @@ export default function App() {
       <Layout title={TITLE}>
         <Routes>
           <Route path="/" element={
-            <Home
+            <Search
               initial_state={initial_state}
               can_vote_only={can_vote_only}
               target_members_count={members.size}

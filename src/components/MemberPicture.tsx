@@ -3,7 +3,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { IMAGE_DIR } from './Constants';
+import { IMAGE_DIR } from '../modules/Constants';
 import React from 'react';
 import { Member, SortSettings } from '../hooks/useNPDatabase';
 

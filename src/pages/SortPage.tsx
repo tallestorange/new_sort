@@ -2,8 +2,8 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Sorter from "../modules/Sorter";
-import MemberPicture from "./MemberPicture";
-import ResultPicture from "./ResultPicture";
+import MemberPicture from "../components/MemberPicture";
+import ResultPicture from "../components/ResultPicture";
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,7 +12,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { HASHTAGS, PAGE_URL } from "./Constants";
+import { HASHTAGS, PAGE_URL } from "../modules/Constants";
 import { Member, SortSettings } from "../hooks/useNPDatabase";
 
 interface Props {
