@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import Select from '@material-ui/core/Select';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
-import React from "react";
+import { CustomCheckbox, CustomListItemText } from "./SearchConfig";
 
 interface Props {
   title: string;
@@ -45,23 +45,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CustomListItemText = React.memo((props: { title: string, id: string, index: number}) => {
-  return (
-    <ListItemText primary={props.title} id={props.id + "-text-" + props.index} />
-  )
-}, (before, after) => {
-  return before.title === after.title;
-})
-
-const CustomCheckbox = React.memo((props: {id: string, index: number, checked: boolean}) => {
-  return (
-    <Checkbox checked={props.checked} id={props.id + "-checkbox-" + props.index} />
-  )
-}, (before, after) => {
-  return before.checked === after.checked;
-})
-
-function SearchSelect(props: Props) {
+const SearchSelect = memo((props: Props) => {
   const [items, setItems] = useState<string[]>(props.default_selected);
   const targetLength = props.items.length;
   const targets = props.items;
@@ -129,11 +113,8 @@ function SearchSelect(props: Props) {
       </Select>
     </FormControl>
   );
-}
-
-const CustomSelect = React.memo(
-  SearchSelect,
-  (before, after) => {
+},
+(before, after) => {
   if (before.title !== after.title) {
     return false;
   }
@@ -158,4 +139,4 @@ const CustomSelect = React.memo(
   return true;
 });
 
-export default CustomSelect;
+export default SearchSelect;

@@ -8,20 +8,23 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
 import { BOARDER, SORT_PATH } from "../modules/Constants";
 import { Link } from "react-router-dom";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 
-interface Props {
-  onSortSettingsUpdated?: (setting: SortSettings) => void;
-}
-
-const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void; form_id: string, checkbox_id: string, label: string}) => {
+export const CustomListItemText = React.memo((props: { title: string, id: string, index: number}) => {
   return (
-    <FormGroup>
-      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked(event.target.checked) }} />} label={props.label} />
-    </FormGroup>
+    <ListItemText primary={props.title} id={props.id + "-text-" + props.index} />
+  )
+}, (before, after) => {
+  return before.title === after.title;
+})
+
+export const CustomCheckbox = React.memo((props: {id: string, index: number, checked: boolean}) => {
+  return (
+    <Checkbox checked={props.checked} id={props.id + "-checkbox-" + props.index} />
   )
 }, (before, after) => {
   return before.checked === after.checked;
-});
+})
 
 export const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {
   return (
@@ -53,6 +56,20 @@ export const SortStartButton = React.memo((props: { enabled: boolean }) => {
     </Button>
   )
 });
+
+const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void; form_id: string, checkbox_id: string, label: string}) => {
+  return (
+    <FormGroup>
+      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked(event.target.checked) }} />} label={props.label} />
+    </FormGroup>
+  )
+}, (before, after) => {
+  return before.checked === after.checked;
+});
+
+interface Props {
+  onSortSettingsUpdated?: (setting: SortSettings) => void;
+}
 
 export default function SearchConfig(props: Props) {
   const [showHobby, setShowHobby] = useState<boolean>(false);
