@@ -128,7 +128,8 @@ export default function useNPDatabase(): NPDatabase {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }, [search, canVote]);
+    // eslint-disable-next-line
+  }, [search]);
 
   const setBirthPlaces = useCallback((birthplaces_after: string[], update_members: boolean = true) => {
     birthplaces.current = birthplaces_after;
@@ -137,7 +138,8 @@ export default function useNPDatabase(): NPDatabase {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }, [search, canVote]);
+    // eslint-disable-next-line
+  }, [search]);
 
   const setHeights = useCallback((heights_after: string[], update_members: boolean = true) => {
     heights.current = heights_after;
@@ -146,7 +148,8 @@ export default function useNPDatabase(): NPDatabase {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }, [search, canVote]);
+    // eslint-disable-next-line
+  }, [search]);
 
   const setYears = useCallback((years_after: string[], update_members: boolean = true) => {
     years.current = years_after;
@@ -155,7 +158,8 @@ export default function useNPDatabase(): NPDatabase {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }, [search, canVote]);
+    // eslint-disable-next-line
+  }, [search]);
 
   const setCanVoteOnly = useCallback((can_vote_only: boolean, update_members: boolean = true) => {
     setCanVote(can_vote_only);
