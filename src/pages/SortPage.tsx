@@ -2,8 +2,8 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Sorter from "../modules/Sorter";
-import MemberPicture from "./MemberPicture";
-import ResultPicture from "./ResultPicture";
+import MemberPicture from "../components/MemberPicture";
+import ResultPicture from "../components/ResultPicture";
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,13 +12,14 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { SortSettings } from './Home';
-import { HASHTAGS, PAGE_URL } from "./Constants";
+import { HASHTAGS, PAGE_URL } from "../modules/Constants";
+import { Member, SortSettings } from "../hooks/useNPDatabase";
 
 interface Props {
-  members: string[];
+  members: Map<string, Member>;
   sortName: string;
   sortConfig: SortSettings;
+  initialized: boolean;
 }
 interface State {
   result: boolean;
@@ -28,10 +29,22 @@ export default class SortPage extends React.Component<Props, State> {
   sort: Sorter;
   constructor(props: Props) {
     super(props);
-    this.sort = new Sorter(props.members);
+    this.sort = new Sorter(Array.from(props.members.keys()));
     this.state = { result: this.sort.sort() };
   }
+
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+    if (prevProps.members.size !== this.props.members.size) {
+      this.sort = new Sorter(Array.from(this.props.members.keys()));
+      this.setState({ result: this.sort.sort() });
+    }
+  }
+
   render() {
+    if (!this.props.initialized) {
+      return <div></div>
+    }
+
     if (this.state.result) {
       let rankTable: JSX.Element[] = [];
       let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${this.props.sortName}結果\n`);
@@ -114,7 +127,7 @@ export default class SortPage extends React.Component<Props, State> {
               <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{this.sort.currentRound} - {this.sort.progress}%</p>
             </Grid>
             <Grid container item xs={6} justifyContent="center">
-              <MemberPicture name={this.sort.lastChallenge[0]}
+              <MemberPicture member={this.props.members.get(this.sort.lastChallenge[0])!}
                 sortConfig={this.props.sortConfig}
                 onClick={() => {
                   this.sort.backable = true;
@@ -124,7 +137,7 @@ export default class SortPage extends React.Component<Props, State> {
                 }} />
             </Grid>
             <Grid container item xs={6} justifyContent="center">
-              <MemberPicture name={this.sort.lastChallenge[1]}
+              <MemberPicture member={this.props.members.get(this.sort.lastChallenge[1])!}
                 sortConfig={this.props.sortConfig}
                 onClick={() => {
                   this.sort.backable = true;

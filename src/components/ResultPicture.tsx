@@ -5,7 +5,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Box from "@material-ui/core/Box";
 import {GridSize} from "@material-ui/core/Grid";
-import { IMAGE_DIR } from "./Constants";
+import { IMAGE_DIR } from "../modules/Constants";
 
 interface Props {
   name: string;

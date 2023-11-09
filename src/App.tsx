@@ -1,22 +1,16 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from './components/Home';
-import { SORT_PATH, TITLE } from './components/Constants'
+import Search from './pages/Search';
+import { SORT_PATH, TITLE } from './modules/Constants'
 import Layout from "./components/Layout";
-import SortPage from "./components/SortPage";
+import SortPage from "./pages/SortPage";
 import useNPDatabase from "./hooks/useNPDatabase";
 
 import "./App.css";
+import { useMemo } from "react";
 
 export default function App() {
   const {
-    initial_mbtis,
-    initial_birthplaces,
-    initial_heights,
-    initial_birthyears,
-    current_mbtis,
-    current_birthplaces,
-    current_heights,
-    current_birthyears,
+    initial_state,
     can_vote_only,
     setMBTIs,
     setBirthPlaces,
@@ -28,22 +22,21 @@ export default function App() {
     setSortSettings
   } = useNPDatabase();
 
+  const initialized = useMemo(() => {
+    const v1 = initial_state.current_birthplaces.initialized && initial_state.current_birthyears.initialized && initial_state.current_heights.initialized && initial_state.current_mbtis.initialized;
+    const v2 = initial_state.initial_birthplaces.initialized && initial_state.initial_birthyears.initialized && initial_state.initial_heights.initialized && initial_state.initial_mbtis.initialized;
+    return v1 && v2;
+  }, [initial_state]);
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Layout title={TITLE}>
         <Routes>
           <Route path="/" element={
-            <Home
-              initial_mbtis={initial_mbtis}
-              initial_birthplaces={initial_birthplaces}
-              initial_heights={initial_heights}
-              initial_birthyears={initial_birthyears}
-              current_mbtis={current_mbtis}
-              current_birthplaces={current_birthplaces}
-              current_heights={current_heights}
-              current_birthyears={current_birthyears}
+            <Search
+              initial_state={initial_state}
               can_vote_only={can_vote_only}
-              target_members_count={members.length}
+              target_members_count={members.size}
               setMBTIs={setMBTIs}
               setBirthPlaces={setBirthPlaces}
               setHeights={setHeights}
@@ -53,9 +46,10 @@ export default function App() {
           />} />
           <Route path={`/${SORT_PATH}`} element={
             <SortPage 
-              members={members} 
-              sortName={TITLE} 
-              sortConfig={sort_settings} 
+              members={members}
+              sortName={TITLE}
+              sortConfig={sort_settings}
+              initialized={initialized}
           />} />
         </Routes>
       </Layout>

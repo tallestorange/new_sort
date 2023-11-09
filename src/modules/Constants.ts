@@ -5,3 +5,5 @@ export const IMAGE_DIR: string = "member_pics/";
 export const BOARDER: number = 50;
 export const PAGE_URL: string = "https://np-sort.web.app/";
 export const SORT_PATH: string = "sort";
+export const NOW_LOADING: string = "読み込み中...";
+export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/9 低速回線向けの最適化)";
