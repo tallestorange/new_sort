@@ -19,6 +19,7 @@ interface Props {
   members: Map<string, Member>;
   sortName: string;
   sortConfig: SortSettings;
+  initialized: boolean;
 }
 interface State {
   result: boolean;
@@ -31,7 +32,19 @@ export default class SortPage extends React.Component<Props, State> {
     this.sort = new Sorter(Array.from(props.members.keys()));
     this.state = { result: this.sort.sort() };
   }
+
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+    if (prevProps.members.size !== this.props.members.size) {
+      this.sort = new Sorter(Array.from(this.props.members.keys()));
+      this.setState({ result: this.sort.sort() });
+    }
+  }
+
   render() {
+    if (!this.props.initialized) {
+      return <div></div>
+    }
+
     if (this.state.result) {
       let rankTable: JSX.Element[] = [];
       let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${this.props.sortName}結果\n`);

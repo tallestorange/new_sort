@@ -6,6 +6,7 @@ import SortPage from "./components/SortPage";
 import useNPDatabase from "./hooks/useNPDatabase";
 
 import "./App.css";
+import { useMemo } from "react";
 
 export default function App() {
   const {
@@ -20,6 +21,12 @@ export default function App() {
     sort_settings,
     setSortSettings
   } = useNPDatabase();
+
+  const initialized = useMemo(() => {
+    const v1 = initial_state.current_birthplaces.initialized && initial_state.current_birthyears.initialized && initial_state.current_heights.initialized && initial_state.current_mbtis.initialized;
+    const v2 = initial_state.initial_birthplaces.initialized && initial_state.initial_birthyears.initialized && initial_state.initial_heights.initialized && initial_state.initial_mbtis.initialized;
+    return v1 && v2;
+  }, [initial_state]);
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -39,9 +46,10 @@ export default function App() {
           />} />
           <Route path={`/${SORT_PATH}`} element={
             <SortPage 
-              members={members} 
-              sortName={TITLE} 
-              sortConfig={sort_settings} 
+              members={members}
+              sortName={TITLE}
+              sortConfig={sort_settings}
+              initialized={initialized}
           />} />
         </Routes>
       </Layout>
