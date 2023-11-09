@@ -3,10 +3,9 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { SortSettings } from './Home';
 import { IMAGE_DIR } from './Constants';
 import React from 'react';
-import { Member } from '../hooks/useNPDatabase';
+import { Member, SortSettings } from '../hooks/useNPDatabase';
 
 interface Props {
   member: Member;

@@ -2,8 +2,8 @@ import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 import { useEffect, useState } from "react";
-import { SortSettings } from "./Home";
 import React from "react";
+import { SortSettings } from "../hooks/useNPDatabase";
 
 interface Props {
   onSortSettingsUpdated?: (setting: SortSettings) => void;

@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { BOARDER, VERSION } from '../components/Constants'
-import { SortSettings } from "../components/Home";
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 import parse from "csv-parse/lib/sync";
+import { getBirthPlacesFromLocalStorage, getCanVoteFromLocalStorage, getHeightsFromLocalStorage, getMBTIsFromLocalStorage, getYearsFromLocalStorage, setBirthPlacesToLocalStorage, setCanVoteToLocalStorage, setHeightsToLocalStorage, setMBTIsToLocalStorage, setYearsToLocalStorage } from "../modules/LocalStorage";
 
 export interface Member {
   name: string;
@@ -15,6 +15,28 @@ export interface Member {
   week_2_rank: number;
   week_3_rank: number;
   week_5_rank: number;
+}
+
+export interface InitialState {
+  initial_mbtis: StoredItems;
+  initial_birthplaces: StoredItems;
+  initial_heights: StoredItems;
+  initial_birthyears: StoredItems;
+  current_mbtis: StoredItems;
+  current_birthplaces: StoredItems;
+  current_heights: StoredItems;
+  current_birthyears: StoredItems;
+}
+
+interface StoredItems {
+  items: string[],
+  initialized: boolean
+}
+
+export interface SortSettings {
+  show_hobby: boolean;
+  show_skill: boolean;
+  show_ranking: boolean;
 }
 
 interface NPDatabase {
@@ -30,72 +52,11 @@ interface NPDatabase {
   setSortSettings: (sort_settings: SortSettings) => void;
 }
 
-export interface InitialState {
-  initial_mbtis: StoredItems;
-  initial_birthplaces: StoredItems;
-  initial_heights: StoredItems;
-  initial_birthyears: StoredItems;
-  current_mbtis: StoredItems;
-  current_birthplaces: StoredItems;
-  current_heights: StoredItems;
-  current_birthyears: StoredItems;
-}
-
 const fetchCSVAsync = async (): Promise<Member[]> => {
   const response = await fetch(NP_DB_MEMBERS);
   const text = await response.text();
   const parsedCSV: Member[] = parse(text, { columns: true });
   return parsedCSV;
-}
-
-const getMBTIsFromLocalStorage = (): string[] => {
-  const all_mbtis_stored: string[] = JSON.parse(localStorage.getItem("mbtis") || "[]");
-  return all_mbtis_stored;
-}
-
-const setMBTIsToLocalStorage = (mbtis: string[]): void => {
-  localStorage.setItem("mbtis", JSON.stringify(mbtis))
-}
-
-const getBirthPlacesFromLocalStorage = (): string[] => {
-  const all_birthplaces_stored: string[] = JSON.parse(localStorage.getItem("birthplaces") || "[]");
-  return all_birthplaces_stored;
-}
-
-const setBirthPlacesToLocalStorage = (birthplaces: string[]): void => {
-  localStorage.setItem("birthplaces", JSON.stringify(birthplaces))
-}
-
-const getHeightsFromLocalStorage = (): string[] => {
-  const all_heights_stored: string[] = JSON.parse(localStorage.getItem("heights") || "[]");
-  return all_heights_stored;
-}
-
-const setHeightsToLocalStorage = (heights: string[]): void => {
-  localStorage.setItem("heights", JSON.stringify(heights))
-}
-
-const getYearsFromLocalStorage = (): string[] => {
-  const all_birthyears_stored: string[] = JSON.parse(localStorage.getItem("years") || "[]");
-  return all_birthyears_stored;
-}
-
-const setYearsToLocalStorage = (years: string[]): void => {
-  localStorage.setItem("years", JSON.stringify(years))
-}
-
-const getCanVoteFromLocalStorage = (): boolean => {
-  const can_vote_only: boolean = JSON.parse(localStorage.getItem("can_vote_only") || "false");
-  return can_vote_only;
-}
-
-const setCanVoteToLocalStorage = (can_vote_only: boolean): void => {
-  localStorage.setItem("can_vote_only", JSON.stringify(can_vote_only))
-}
-
-interface StoredItems {
-  items: string[],
-  initialized: boolean
 }
 
 export default function useNPDatabase(): NPDatabase {
@@ -134,56 +95,73 @@ export default function useNPDatabase(): NPDatabase {
 
   // 初期化処理(データベースのcsvを読み込む)
   useEffect(() => {
-    console.log("start initialize")
+    console.log("initialize started")
     fetchCSVAsync().then(initializeDatabase).then(() => {
-      console.log("finish initialize");
+      console.log("initialize finished");
     });
+    // eslint-disable-next-line
   }, [])
 
-  const setMBTIs = (mbtis_after: string[], update_members: boolean = true) => {
+  const search = useCallback((mbti: string[], birthplaces: string[], heights: string[], years: string[], can_vote_only: boolean): Map<string, Member> => {
+    let mbti_set = new Set(mbti);
+    let birthplace_set = new Set(birthplaces);
+    let heights_set = new Set(heights);
+    let years_set = new Set(years);
+
+    let result: Map<string, Member> = new Map<string, Member>();
+    for (let i of members_array.current) {
+      if (can_vote_only && i.week_5_rank > BOARDER) { continue; }
+      if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
+        result.set(i.name, i);
+      }
+    }
+    return result;
+  }, [members_array]);
+
+  const setMBTIs = useCallback((mbtis_after: string[], update_members: boolean = true) => {
     mbtis.current = mbtis_after;
     setMBTIsToLocalStorage(mbtis.current);
     if (update_members) {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }
+  }, [search, canVote]);
 
-  const setBirthPlaces = (birthplaces_after: string[], update_members: boolean = true) => {
+  const setBirthPlaces = useCallback((birthplaces_after: string[], update_members: boolean = true) => {
     birthplaces.current = birthplaces_after;
     setBirthPlacesToLocalStorage(birthplaces.current);
     if (update_members) {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }
+  }, [search, canVote]);
 
-  const setHeights = (heights_after: string[], update_members: boolean = true) => {
+  const setHeights = useCallback((heights_after: string[], update_members: boolean = true) => {
     heights.current = heights_after;
     setHeightsToLocalStorage(heights.current);
     if (update_members) {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }
+  }, [search, canVote]);
 
-  const setYears = (years_after: string[], update_members: boolean = true) => {
+  const setYears = useCallback((years_after: string[], update_members: boolean = true) => {
     years.current = years_after;
     setYearsToLocalStorage(years.current);
     if (update_members) {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
       setMembers(members_result);
     }
-  }
+  }, [search, canVote]);
 
-  const setCanVoteOnly = (can_vote_only: boolean, update_members: boolean = true) => {
+  const setCanVoteOnly = useCallback((can_vote_only: boolean, update_members: boolean = true) => {
     setCanVote(can_vote_only);
     setCanVoteToLocalStorage(can_vote_only);
     if (update_members) {
       const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, can_vote_only);
       setMembers(members_result);
     }
-  }
+  }, [search]);
 
   const updateSortSetting = (val: SortSettings) => {
     if (val.show_hobby !== sortConfig.show_hobby || val.show_ranking !== sortConfig.show_ranking || val.show_skill !== sortConfig.show_skill) {
@@ -298,22 +276,6 @@ export default function useNPDatabase(): NPDatabase {
       current_birthyears: all_birthyears.current
     })
   }
-
-  const search = useCallback((mbti: string[], birthplaces: string[], heights: string[], years: string[], can_vote_only: boolean): Map<string, Member> => {
-    let mbti_set = new Set(mbti);
-    let birthplace_set = new Set(birthplaces);
-    let heights_set = new Set(heights);
-    let years_set = new Set(years);
-
-    let result: Map<string, Member> = new Map<string, Member>();
-    for (let i of members_array.current) {
-      if (can_vote_only && i.week_5_rank > BOARDER) { continue; }
-      if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
-        result.set(i.name, i);
-      }
-    }
-    return result;
-  }, [members_array]);
 
   return {
     initial_state: initialState,

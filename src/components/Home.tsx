@@ -10,8 +10,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import React from "react";
 import SearchConfig from "./SearchConfig";
-import { InitialState } from "../hooks/useNPDatabase";
-
+import { InitialState, SortSettings } from "../hooks/useNPDatabase";
 
 interface Props {
   initial_state: InitialState,
@@ -23,12 +22,6 @@ interface Props {
   setYears: (members: string[]) => void;
   setCanVote: (can_vote_only: boolean) => void;
   onSortSettingsUpdated: (settings: SortSettings) => void;
-}
-
-export interface SortSettings {
-  show_hobby: boolean;
-  show_skill: boolean;
-  show_ranking: boolean;
 }
 
 const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {

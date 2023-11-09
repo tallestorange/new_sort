@@ -12,9 +12,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { SortSettings } from './Home';
 import { HASHTAGS, PAGE_URL } from "./Constants";
-import { Member } from "../hooks/useNPDatabase";
+import { Member, SortSettings } from "../hooks/useNPDatabase";
 
 interface Props {
   members: Map<string, Member>;
