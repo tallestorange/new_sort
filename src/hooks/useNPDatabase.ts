@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { BOARDER, VERSION, NOW_LOADING } from '../modules/Constants'
+import { BOARDER, VERSION, NOW_LOADING, PREF_SORT_MAP } from '../modules/Constants'
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 import parse from "csv-parse/lib/sync";
 import { getBirthPlacesFromLocalStorage, getCanVoteFromLocalStorage, getHeightsFromLocalStorage, getMBTIsFromLocalStorage, getYearsFromLocalStorage, setBirthPlacesToLocalStorage, setCanVoteToLocalStorage, setHeightsToLocalStorage, setMBTIsToLocalStorage, setYearsToLocalStorage } from "../modules/LocalStorage";
@@ -177,47 +177,22 @@ export default function useNPDatabase(): NPDatabase {
 
     const mbtis_set: Set<string> = new Set<string>();
     const heights_set: Set<string> = new Set<string>();
+    const birthplaces_set: Set<string> = new Set<string>();
     const years_set: Set<string> = new Set<string>();
 
     for (let member of members) {
       members_map.current.set(member.name, member);
       all_members.current.items.push(member.name);
+      birthplaces_set.add(member.birth_place);
       mbtis_set.add(member.mbti);
       heights_set.add(member.height);
       years_set.add(member.birth_date.split('/')[0]);
     }
     all_members.current.initialized = true;
 
-    all_birthplaces.current.items = [
-      '北海道',
-      '岩手',
-      '宮城',
-      '福島',
-      '栃木',
-      '群馬',
-      '埼玉',
-      '千葉',
-      '東京',
-      '神奈川',
-      '新潟',
-      '石川',
-      '長野',
-      '愛知',
-      '三重',
-      '京都',
-      '大阪',
-      '兵庫',
-      '奈良',
-      '岡山',
-      '広島',
-      '徳島',
-      '香川',
-      '福岡',
-      '熊本',
-      '宮崎',
-      'アメリカ',
-      'インドネシア'
-    ]
+    const birthPlacesArray = Array.from(birthplaces_set);
+    birthPlacesArray.sort((a, b) => { return PREF_SORT_MAP.get(a)! - PREF_SORT_MAP.get(b)! });
+    all_birthplaces.current.items = birthPlacesArray;
     all_birthplaces.current.initialized = true;
 
     const mbtisArray = Array.from(mbtis_set);

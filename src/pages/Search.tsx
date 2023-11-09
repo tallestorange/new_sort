@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE, LATEST_CHANGE_LOG } from '../modules/Constants';
+import { TITLE, LATEST_CHANGE_LOG, PREF_SORT_MAP } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import SearchConfig, { CanVoteCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { InitialState, SortSettings } from "../hooks/useNPDatabase";
@@ -41,7 +41,8 @@ export default function Search(props: Props) {
           <SearchSelect
             title="出身地"
             id="birthplace"
-            sort={false}
+            sort={true}
+            sortFunction={(a, b) => { return PREF_SORT_MAP.get(a)! - PREF_SORT_MAP.get(b)! }}
             enabled={props.initial_state.initial_birthplaces.initialized && props.initial_state.current_birthplaces.initialized}
             items={props.initial_state.initial_birthplaces.items}
             default_selected={props.initial_state.current_birthplaces.items}

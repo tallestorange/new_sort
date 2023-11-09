@@ -14,6 +14,7 @@ interface Props {
   items: string[];
   default_selected: string[];
   sort: boolean;
+  sortFunction?: (left: string, right: string) => number;
   enabled: boolean;
   onValueChanged: (items: string[]) => void;
 }
@@ -80,9 +81,9 @@ const SearchSelect = memo((props: Props) => {
         value={items}
         multiple
         renderValue={(selected: any) => {
-          let result = selected;
+          let result: string[] = selected;
           if (props.sort) {
-            result.sort();
+            result.sort(props.sortFunction);
           }
           return result.join(', ');
         }}
