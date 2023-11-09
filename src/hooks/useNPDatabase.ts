@@ -73,11 +73,6 @@ export default function useNPDatabase(): NPDatabase {
   const all_birthplaces_stored = useRef<StoredItems>({items: [], initialized: false});
   const all_heights_stored = useRef<StoredItems>({items: [], initialized: false});
   const all_birthyears_stored = useRef<StoredItems>({items: [], initialized: false});
-
-  const mbtis = useRef<string[]>([]);
-  const birthplaces = useRef<string[]>([]);
-  const heights = useRef<string[]>([]);
-  const years = useRef<string[]>([]);
   const members_map = useRef<Map<string, Member>>(new Map<string, Member>());
 
   const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
@@ -119,64 +114,58 @@ export default function useNPDatabase(): NPDatabase {
       }
     }
     return result;
-  }, [members_array]);
+  }, []);
 
-  const setMBTIs = useCallback((mbtis_after: string[], update_members: boolean = true) => {
-    mbtis.current = mbtis_after;
-    setMBTIsToLocalStorage(mbtis.current);
-    if (update_members) {
-      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
-      setMembers(members_result);
-    }
+  const updateMembers = useCallback(() => {
+    const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, canVote);
+    setMembers(members_result);
     // eslint-disable-next-line
-  }, [search]);
+  }, []);
 
-  const setBirthPlaces = useCallback((birthplaces_after: string[], update_members: boolean = true) => {
-    birthplaces.current = birthplaces_after;
-    setBirthPlacesToLocalStorage(birthplaces.current);
-    if (update_members) {
-      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
-      setMembers(members_result);
-    }
+  const setMBTIs = useCallback((mbtis_after: string[]) => {
+    all_mbtis_stored.current.items = mbtis_after;
+    setMBTIsToLocalStorage(all_mbtis_stored.current.items);
+    updateMembers();
     // eslint-disable-next-line
-  }, [search]);
+  }, []);
 
-  const setHeights = useCallback((heights_after: string[], update_members: boolean = true) => {
-    heights.current = heights_after;
-    setHeightsToLocalStorage(heights.current);
-    if (update_members) {
-      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
-      setMembers(members_result);
-    }
+  const setBirthPlaces = useCallback((birthplaces_after: string[]) => {
+    all_birthplaces_stored.current.items = birthplaces_after;
+    setBirthPlacesToLocalStorage(all_birthplaces_stored.current.items);
+    updateMembers();
     // eslint-disable-next-line
-  }, [search]);
+  }, []);
 
-  const setYears = useCallback((years_after: string[], update_members: boolean = true) => {
-    years.current = years_after;
-    setYearsToLocalStorage(years.current);
-    if (update_members) {
-      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, canVote);
-      setMembers(members_result);
-    }
+  const setHeights = useCallback((heights_after: string[]) => {
+    all_heights_stored.current.items = heights_after;
+    console.log(heights_after)
+    setHeightsToLocalStorage(all_heights_stored.current.items);
+    updateMembers();
     // eslint-disable-next-line
-  }, [search]);
+  }, []);
 
-  const setCanVoteOnly = useCallback((can_vote_only: boolean, update_members: boolean = true) => {
+  const setYears = useCallback((years_after: string[]) => {
+    all_birthyears_stored.current.items = years_after;
+    setYearsToLocalStorage(all_birthyears_stored.current.items);
+    updateMembers();
+    // eslint-disable-next-line
+  }, []);
+
+  const setCanVoteOnly = useCallback((can_vote_only: boolean) => {
     setCanVote(can_vote_only);
     setCanVoteToLocalStorage(can_vote_only);
-    if (update_members) {
-      const members_result = search(mbtis.current, birthplaces.current, heights.current, years.current, can_vote_only);
-      setMembers(members_result);
-    }
-  }, [search]);
+    updateMembers();
+    // eslint-disable-next-line
+  }, []);
 
-  const updateSortSetting = (val: SortSettings) => {
+  const updateSortSetting = useCallback((val: SortSettings) => {
     if (val.show_hobby !== sortConfig.show_hobby || val.show_ranking !== sortConfig.show_ranking || val.show_skill !== sortConfig.show_skill) {
       setSortConfig(val);
     }
-  }
+    // eslint-disable-next-line
+  }, []);
 
-  const initializeDatabase = (members: Member[]) => {
+  const initializeDatabase = useCallback((members: Member[]) => {
     members_array.current = members;
 
     const mbtis_set: Set<string> = new Set<string>();
@@ -229,28 +218,24 @@ export default function useNPDatabase(): NPDatabase {
     });
     all_mbtis_stored.current.items = mbtis_stored;
     all_mbtis_stored.current.initialized = true;
-    mbtis.current = mbtis_stored;
 
     const birthplaces_stored = getBirthPlacesFromLocalStorage(() => {
       setBirthPlacesToLocalStorage([]);
     });
     all_birthplaces_stored.current.items = birthplaces_stored;
     all_birthplaces_stored.current.initialized = true;
-    birthplaces.current = birthplaces_stored;
 
     const heights_stored = getHeightsFromLocalStorage(() => {
       setHeightsToLocalStorage([]);
     });
     all_heights_stored.current.items = heights_stored;
     all_heights_stored.current.initialized = true;
-    heights.current = heights_stored;
 
     const birthyears_stored = getYearsFromLocalStorage(() => {
       setYearsToLocalStorage([]);
     });
     all_birthyears_stored.current.items = birthyears_stored;
     all_birthyears_stored.current.initialized = true;
-    years.current = birthyearsArray;
 
     const members_result = search(mbtis_stored, birthplaces_stored, heights_stored, birthyears_stored, canVote);
     setMembers(members_result);
@@ -265,7 +250,8 @@ export default function useNPDatabase(): NPDatabase {
       current_heights: all_heights_stored.current,
       current_birthyears: all_birthyears_stored.current
     })
-  }
+    // eslint-disable-next-line
+  }, []);
 
   return {
     initial_state: initialState,
