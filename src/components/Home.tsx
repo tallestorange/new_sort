@@ -70,6 +70,7 @@ export default function Home(props: Props) {
             title="MBTI" 
             id="mbti" 
             sort={true}
+            enabled={props.initial_state.initial_mbtis.initialized && props.initial_state.current_mbtis.initialized}
             items={props.initial_state.initial_mbtis.items}
             default_selected={props.initial_state.current_mbtis.items} 
             onValueChanged={props.setMBTIs} />
@@ -79,6 +80,7 @@ export default function Home(props: Props) {
             title="出身地" 
             id="birthplace" 
             sort={false}
+            enabled={props.initial_state.initial_birthplaces.initialized && props.initial_state.current_birthplaces.initialized}
             items={props.initial_state.initial_birthplaces.items}
             default_selected={props.initial_state.current_birthplaces.items} 
             onValueChanged={props.setBirthPlaces} />
@@ -88,6 +90,7 @@ export default function Home(props: Props) {
             title="身長"
             id="height" 
             sort={true} 
+            enabled={props.initial_state.initial_heights.initialized && props.initial_state.current_heights.initialized}
             items={props.initial_state.initial_heights.items}
             default_selected={props.initial_state.current_heights.items}
             onValueChanged={props.setHeights} />
@@ -96,7 +99,8 @@ export default function Home(props: Props) {
           <SearchSelect 
             title="生まれ年" 
             id="birthyear" 
-            sort={true} 
+            sort={true}
+            enabled={props.initial_state.initial_birthyears.initialized && props.initial_state.current_birthyears.initialized}
             items={props.initial_state.initial_birthyears.items} 
             default_selected={props.initial_state.current_birthyears.items} 
             onValueChanged={props.setYears} />

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { BOARDER, VERSION } from '../components/Constants'
+import { BOARDER, VERSION, NOW_LOADING } from '../components/Constants'
 import NP_DB_MEMBERS from "../NP_DB/members_minimal.csv";
 import parse from "csv-parse/lib/sync";
 import { getBirthPlacesFromLocalStorage, getCanVoteFromLocalStorage, getHeightsFromLocalStorage, getMBTIsFromLocalStorage, getYearsFromLocalStorage, setBirthPlacesToLocalStorage, setCanVoteToLocalStorage, setHeightsToLocalStorage, setMBTIsToLocalStorage, setYearsToLocalStorage } from "../modules/LocalStorage";
@@ -83,14 +83,14 @@ export default function useNPDatabase(): NPDatabase {
   const [canVote, setCanVote] = useState<boolean>(getCanVoteFromLocalStorage());
   const [sortConfig, setSortConfig] = useState<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
   const [initialState, setInitialState] = useState<InitialState>({ 
-    initial_mbtis: { items: [], initialized: false},
-    initial_birthplaces: { items: [], initialized: false},
-    initial_heights: { items: [], initialized: false},
-    initial_birthyears: { items: [], initialized: false},
-    current_mbtis: { items: [], initialized: false},
-    current_birthplaces: { items: [], initialized: false},
-    current_heights: { items: [], initialized: false},
-    current_birthyears: { items: [], initialized: false},
+    initial_mbtis: { items: [NOW_LOADING], initialized: false},
+    initial_birthplaces: { items: [NOW_LOADING], initialized: false},
+    initial_heights: { items: [NOW_LOADING], initialized: false},
+    initial_birthyears: { items: [NOW_LOADING], initialized: false},
+    current_mbtis: { items: [NOW_LOADING], initialized: false},
+    current_birthplaces: { items: [NOW_LOADING], initialized: false},
+    current_heights: { items: [NOW_LOADING], initialized: false},
+    current_birthyears: { items: [NOW_LOADING], initialized: false},
   });
 
   // 初期化処理(データベースのcsvを読み込む)

@@ -14,6 +14,7 @@ interface Props {
   items: string[];
   default_selected: string[];
   sort: boolean;
+  enabled: boolean;
   onValueChanged: (items: string[]) => void;
 }
 
@@ -86,7 +87,7 @@ function SearchSelect(props: Props) {
   };
 
   return (
-    <FormControl className={classes.formControl} fullWidth>
+    <FormControl disabled={!props.enabled} className={classes.formControl} fullWidth>
       <InputLabel id={props.id + "-select-label"}>{props.title}</InputLabel>
       <Select
         label={props.title}
