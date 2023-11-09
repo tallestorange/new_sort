@@ -118,7 +118,7 @@ export default function Home(props: Props) {
       </Grid>
 
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p><a href="https://github.com/emolga587/hpsort2">ハロプロソート(updated)</a>ベースで開発しています</p>
+        <p><a href="https://github.com/emolga587/hpsort2" target="_blank" rel="noopener noreferrer">ハロプロソート(updated)</a>ベースで開発しています</p>
       </Grid>
     </Grid>
   );
