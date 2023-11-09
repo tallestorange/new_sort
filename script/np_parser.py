@@ -97,15 +97,24 @@ def add_ranking(data):
     url = urljoin(base_url, "/rank/index.php"+week)
     res = requests.get(url)
     html_text = bs4.BeautifulSoup(res.content, "html.parser")
-    ranks = html_text.find_all("li", class_="list--ranking__item")
-    data[0].append(f"week_{week_int}_rank")
+    ranks = html_text.find_all("li", class_="list--ranking__item")  
+    for (i, val) in enumerate(data):
+      if i:
+        data[i].append("")
+      else:
+        data[i].append(f"week_{week_int}_rank")
+  
     for rank in ranks:
       name = rank.find("div", class_="name").text
-      ranking = int(rank.find("div", class_="icon-rank").text)
+      icon_rank = rank.find("div", class_="icon-rank")
+      if icon_rank is None:
+        ranking = "???"
+      else:
+        ranking = int(icon_rank.text)
 
       for (i, val) in enumerate(data):
         if val[1] == name:
-          data[i].append(ranking)
+          data[i][-1] = ranking
           break
   return data
 
