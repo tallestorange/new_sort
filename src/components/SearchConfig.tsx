@@ -7,23 +7,6 @@ import { SortSettings } from "../hooks/useNPDatabase";
 import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
 import { BOARDER } from "../modules/Constants";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-
-export const CustomListItemText = React.memo((props: { title: string, id: string, index: number }) => {
-  return (
-    <ListItemText primary={props.title} id={props.id + "-text-" + props.index} />
-  )
-}, (before, after) => {
-  return before.title === after.title;
-})
-
-export const CustomCheckbox = React.memo((props: { id: string, index: number, checked: boolean }) => {
-  return (
-    <Checkbox checked={props.checked} id={props.id + "-checkbox-" + props.index} />
-  )
-}, (before, after) => {
-  return before.checked === after.checked;
-})
 
 export const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {
   return (
