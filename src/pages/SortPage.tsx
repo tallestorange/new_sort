@@ -64,7 +64,7 @@ function NowSortPage(props: {
   sort: Sorter;
   onSorted?: (result: boolean) => void;
 }) {
-  const {sort, onSorted} = props;
+  const {sort, members, onSorted} = props;
   const [currentRound, setCurrentRound] = useState<number>(sort.currentRound);
 
   const leftWin = useCallback(() => {
@@ -105,6 +105,20 @@ function NowSortPage(props: {
       alert("これ以上戻れません！")
     }
   }, [sort, onSorted]);
+
+  // lastChallengeが毎回変わるのでメモ化しない
+  const leftMember = (): Member => {
+    const member = members.get(sort.lastChallenge[0])!;
+    // console.log(member);
+    return member
+  }
+
+  // lastChallengeが毎回変わるのでメモ化しない
+  const rightMember = (): Member => {
+    const member = members.get(sort.lastChallenge[1])!;
+    // console.log(member);
+    return member;
+  }
   
   return (
     <div style={{ textAlign: "center" }}>
@@ -116,12 +130,12 @@ function NowSortPage(props: {
           <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{currentRound} - {sort.progress}%</p>
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture member={props.members.get(sort.lastChallenge[0])!}
+          <MemberPicture member={leftMember()}
             sortConfig={props.sortConfig}
             onClick={leftWin} />
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture member={props.members.get(sort.lastChallenge[1])!}
+          <MemberPicture member={rightMember()}
             sortConfig={props.sortConfig}
             onClick={rightWin} />
         </Grid>
