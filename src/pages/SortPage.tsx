@@ -23,10 +23,16 @@ interface Props {
   initialized: boolean;
 }
 
+/**
+ * ソート画面
+ * ソートが完了するとソート結果表示画面に遷移する
+ * @param props 
+ * @returns 
+ */
 export default function SortPage(props: Props) {
   const location = useLocation();
   const sort_settings = location.state as SortSettings;
-  const {members} = props;
+  const {members, sortName, initialized} = props;
 
   const sort = useRef<Sorter>();
   const target_members = useRef<Map<string, Member>>(members);
@@ -47,7 +53,7 @@ export default function SortPage(props: Props) {
   }, [members])
 
   return (
-    props.initialized ? result ? <SortResultPage members={props.members} sortName={props.sortName} sort={sort.current} /> : <NowSortPage members={props.members} sortName={props.sortName} sortConfig={sort_settings} sort={sort.current} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage sortName={sortName} sort={sort.current} /> : <NowSortPage members={members} sortName={sortName} sortConfig={sort_settings} sort={sort.current} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -64,7 +70,7 @@ function NowSortPage(props: {
   sort: Sorter;
   onSorted?: (result: boolean) => void;
 }) {
-  const {sort, members, onSorted} = props;
+  const {sort, members, sortName, sortConfig, onSorted} = props;
   const [currentRound, setCurrentRound] = useState<number>(sort.currentRound);
 
   const leftWin = useCallback(() => {
@@ -124,19 +130,19 @@ function NowSortPage(props: {
     <div style={{ textAlign: "center" }}>
       <Grid container spacing={1}>
         <Grid container item xs={12} justifyContent="center">
-          <h2 style={{ marginBottom: 0 }}>{props.sortName}</h2>
+          <h2 style={{ marginBottom: 0 }}>{sortName}</h2>
         </Grid>
         <Grid container item xs={12} justifyContent="center">
           <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{currentRound} - {sort.progress}%</p>
         </Grid>
         <Grid container item xs={6} justifyContent="center">
           <MemberPicture member={leftMember()}
-            sortConfig={props.sortConfig}
+            sortConfig={sortConfig}
             onClick={leftWin} />
         </Grid>
         <Grid container item xs={6} justifyContent="center">
           <MemberPicture member={rightMember()}
-            sortConfig={props.sortConfig}
+            sortConfig={sortConfig}
             onClick={rightWin} />
         </Grid>
         <Grid container item xs={12} justifyContent="center">
@@ -162,7 +168,6 @@ function NowSortPage(props: {
  * @returns 
  */
 function SortResultPage(props: {
-  members: Map<string, Member>;
   sortName: string;
   sort: Sorter;
 }) {
@@ -205,7 +210,7 @@ function SortResultPage(props: {
   
   return (<Grid container alignItems="flex-start">
     <Grid container item xs={12} justifyContent="center">
-      <h2 style={{ marginBottom: 0 }}>{props.sortName}結果</h2>
+      <h2 style={{ marginBottom: 0 }}>{sortName}結果</h2>
     </Grid>
     <Grid container item xs={12} justifyContent="center">
       <p style={{ marginTop: 0, marginBottom: 10 }}>ラウンド{sort.currentRound} - {sort.progress}%</p>
