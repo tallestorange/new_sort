@@ -49,8 +49,6 @@ interface NPDatabase {
   setYears: (members: string[]) => void;
   setCanVote: (can_vote_only: boolean) => void;
   members: Map<string, Member>;
-  // sort_settings: SortSettings;
-  // setSortSettings: (sort_settings: SortSettings) => void;
 }
 
 const fetchCSVAsync = async (): Promise<Member[]> => {
@@ -162,13 +160,6 @@ export default function useNPDatabase(): NPDatabase {
     // eslint-disable-next-line
   }, []);
 
-  // const updateSortSetting = useCallback((val: SortSettings) => {
-  //   if (val.show_hobby !== sortConfig.show_hobby || val.show_ranking !== sortConfig.show_ranking || val.show_skill !== sortConfig.show_skill) {
-  //     setSortConfig(val);
-  //   }
-  //   // eslint-disable-next-line
-  // }, []);
-
   const initializeDatabase = useCallback((members: Member[]) => {
     members_array.current = members;
 
@@ -266,7 +257,5 @@ export default function useNPDatabase(): NPDatabase {
     setYears: setYears,
     setCanVote: setCanVoteOnly,
     members: members,
-    // sort_settings: sortConfig,
-    // setSortSettings: updateSortSetting
   }
 }
