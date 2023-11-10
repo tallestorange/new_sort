@@ -1,33 +1,17 @@
-# hpsort2
+# new_sort
 
-ハロプロソート(updated)です。
+[日プ](https://produce101.jp/)ソートです。
 
-ソートアルゴリズムに[Ford-Johnson法](https://en.wikipedia.org/wiki/Merge-insertion_sort)を採用し比較回数を抑えるとともに、Reactでモバイルネイティブに作り直しています。
+[ハロプロソート(updated)](https://github.com/emolga587/hpsort2)をベースにメンバー絞り込み機能や通信の非同期化を実施し、データベースを日プのものに差し替えたものになります。
 
-[https://16be.at/sort/](https://16be.at/sort/)
+[https://np-sort.web.app/](https://np-sort.web.app/) ※番組終了まで公開予定
 
-メンバーデータは[@xxgentaroxx](https://twitter.com/xxgentaroxx)大先生の[HP_DB](https://github.com/xxgentaroxx/HP_DB)を利用しています。
-
-## docker環境
-
-### ビルド
-
-```
-docker build -t hpsort2 https://github.com/emolga587/hpsort2.git
-```
-
-### 実行
-
-```
-docker run -p 5000:5000 hpsort2
-```
-
-## 非docker環境
+## 動かし方
 
 ### クローン・パッケージのインストール
 ```
-git clone --recursive https://github.com/emolga587/hpsort2.git  #サブモジュールも一緒にcloneしてください
-cd ./hpsort2/
+git clone https://github.com/tallestorange/new_sort.git
+cd ./new_sort/
 npm install
 ```
 
@@ -43,17 +27,13 @@ npm run build
 
 ## 不具合報告、改善要望、連絡先
 
-### 開発者以外の方
-[Twitter](https://twitter.com/emolga587)へお願いします。
-
 ### 開発者の方
-[こちら](https://github.com/emolga587/hpsort2/pulls)へお願いします。
+[こちら](https://github.com/tallestorange/new_sort/pulls)へお願いします。
 
 ## ライセンス
-MITライセンスとします。
-ただし、public/member_pics/以下の画像、src/HP_DB/以下のデータに関してはこの限りではありません。
+本家様と同様にMITライセンスとします。
+ただし、public/member_pics/以下の画像、src/NP_DB/以下のデータに関してはこの限りではありません。
 
 ## 謝辞
-[じゅんくどぅ](https://twitter.com/junkudu)様、ブラックハウリング様(先代、先々代ソート管理人)
 
-[げんたろう](https://twitter.com/xxgentaroxx)大先生(HP_DBメンテナ)
+[emolga587](https://twitter.com/emolga587)様(ハロプロソート(updated)開発者)
