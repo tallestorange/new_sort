@@ -69,6 +69,14 @@ const SearchSelect = memo((props: Props) => {
     onValueChanged(items_after);
   }, [onValueChanged, isAllSelected, items]);
 
+  const renderValue = useCallback((selected: any) => {
+    let result: string[] = selected;
+    if (sort) {
+      result.sort(sortFunction);
+    }
+    return result.join(', ');
+  }, [sortFunction, sort]);
+
   return (
     <FormControl disabled={!enabled} className={classes.formControl} fullWidth>
       <InputLabel id={id + "-select-label"}>{title}</InputLabel>
@@ -78,13 +86,7 @@ const SearchSelect = memo((props: Props) => {
         id={id + "-select"}
         value={currentItems}
         multiple
-        renderValue={(selected: any) => {
-          let result: string[] = selected;
-          if (sort) {
-            result.sort(sortFunction);
-          }
-          return result.join(', ');
-        }}
+        renderValue={renderValue}
         onChange={handleChange}
         inputProps={{id: id + "-select-input"}}
         MenuProps={{variant: "menu"}}
