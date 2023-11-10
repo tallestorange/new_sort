@@ -16,13 +16,9 @@ function Header(props: Props) {
       <Toolbar>
         <Typography variant="h5" style={{ flexGrow: 1, fontWeight: 500 }}>{props.children}</Typography>
         <IconButton
-          aria-controls="menu-appbar"
-          aria-haspopup="true"
           color="inherit"
           to="/"
-          component={Link}
-          aria-label="Move to Home"
-        >
+          component={Link}>
           <HomeIcon />
         </IconButton>
       </Toolbar>

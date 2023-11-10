@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button/Button";
 import { BOARDER } from "../modules/Constants";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 
-export const CustomListItemText = React.memo((props: { title: string, id: string, index: number}) => {
+export const CustomListItemText = React.memo((props: { title: string, id: string, index: number }) => {
   return (
     <ListItemText primary={props.title} id={props.id + "-text-" + props.index} />
   )
@@ -17,7 +17,7 @@ export const CustomListItemText = React.memo((props: { title: string, id: string
   return before.title === after.title;
 })
 
-export const CustomCheckbox = React.memo((props: {id: string, index: number, checked: boolean}) => {
+export const CustomCheckbox = React.memo((props: { id: string, index: number, checked: boolean }) => {
   return (
     <Checkbox checked={props.checked} id={props.id + "-checkbox-" + props.index} />
   )
@@ -48,14 +48,13 @@ export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: 
     <Button
       disabled={!props.enabled}
       onClick={props.onClick}
-      color="secondary"
-    >
+      color="secondary">
       ソート開始
     </Button>
   )
 });
 
-const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void; form_id: string, checkbox_id: string, label: string}) => {
+const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void, form_id: string, checkbox_id: string, label: string}) => {
   return (
     <FormGroup>
       <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked(event.target.checked) }} />} label={props.label} />

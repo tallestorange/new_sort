@@ -9,7 +9,7 @@ export const NOW_LOADING: string = "読み込み中...";
 export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/10 順位情報を最新版に更新)";
 export const MAXIMUM_TWEET_MEMBERS_COUNT = 11;
 
-export const PREF_SORT_MAP: Map<string, number> = new  Map<string, number>([
+export const PREF_SORT_MAP: Map<string, number> = new Map<string, number>([
   ['北海道', 0],
   ['岩手', 1],
   ['宮城', 2],
