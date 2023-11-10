@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE, LATEST_CHANGE_LOG, PREF_SORT_MAP } from '../modules/Constants';
+import { TITLE, LATEST_CHANGE_LOG, PREF_SORT_MAP, SORT_PATH } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import SearchConfig, { CanVoteCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { InitialState, SortSettings } from "../hooks/useNPDatabase";
@@ -81,7 +81,7 @@ export default function Search(props: Props) {
         </Grid>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <SortStartButton enabled={props.target_members_count > 0} onClick={() => {navigate('/sort', { state: sortConfig.current })}} />
+        <SortStartButton enabled={props.target_members_count > 0} onClick={() => {navigate(`/${SORT_PATH}`, { state: sortConfig.current })}} />
       </Grid>
 
       <Grid container item xs={12} justifyContent="center" spacing={0}>
