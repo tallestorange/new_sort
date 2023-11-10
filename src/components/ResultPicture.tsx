@@ -38,7 +38,7 @@ export default function ResultPicture(props: Props) {
   } else if (props.rank >= 7) {
     styles.media.width *= 8 / 9;
     name_font_size -= 2;
-    card_width = 3;
+    card_width = 2;
   }
 
   return (
