@@ -69,7 +69,7 @@ interface Props {
   onSortSettingsUpdated?: (setting: SortSettings) => void;
 }
 
-export default function SearchConfig(props: Props) {
+const SearchConfig = React.memo((props: Props) => {
   const [showHobby, setShowHobby] = useState<boolean>(false);
   const [showRanking, setShowRanking] = useState<boolean>(false);
   const [showSkill, setShowSkill] = useState<boolean>(false);
@@ -86,4 +86,7 @@ export default function SearchConfig(props: Props) {
       <LabelCheckBox checked={showRanking} setChecked={setShowRanking} form_id="checkbox-form-ranking" checkbox_id="checkbox-rankings" label="ソート時に順位変動を表示する" />
     </FormGroup>
   );
-}
+}, (before, after) => {
+  return before.onSortSettingsUpdated === after.onSortSettingsUpdated;
+});
+export default SearchConfig;

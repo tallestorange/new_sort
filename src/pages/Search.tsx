@@ -5,7 +5,7 @@ import SearchSelect from "../components/SearchSelect";
 import SearchConfig, { CanVoteCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { InitialState, SortSettings } from "../hooks/useNPDatabase";
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 
 interface Props {
   initial_state: InitialState,
@@ -21,6 +21,12 @@ interface Props {
 export default function Search(props: Props) {
   const navigate = useNavigate();
   const sortConfig = useRef<SortSettings>({ show_hobby: false, show_skill: false, show_ranking: false });
+  const onSortButtonClicked = useCallback(() => {
+    navigate(`/${SORT_PATH}`, { state: sortConfig.current })
+  }, [navigate]);
+  const setSortSetting = useCallback((val: SortSettings) => {
+    sortConfig.current = val;
+  }, []);
 
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
@@ -77,11 +83,11 @@ export default function Search(props: Props) {
         </Grid>
         <Grid>
           <CanVoteCheckBox canVote={props.can_vote_only} setCanVote={props.setCanVote} />
-          <SearchConfig onSortSettingsUpdated={(val) => { sortConfig.current = val }} />
+          <SearchConfig onSortSettingsUpdated={setSortSetting} />
         </Grid>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <SortStartButton enabled={props.target_members_count > 0} onClick={() => {navigate(`/${SORT_PATH}`, { state: sortConfig.current })}} />
+        <SortStartButton enabled={props.target_members_count > 0} onClick={onSortButtonClicked} />
       </Grid>
 
       <Grid container item xs={12} justifyContent="center" spacing={0}>
