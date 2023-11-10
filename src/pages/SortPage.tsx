@@ -12,7 +12,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { HASHTAGS, PAGE_URL } from "../modules/Constants";
+import { HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
 import { Member, SortSettings } from "../hooks/useNPDatabase";
 import { useLocation } from 'react-router-dom';
 import { useCallback } from "react";
@@ -177,7 +177,7 @@ function SortResultPage(props: {
     return tweet_url;
   }, [sort, sortName]);
 
-  const getResultPictures = useCallback((min: Number, max: Number) => {
+  const getResultPictures = useCallback((min: number, max: number) => {
     const result: JSX.Element[] = [];
     for (let i of sort.array) {
       if (sort.rank(i) >= min && sort.rank(i) <= max) {
@@ -229,7 +229,7 @@ function SortResultPage(props: {
     <Grid container item xs={12} justifyContent="center">
       <br />
       <p>
-        <Button href={getTwitterIntentURL(11)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
+        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
       </p>
     </Grid>
   </Grid>)
