@@ -87,6 +87,7 @@ const SearchSelect = memo((props: Props) => {
         }}
         onChange={handleChange}
         inputProps={{id: id + "-select"}}
+        MenuProps={{variant: "menu"}}
       >
         <MenuItem
           value="all"
