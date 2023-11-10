@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, useCallback, useMemo } from "react";
 import Select from '@material-ui/core/Select';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -47,68 +47,66 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SearchSelect = memo((props: Props) => {
-  const [items, setItems] = useState<string[]>(props.default_selected);
-  const targetLength = props.items.length;
-  const targets = props.items;
-  const isAllSelected = items.length === targetLength;
+  const { default_selected, onValueChanged, items, title, id, sort, enabled, sortFunction } = props;
+  const [currentItems, setCurrentItems] = useState<string[]>(default_selected);
+  const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
   const classes = useStyles();
-  const { default_selected } = props;
 
   useEffect(() => {
-    setItems(default_selected);
+    setCurrentItems(default_selected);
   }, [default_selected]);
 
-  const handleChange = (event: any) => {
+  const handleChange = useCallback((event: any) => {
     const value = event.target.value;
     let items_after: string[] = [];
     if (value[value.length - 1] === 'all') {
-      items_after = items.length === targetLength ? [] : targets;
+      items_after = isAllSelected ? [] : items;
     }
     else {
       items_after = value;
     }
-    setItems(items_after);
-    props.onValueChanged(items_after);
-  };
+    setCurrentItems(items_after);
+    onValueChanged(items_after);
+  }, [onValueChanged, isAllSelected, items]);
 
   return (
-    <FormControl disabled={!props.enabled} className={classes.formControl} fullWidth>
-      <InputLabel id={props.id + "-select-label"}>{props.title}</InputLabel>
+    <FormControl disabled={!enabled} className={classes.formControl} fullWidth>
+      <InputLabel id={id + "-select-label"}>{title}</InputLabel>
       <Select
-        label={props.title}
-        labelId={props.id + "-select-label"}
-        id={props.id + "-select"}
-        value={items}
+        label={title}
+        labelId={id + "-select-label"}
+        id={id + "-select"}
+        value={currentItems}
         multiple
         renderValue={(selected: any) => {
           let result: string[] = selected;
-          if (props.sort) {
-            result.sort(props.sortFunction);
+          if (sort) {
+            result.sort(sortFunction);
           }
           return result.join(', ');
         }}
         onChange={handleChange}
-        inputProps={{id: props.id + "-select"}}
+        inputProps={{id: id + "-select"}}
       >
         <MenuItem
           value="all"
           classes={{
             root: isAllSelected ? classes.selectedAll : ""
           }}
-          id={props.id + "-item-selectall"}
+          id={id + "-item-selectall"}
         >
-          <Checkbox checked={isAllSelected} id={props.id + "-checkbox-selectall"}/>
+          <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"}/>
           <ListItemText
             classes={{ primary: classes.selectAllText }}
             primary="すべて選択する"
-            id={props.id + "-text-selectall"}
+            id={id + "-text-selectall"}
           />
         </MenuItem>
-        {props.items.map((val, index) => {
+        {items.map((val, index) => {
           return (
-            <MenuItem key={index} value={val} id={props.id + "-item-" + index}>
-              <CustomCheckbox id={props.id} index={index} checked={items.indexOf(val) > -1} />
-              <CustomListItemText title={val} id={props.id} index={index} />
+            <MenuItem key={index} value={val} id={id + "-item-" + index}>
+              <CustomCheckbox id={id} index={index} checked={currentItems.indexOf(val) > -1} />
+              <CustomListItemText title={val} id={id} index={index} />
             </MenuItem>)
         })}
       </Select>
@@ -116,28 +114,7 @@ const SearchSelect = memo((props: Props) => {
   );
 },
 (before, after) => {
-  if (before.title !== after.title) {
-    return false;
-  }
-  if (before.id !== after.id) {
-    return false;
-  }
-  if (before.onValueChanged !== after.onValueChanged) {
-    return false;
-  }
-  if (before.items.length !== after.items.length) return false;
-  for (let i = 0, n = before.items.length; i < n; ++i) {
-    if (before.items[i] !== after.items[i]) return false;
-  }
-  if (before.items.length !== after.items.length) return false;
-  for (let i = 0, n = before.items.length; i < n; ++i) {
-    if (before.items[i] !== after.items[i]) return false;
-  }
-  if (before.default_selected.length !== after.default_selected.length) return false;
-  for (let i = 0, n = before.default_selected.length; i < n; ++i) {
-    if (before.default_selected[i] !== after.default_selected[i]) return false;
-  }
-  return true;
+  return before.default_selected === after.default_selected && before.items === after.items;
 });
 
 export default SearchSelect;
