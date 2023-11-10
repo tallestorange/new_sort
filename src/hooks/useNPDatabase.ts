@@ -336,7 +336,6 @@ export default function useNPDatabase(): NPDatabase {
    */
   const setHeights = useCallback((heights_after: string[]) => {
     all_heights_stored.current.items = heights_after;
-    console.log(heights_after)
     setHeightsToLocalStorage(all_heights_stored.current.items);
     const members_result = search(all_mbtis_stored.current.items, all_birthplaces_stored.current.items, all_heights_stored.current.items, all_birthyears_stored.current.items, can_vote.current);
     setMembers(members_result);

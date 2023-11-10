@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Sorter from "../modules/Sorter";
@@ -12,177 +12,244 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { HASHTAGS, PAGE_URL } from "../modules/Constants";
+import { HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
 import { Member, SortSettings } from "../hooks/useNPDatabase";
 import { useLocation } from 'react-router-dom';
-
-export default function SortPage(props: {members: Map<string, Member>, sortName: string, initialized: boolean}) {
-  const location = useLocation();
-  const sort_settings = location.state as SortSettings;
-  console.log(sort_settings);
-  return (<SortPageOld members={props.members} sortName={props.sortName} initialized={props.initialized} sortConfig={sort_settings}></SortPageOld>)
-}
+import { useCallback } from "react";
 
 interface Props {
   members: Map<string, Member>;
   sortName: string;
-  sortConfig: SortSettings;
   initialized: boolean;
 }
-interface State {
-  result: boolean;
+
+/**
+ * ソート画面
+ * ソートが完了するとソート結果表示画面に遷移する
+ * @param props 
+ * @returns 
+ */
+export default function SortPage(props: Props) {
+  const location = useLocation();
+  const sort_settings = location.state as SortSettings;
+  const {members, sortName, initialized} = props;
+
+  const sort = useRef<Sorter>();
+  const target_members = useRef<Map<string, Member>>(members);
+  const [result, setResult] = useState<boolean>();
+
+  if (!sort.current) {
+    // 初期化処理
+    sort.current = new Sorter(Array.from(members.keys()));
+    setResult(sort.current.sort());
+  }
+
+  useEffect(() => {
+    if (members.size !== target_members.current.size) {
+      target_members.current = members;
+      sort.current = new Sorter(Array.from(members.keys()));
+      setResult(sort.current.sort());
+    }
+  }, [members])
+
+  return (
+    initialized ? result ? <SortResultPage sortName={sortName} sort={sort.current} /> : <NowSortPage members={members} sortName={sortName} sortConfig={sort_settings} sort={sort.current} onSorted={setResult} /> :
+    <div></div>
+  )
 }
 
-class SortPageOld extends React.Component<Props, State> {
+/**
+ * ソート中の画面
+ * @param props 
+ * @returns 
+ */
+function NowSortPage(props: {
+  members: Map<string, Member>;
+  sortName: string;
+  sortConfig: SortSettings;
   sort: Sorter;
-  constructor(props: Props) {
-    super(props);
-    this.sort = new Sorter(Array.from(props.members.keys()));
-    this.state = { result: this.sort.sort() };
+  onSorted?: (result: boolean) => void;
+}) {
+  const {sort, members, sortName, sortConfig, onSorted} = props;
+  const [currentRound, setCurrentRound] = useState<number>(sort.currentRound);
+
+  const leftWin = useCallback(() => {
+    sort.backable = true;
+    sort.prev_items = JSON.parse(JSON.stringify(sort.items));
+    sort.addResult(sort.lastChallenge[0], sort.lastChallenge[1]);
+    const result = sort.sort();
+    setCurrentRound(sort.currentRound);
+    onSorted?.(result);
+  }, [sort, onSorted]);
+
+  const rightWin = useCallback(() => {
+    sort.backable = true;
+    sort.prev_items = JSON.parse(JSON.stringify(sort.items));
+    sort.addResult(sort.lastChallenge[1], sort.lastChallenge[0]);
+    const result = sort.sort();
+    setCurrentRound(sort.currentRound);
+    onSorted?.(result);
+  }, [sort, onSorted]);
+
+  const bothWin = useCallback(() => {
+    sort.backable = true;
+    sort.prev_items = JSON.parse(JSON.stringify(sort.items));
+    sort.addEqual(sort.lastChallenge[0], sort.lastChallenge[1]);
+    const result = sort.sort();
+    setCurrentRound(sort.currentRound);
+    onSorted?.(result);
+  }, [sort, onSorted]);
+
+  const back = useCallback(() => {
+    if (sort.backable) {
+      sort.back();
+      const result = sort.sort();
+      setCurrentRound(sort.currentRound);
+      onSorted?.(result);
+    }
+    else {
+      alert("これ以上戻れません！")
+    }
+  }, [sort, onSorted]);
+
+  // lastChallengeが毎回変わるのでメモ化しない
+  const leftMember = (): Member => {
+    const member = members.get(sort.lastChallenge[0])!;
+    // console.log(member);
+    return member
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
-    if (prevProps.members.size !== this.props.members.size) {
-      this.sort = new Sorter(Array.from(this.props.members.keys()));
-      this.setState({ result: this.sort.sort() });
-    }
+  // lastChallengeが毎回変わるのでメモ化しない
+  const rightMember = (): Member => {
+    const member = members.get(sort.lastChallenge[1])!;
+    // console.log(member);
+    return member;
   }
-
-  render() {
-    if (!this.props.initialized) {
-      return <div></div>
-    }
-
-    if (this.state.result) {
-      let rankTable: JSX.Element[] = [];
-      let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${this.props.sortName}結果\n`);
-      let max_output = 11;
-
-      let count = 1;
-      for (let i of this.sort.array) {
-        rankTable.push(<TableRow key={i}><TableCell align="left">{this.sort.rank(i)}位</TableCell><TableCell align="left">{i}</TableCell></TableRow>);
-        if (count <= max_output) {
-          tweet_url += encodeURI(`${this.sort.rank(i)}位: ${i}\n`);
-          count++;
-        }
-      }
-
-      const getResultPictures = (min: Number, max: Number) => {
-        const result: JSX.Element[] = [];
-        for (let i of this.sort.array) {
-          if (this.sort.rank(i) >= min && this.sort.rank(i) <= max) {
-            result.push(
-              <ResultPicture key={i} name={i} rank={this.sort.rank(i)}></ResultPicture>
-            );
-          }
-        }
-        return result;
-      }
-
-      tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
-      return <Grid container alignItems="flex-start">
+  
+  return (
+    <div style={{ textAlign: "center" }}>
+      <Grid container spacing={1}>
         <Grid container item xs={12} justifyContent="center">
-          <h2 style={{ marginBottom: 0 }}>{this.props.sortName}結果</h2>
+          <h2 style={{ marginBottom: 0 }}>{sortName}</h2>
         </Grid>
         <Grid container item xs={12} justifyContent="center">
-          <p style={{ marginTop: 0, marginBottom: 10 }}>ラウンド{this.sort.currentRound} - {this.sort.progress}%</p>
+          <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{currentRound} - {sort.progress}%</p>
         </Grid>
-        <Grid container item md={6} xs={12} justifyContent="center">
-          <Grid container item xs={12} justifyContent="center">
-            {getResultPictures(1, 1)}
-          </Grid>
-          <Grid container item xs={12} justifyContent="center">
-            {getResultPictures(2, 3)}
-          </Grid>
-          <Grid container item xs={12} justifyContent="center">
-            {getResultPictures(4, 6)}
-          </Grid>
-          <Grid container item xs={12} justifyContent="center">
-            {getResultPictures(7, 10)}
-          </Grid>
+        <Grid container item xs={6} justifyContent="center">
+          <MemberPicture member={leftMember()}
+            sortConfig={sortConfig}
+            onClick={leftWin} />
         </Grid>
-
-        <Grid container item md={6} xs={12} justifyContent="center">
-          <TableContainer component={Paper}>
-            <Table size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow style={{ backgroundColor: "#444" }}>
-                  <TableCell style={{ color: "white", fontWeight: "bold" }}>順位</TableCell>
-                  <TableCell style={{ color: "white", fontWeight: "bold" }}>名前</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rankTable}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        <Grid container item xs={6} justifyContent="center">
+          <MemberPicture member={rightMember()}
+            sortConfig={sortConfig}
+            onClick={rightWin} />
         </Grid>
         <Grid container item xs={12} justifyContent="center">
-          <br />
-          <p>
-            <Button href={tweet_url} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
-          </p>
+          <Button variant="contained" size="large" style={{ backgroundColor: "white", color: "#444" }}
+            onClick={bothWin}>
+            両方勝ち
+          </Button>
+        </Grid>
+        <Grid container item xs={12} justifyContent="center">
+          <Button size="large" style={{ backgroundColor: "#444", color: "white" }}
+            onClick={back}>
+            ひとつ戻る
+          </Button>
         </Grid>
       </Grid>
-    } else {
-      return (
-        <div style={{ textAlign: "center" }}>
-          <Grid container spacing={1}>
-            <Grid container item xs={12} justifyContent="center">
-              <h2 style={{ marginBottom: 0 }}>{this.props.sortName}</h2>
-            </Grid>
-            <Grid container item xs={12} justifyContent="center">
-              <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{this.sort.currentRound} - {this.sort.progress}%</p>
-            </Grid>
-            <Grid container item xs={6} justifyContent="center">
-              <MemberPicture member={this.props.members.get(this.sort.lastChallenge[0])!}
-                sortConfig={this.props.sortConfig}
-                onClick={() => {
-                  this.sort.backable = true;
-                  this.sort.prev_items = JSON.parse(JSON.stringify(this.sort.items));
-                  this.sort.addResult(this.sort.lastChallenge[0], this.sort.lastChallenge[1]);
-                  this.setState({ result: this.sort.sort() });
-                }} />
-            </Grid>
-            <Grid container item xs={6} justifyContent="center">
-              <MemberPicture member={this.props.members.get(this.sort.lastChallenge[1])!}
-                sortConfig={this.props.sortConfig}
-                onClick={() => {
-                  this.sort.backable = true;
-                  this.sort.prev_items = JSON.parse(JSON.stringify(this.sort.items));
-                  this.sort.addResult(this.sort.lastChallenge[1], this.sort.lastChallenge[0]);
-                  this.setState({ result: this.sort.sort() });
-                }} />
-            </Grid>
-            <Grid container item xs={12} justifyContent="center">
-              <Button variant="contained" size="large" style={{ backgroundColor: "white", color: "#444" }}
-                onClick={() => {
-                  this.sort.backable = true;
-                  this.sort.prev_items = JSON.parse(JSON.stringify(this.sort.items));
-                  this.sort.addEqual(this.sort.lastChallenge[0], this.sort.lastChallenge[1]);
-                  this.setState({ result: this.sort.sort() });
-                }}
-              >
-                両方勝ち
-              </Button>
-            </Grid>
-            <Grid container item xs={12} justifyContent="center">
-              <Button size="large" style={{ backgroundColor: "#444", color: "white" }}
-                onClick={() => {
-                  if (this.sort.backable) {
-                    this.sort.back();
-                    this.setState({ result: this.sort.sort() });
-                  } else {
-                    alert("これ以上戻れません！")
-                  }
-                }}
-              >
-                ひとつ戻る
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
-      );
+    </div>
+  );
+}
+
+/**
+ * ソート結果表示画面
+ * @param props 
+ * @returns 
+ */
+function SortResultPage(props: {
+  sortName: string;
+  sort: Sorter;
+}) {
+  const {sort, sortName} = props;
+
+  const getRankTable = useCallback((): JSX.Element[] => {
+    const rankTable: JSX.Element[] = [];
+    for (let i of sort.array) {
+      rankTable.push(<TableRow key={i}><TableCell align="left">{sort.rank(i)}位</TableCell><TableCell align="left">{i}</TableCell></TableRow>);
     }
-  }
+    return rankTable;
+  }, [sort]);
+
+  const getTwitterIntentURL = useCallback((max_output: number): string => {
+    let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}結果\n`);
+
+    let count = 1;
+    for (let i of sort.array) {
+      if (count <= max_output) {
+        tweet_url += encodeURI(`${sort.rank(i)}位: ${i}\n`);
+        count++;
+      }
+    }
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
+
+    return tweet_url;
+  }, [sort, sortName]);
+
+  const getResultPictures = useCallback((min: number, max: number) => {
+    const result: JSX.Element[] = [];
+    for (let i of sort.array) {
+      if (sort.rank(i) >= min && sort.rank(i) <= max) {
+        result.push(
+          <ResultPicture key={i} name={i} rank={sort.rank(i)}></ResultPicture>
+        );
+      }
+    }
+    return result;
+  }, [sort]);
+  
+  return (<Grid container alignItems="flex-start">
+    <Grid container item xs={12} justifyContent="center">
+      <h2 style={{ marginBottom: 0 }}>{sortName}結果</h2>
+    </Grid>
+    <Grid container item xs={12} justifyContent="center">
+      <p style={{ marginTop: 0, marginBottom: 10 }}>ラウンド{sort.currentRound} - {sort.progress}%</p>
+    </Grid>
+    <Grid container item md={6} xs={12} justifyContent="center">
+      <Grid container item xs={12} justifyContent="center">
+        {getResultPictures(1, 1)}
+      </Grid>
+      <Grid container item xs={12} justifyContent="center">
+        {getResultPictures(2, 3)}
+      </Grid>
+      <Grid container item xs={12} justifyContent="center">
+        {getResultPictures(4, 6)}
+      </Grid>
+      <Grid container item xs={12} justifyContent="center">
+        {getResultPictures(7, 10)}
+      </Grid>
+    </Grid>
+
+    <Grid container item md={6} xs={12} justifyContent="center">
+      <TableContainer component={Paper}>
+        <Table size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow style={{ backgroundColor: "#444" }}>
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>順位</TableCell>
+              <TableCell style={{ color: "white", fontWeight: "bold" }}>名前</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {getRankTable()}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Grid>
+    <Grid container item xs={12} justifyContent="center">
+      <br />
+      <p>
+        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
+      </p>
+    </Grid>
+  </Grid>)
 }
