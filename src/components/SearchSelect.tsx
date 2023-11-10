@@ -86,7 +86,7 @@ const SearchSelect = memo((props: Props) => {
           return result.join(', ');
         }}
         onChange={handleChange}
-        inputProps={{id: id + "-select"}}
+        inputProps={{id: id + "-select-input"}}
         MenuProps={{variant: "menu"}}
       >
         <MenuItem

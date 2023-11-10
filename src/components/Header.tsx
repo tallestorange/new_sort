@@ -17,6 +17,7 @@ function Header(props: Props) {
         <Typography variant="h5" style={{ flexGrow: 1, fontWeight: 500 }}>{props.children}</Typography>
         <IconButton
           color="inherit"
+          aria-label="home"
           to="/"
           component={Link}>
           <HomeIcon />
