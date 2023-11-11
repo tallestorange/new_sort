@@ -49,6 +49,13 @@ export const SearchSelect = memo((props: Props) => {
   const { default_selected, onValueChanged, items, title, id, sort, enabled, sortFunction } = props;
   const [currentItems, setCurrentItems] = useState<string[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
+  const allSelectedSet = useMemo(() => {
+    const v = new Set<number>();
+    for (let i = 0; i < items.length; i++) {
+      v.add(i);
+    }
+    return v;
+  }, [items]); 
   const classes = useStyles();
 
   const selectedSet = useRef<Set<number>>();
@@ -91,14 +98,11 @@ export const SearchSelect = memo((props: Props) => {
       onValueChanged([])
     }
     else {
-      selectedSet.current!.clear();
-      for (let i = 0; i < items.length; i++) {
-        selectedSet.current!.add(i)
-      }
+      selectedSet.current = allSelectedSet;
       setCurrentItems(items)
       onValueChanged(items)
     }
-  }, [items, onValueChanged, isAllSelected]);
+  }, [items, onValueChanged, isAllSelected, allSelectedSet]);
 
   return (
     <FormControl disabled={!enabled} className={classes.formControl} fullWidth>
@@ -130,7 +134,9 @@ export const SearchSelect = memo((props: Props) => {
         </MenuItem>
         {items.map((val, index) => {
           return (
-            <CustomMenuItem title={val} id={id} index={index} default_checked={selectedSet.current!.has(index)} onSelected={handleChange} />
+            <div key={index}>
+              <CustomMenuItem title={val} id={id} index={index} default_checked={selectedSet.current!.has(index)} onSelected={handleChange} />
+            </div>
           )
         })}
       </Select>
@@ -157,20 +163,20 @@ const CustomMenuItem = memo((props: { title: string, id: string, index: number, 
     setChecked(default_checked);
   }, [default_checked]);
 
-  const onClicked = useCallback((index: number) => {
+  const onClicked = useCallback(() => {
     onSelected?.(index, !checked);
     setChecked(!checked);
-  }, [checked, onSelected])
+  }, [checked, index, onSelected])
 
   return (
-    <MenuItem key={index} value={title} id={id + "-item-" + index} onClick={() => onClicked(index)}>
+    <MenuItem key={index} value={title} id={id + "-item-" + index} onClick={onClicked}>
       <Checkbox checked={checked} id={id + "-checkbox-" + index} />
       <CustomListItemText title={title} id={id} index={index} />
     </MenuItem>
   )
 },
 (a, b) => {
-  return a.title === b.title && a.default_checked === b.default_checked
+  return a.title === b.title && a.default_checked === b.default_checked;
 });
 
 export default SearchSelect;
