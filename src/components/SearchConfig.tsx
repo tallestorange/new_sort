@@ -8,10 +8,10 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
 import { BOARDER } from "../modules/Constants";
 
-export const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote: (canVote: boolean) => void }) => {
+export const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote?: (canVote: boolean) => void }) => {
   return (
     <FormGroup>
-      <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
+      <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote?.(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
     </FormGroup>
   )
 }, (before, after) => {
@@ -37,10 +37,10 @@ export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: 
   )
 });
 
-const LabelCheckBox = React.memo((props: {checked: boolean, setChecked: (canVote: boolean) => void, form_id: string, checkbox_id: string, label: string}) => {
+const LabelCheckBox = React.memo((props: {checked: boolean, setChecked?: (canVote: boolean) => void, form_id: string, checkbox_id: string, label: string}) => {
   return (
     <FormGroup>
-      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked(event.target.checked) }} />} label={props.label} />
+      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked?.(event.target.checked) }} />} label={props.label} />
     </FormGroup>
   )
 }, (before, after) => {

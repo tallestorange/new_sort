@@ -15,7 +15,7 @@ interface Props {
   sort: boolean;
   sortFunction?: (left: string, right: string) => number;
   enabled: boolean;
-  onValueChanged: (items: string[]) => void;
+  onValueChanged?: (items: string[]) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export const SearchSelect = memo((props: Props) => {
+const SearchSelect = memo((props: Props) => {
   const { default_selected, onValueChanged, items, title, id, sort, enabled, sortFunction } = props;
   const [currentItems, setCurrentItems] = useState<string[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
@@ -88,19 +88,19 @@ export const SearchSelect = memo((props: Props) => {
     }
     const after = Array.from(selectedSet.current!).map((v) => { return items[v] });
     setCurrentItems(after)
-    onValueChanged(after);
+    onValueChanged?.(after);
   }, [items, onValueChanged])
 
   const handleSelectAll = useCallback(() => {
     if (isAllSelected) {
       selectedSet.current!.clear();
       setCurrentItems([])
-      onValueChanged([])
+      onValueChanged?.([])
     }
     else {
       selectedSet.current = allSelectedSet;
       setCurrentItems(items)
-      onValueChanged(items)
+      onValueChanged?.(items)
     }
   }, [items, onValueChanged, isAllSelected, allSelectedSet]);
 
@@ -126,11 +126,6 @@ export const SearchSelect = memo((props: Props) => {
           onClick={handleSelectAll}
         >
           <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"}/>
-          {/* <ListItemText
-            classes={{ primary: classes.selectAllText }}
-            primary="すべて選択する"
-            id={id + "-text-selectall"}
-          /> */}
           <SelectAllText id={id} />
         </MenuItem>
         {items.map((val, index) => {
