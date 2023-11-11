@@ -195,7 +195,7 @@ interface NPDatabase {
  * CSVから非同期でメンバ情報を拾ってくる
  * @returns メンバ一覧
  */
-const fetchCSVAsync = async (): Promise<Member[]> => {
+export const fetchCSVAsync = async (): Promise<Member[]> => {
   const response = await fetch(NP_DB_MEMBERS);
   const text = await response.text();
   const parsedCSV: Member[] = parse(text, { columns: true });
