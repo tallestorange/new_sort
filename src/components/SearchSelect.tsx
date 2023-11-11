@@ -126,11 +126,12 @@ export const SearchSelect = memo((props: Props) => {
           onClick={handleSelectAll}
         >
           <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"}/>
-          <ListItemText
+          {/* <ListItemText
             classes={{ primary: classes.selectAllText }}
             primary="すべて選択する"
             id={id + "-text-selectall"}
-          />
+          /> */}
+          <SelectAllText id={id} />
         </MenuItem>
         {items.map((val, index) => {
           return (
@@ -153,6 +154,20 @@ const CustomListItemText = memo((props: { title: string, id: string, index: numb
   )
 }, (before, after) => {
   return before.title === after.title;
+})
+
+const SelectAllText = memo((props: {id: string}) => {
+  const classes = useStyles();
+  const {id} = props;
+  return (
+    <ListItemText
+      classes={{ primary: classes.selectAllText }}
+      primary="すべて選択する"
+      id={id + "-text-selectall"}
+    />
+  )
+},(a, b) => {
+  return a.id === b.id;
 })
 
 const CustomMenuItem = memo((props: { title: string, id: string, index: number, default_checked: boolean, onSelected?: (index: number, checked: boolean) => void }) => {
