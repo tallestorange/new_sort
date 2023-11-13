@@ -7,15 +7,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
 
-interface Props {
+interface Props<T> {
   title: string;
   id: string;
-  items: string[];
-  default_selected: string[];
-  sort: boolean;
-  sortFunction?: (left: string, right: string) => number;
+  items: T[];
+  default_selected: T[];
+  title_convert_func: (input: T) => string;
+  on_render_func: (input: T[]) => string;
   enabled: boolean;
-  onValueChanged?: (items: string[]) => void;
+  onValueChanged?: (items: T[]) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -45,9 +45,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SearchSelect = memo((props: Props) => {
-  const { default_selected, onValueChanged, items, title, id, sort, enabled, sortFunction } = props;
-  const [currentItems, setCurrentItems] = useState<string[]>(default_selected);
+const SearchSelect = <T extends {}>(props: Props<T>) => {
+  const { default_selected, onValueChanged, items, title, id, enabled, on_render_func } = props;
+  const [currentItems, setCurrentItems] = useState<T[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
   const allSelectedSet = useMemo(() => {
     const v = new Set<number>();
@@ -72,12 +72,9 @@ const SearchSelect = memo((props: Props) => {
   }, [default_selected, items]);
 
   const renderValue = useCallback((selected: any) => {
-    let result: string[] = selected;
-    if (sort) {
-      result.sort(sortFunction);
-    }
-    return result.join(', ');
-  }, [sortFunction, sort]);
+    let result: T[] = selected;
+    return on_render_func(result);
+  }, [on_render_func]);
 
   const handleChange = useCallback((index: number, selected: boolean) => {
     if (selected) {
@@ -98,7 +95,7 @@ const SearchSelect = memo((props: Props) => {
       onValueChanged?.([])
     }
     else {
-      selectedSet.current = allSelectedSet;
+      selectedSet.current = new Set(allSelectedSet);
       setCurrentItems(items)
       onValueChanged?.(items)
     }
@@ -131,17 +128,17 @@ const SearchSelect = memo((props: Props) => {
         {items.map((val, index) => {
           return (
             <div key={index}>
-              <CustomMenuItem title={val} id={id} index={index} default_checked={selectedSet.current!.has(index)} onSelected={handleChange} />
+              <CustomMenuItem title={props.title_convert_func(val)} id={id} index={index} default_checked={selectedSet.current!.has(index)} onSelected={handleChange} />
             </div>
           )
         })}
       </Select>
     </FormControl>
   );
-},
-(before, after) => {
-  return before.default_selected === after.default_selected && before.items === after.items;
-});
+}//,
+//(before, after) => {
+//  return before.default_selected === after.default_selected && before.items === after.items;
+//});
 
 const CustomListItemText = memo((props: { title: string, id: string, index: number}) => {
   return (

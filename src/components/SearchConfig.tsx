@@ -31,7 +31,7 @@ export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: 
     <Button
       disabled={!props.enabled}
       onClick={props.onClick}
-      color="secondary">
+      color="primary">
       ソート開始
     </Button>
   )

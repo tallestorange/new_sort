@@ -195,10 +195,10 @@ interface NPDatabase {
  * CSVから非同期でメンバ情報を拾ってくる
  * @returns メンバ一覧
  */
-export const fetchCSVAsync = async (): Promise<Member[]> => {
-  const response = await fetch(NP_DB_MEMBERS);
+export const fetchCSVAsync = async <T>(filename: string): Promise<T> => {
+  const response = await fetch(filename);
   const text = await response.text();
-  const parsedCSV: Member[] = parse(text, { columns: true });
+  const parsedCSV: T = parse(text, { columns: true });
   return parsedCSV;
 }
 
@@ -281,7 +281,7 @@ export default function useNPDatabase(): NPDatabase {
   // 初期化処理
   useEffect(() => {
     console.log("initialize started")
-    fetchCSVAsync().then(initializeDatabase).then(() => {
+    fetchCSVAsync<Member[]>(NP_DB_MEMBERS).then(initializeDatabase).then(() => {
       console.log("initialize finished");
     });
     // eslint-disable-next-line

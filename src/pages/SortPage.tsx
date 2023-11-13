@@ -226,7 +226,7 @@ function SortResultPage(props: {
         {getResultPictures(4, 6)}
       </Grid>
       <Grid container item xs={12} justifyContent="center">
-        {getResultPictures(7, 11)}
+        {getResultPictures(7, 10)}
       </Grid>
     </Grid>
 

@@ -3,9 +3,10 @@ import "../App.css";
 import { TITLE, LATEST_CHANGE_LOG, PREF_SORT_MAP, SORT_PATH } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import SearchConfig, { CanVoteCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
-import { InitialState, SortSettings } from "../hooks/useNPDatabase";
+import { InitialState, Member, SortSettings } from "../hooks/useNPDatabase";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Group, GroupParsed, MemberParsed, fetchHPDBAsync } from "../hooks/useHPDatabase";
 
 interface Props {
   initial_state: InitialState,
@@ -28,6 +29,72 @@ export default function Search(props: Props) {
     sortConfig.current = val;
   }, []);
 
+  const [groups, setGroups] = useState<GroupParsed[]>([]);
+  const [members, setMembers] = useState<Map<number, MemberParsed>>(new Map<number, MemberParsed>());
+
+  useEffect(() => {
+    fetchHPDBAsync().then((params) => {
+      const {groups, members} = params;
+      setGroups(groups);
+      setMembers(members);
+    });
+  }, []);
+
+  const onChanged = useCallback((v: GroupParsed[]) => {
+    const result = new Set<number>();
+    let count = 0;
+    for (const [key, value] of members) {
+      if (value.groups === undefined) {
+        continue;
+      }
+      for (const group of value.groups) {
+        if (result.has(key)) {
+          break
+        }
+        for (const i of v) {
+          if (i.groupID !== group.groupID) {
+            continue;
+          }
+          count++;
+
+          let from = i.formDate;
+          let to = i.dissolveDate;
+          let join = group.joinDate;
+          let grad = group.gradDate;
+
+          if (i.dissolveDate !== undefined) {
+            if (value.HPgradDate !== undefined) {
+              if ((from! <= grad! && grad! <= to!) || (from! <= join! && join! <= to!) || (join! <= from! && to! <= grad!)) {
+                result.add(key);
+                break;
+              }
+            }
+            else {
+              if (join! <= to!) {
+                result.add(key);
+                break;
+              }
+            }
+          }
+          else {
+            if (value.HPgradDate !== undefined) {
+              if (from! <= grad! || from! <= join!) {
+                result.add(key);
+                break;
+              }
+            }
+            else {
+              result.add(key);
+              break;
+            }
+          }
+        }
+      }
+    }
+    console.log(Array.from(result).map((v) => {return members.get(v)!.memberName}))
+    // console.log(v, members);
+  }, [members]);
+
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -38,52 +105,18 @@ export default function Search(props: Props) {
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect 
-            title="MBTI"
-            id="mbti"
-            sort={true}
-            enabled={props.initial_state.initial_mbtis.initialized && props.initial_state.current_mbtis.initialized}
-            items={props.initial_state.initial_mbtis.items}
-            default_selected={props.initial_state.current_mbtis.items}
-            onValueChanged={props.setMBTIs} />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="出身地"
-            id="birthplace"
-            sort={true}
-            sortFunction={(a, b) => { return PREF_SORT_MAP.get(a)! - PREF_SORT_MAP.get(b)! }}
-            enabled={props.initial_state.initial_birthplaces.initialized && props.initial_state.current_birthplaces.initialized}
-            items={props.initial_state.initial_birthplaces.items}
-            default_selected={props.initial_state.current_birthplaces.items}
-            onValueChanged={props.setBirthPlaces} />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="身長"
-            id="height"
-            sort={true}
-            enabled={props.initial_state.initial_heights.initialized && props.initial_state.current_heights.initialized}
-            items={props.initial_state.initial_heights.items}
-            default_selected={props.initial_state.current_heights.items}
-            onValueChanged={props.setHeights} />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect
-            title="生まれ年"
-            id="birthyear"
-            sort={true}
-            enabled={props.initial_state.initial_birthyears.initialized && props.initial_state.current_birthyears.initialized}
-            items={props.initial_state.initial_birthyears.items}
-            default_selected={props.initial_state.current_birthyears.items}
-            onValueChanged={props.setYears} />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <ResultText count={props.target_members_count} />
-        </Grid>
-        <Grid>
-          <CanVoteCheckBox canVote={props.can_vote_only} setCanVote={props.setCanVote} />
-          <SearchConfig onSortSettingsUpdated={setSortSetting} />
+          <SearchSelect<GroupParsed>
+            title="所属グループ"
+            id="groups-belong"
+            enabled={true}
+            items={groups}
+            default_selected={[]}
+            title_convert_func={(a) => {return a.groupName}}
+            on_render_func={(v) => { 
+              v.sort((a, b) => { return a.groupID - b.groupID })
+              return v.map((a) => { return a.groupName }).join(', ')
+            }}
+            onValueChanged={onChanged} />
         </Grid>
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>

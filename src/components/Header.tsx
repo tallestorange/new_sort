@@ -12,7 +12,7 @@ interface Props {
 
 function Header(props: Props) {
   return (
-    <AppBar position="static" style={{ color: 'white', backgroundColor: "rgb(237, 114, 176)", boxShadow: "none" }}>
+    <AppBar position="static" style={{ color: 'white', backgroundColor: "rgb(33, 150, 243)", boxShadow: "none" }}>
       <Toolbar>
         <Typography variant="h5" style={{ flexGrow: 1, fontWeight: 500 }}>{props.children}</Typography>
         <IconButton
