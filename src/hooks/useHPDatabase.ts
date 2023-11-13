@@ -10,6 +10,8 @@ export interface Member {
   HPjoinDate: string;
   debutDate: string;
   HPgradDate: string;
+  memberKana: string;
+  birthDate: string;
 }
 
 export interface Group {
@@ -42,10 +44,12 @@ export interface GroupParsed {
 
 export interface MemberParsed {
   memberName: string;
-  HPjoinDate?: Date;
+  HPjoinDate: Date;
   debutDate?: Date;
   HPgradDate?: Date;
-  groups: {groupID: number, joinDate?: Date, gradDate?: Date}[];
+  memberKana: string;
+  birthDate: Date;
+  groups: {groupID: number, joinDate: Date, gradDate?: Date}[];
 }
 
 const parseDate = (dateString: string): Date | undefined => {
@@ -68,9 +72,11 @@ export const fetchHPDBAsync = async (): Promise<{groups: GroupParsed[], members:
   for(const member of members) {
     const val: MemberParsed = {
       memberName: member.memberName,
-      HPjoinDate: parseDate(member.HPjoinDate),
+      HPjoinDate: parseDate(member.HPjoinDate)!,
       debutDate: parseDate(member.debutDate),
       HPgradDate: parseDate(member.HPgradDate),
+      memberKana: member.memberKana,
+      birthDate: parseDate(member.birthDate)!,
       groups: []
     }
 
@@ -78,32 +84,32 @@ export const fetchHPDBAsync = async (): Promise<{groups: GroupParsed[], members:
     result.set(memberID, val);
   }
 
-  const joinMap: Map<number, {groupID: number, joinDate?: Date, gradDate?: Date}[]> = new Map<number, {groupID: number, joinDate?: Date, gradDate?: Date}[]>();
+  const joinMap: Map<number, {groupID: number, joinDate: Date, gradDate?: Date}[]> = new Map<number, {groupID: number, joinDate: Date, gradDate?: Date}[]>();
   for(const joinData of join) {
     if (!joinMap.has(joinData.memberID)) {
       joinMap.set(joinData.memberID, []);
     }
     joinMap.get(joinData.memberID)!.push({
       groupID: joinData.groupID,
-      joinDate: parseDate(joinData.joinDate),
+      joinDate: parseDate(joinData.joinDate)!,
       gradDate: parseDate(joinData.gradDate)});
   }
 
-  const groupMap: Map<number, {groupName: string, formDate?: Date, dissolveDate?: Date, isUnit: string}[]> = new Map<number, {groupName: string, formDate?: Date, dissolveDate?: Date, isUnit: string}[]>();
+  const groupMap: Map<number, {groupName: string, formDate: Date, dissolveDate?: Date, isUnit: string}[]> = new Map<number, {groupName: string, formDate: Date, dissolveDate?: Date, isUnit: string}[]>();
   for(const groupData of group) {
     if (!groupMap.has(groupData.groupID)) {
       groupMap.set(groupData.groupID, []);
     }
     groupMap.get(groupData.groupID)!.push({
       groupName: groupData.groupName,
-      formDate: parseDate(groupData.formDate),
+      formDate: parseDate(groupData.formDate)!,
       dissolveDate: parseDate(groupData.dissolveDate),
       isUnit: groupData.isUnit})
   }
   // console.log(groupMap)
   // console.log(joinMap)
   group.sort((a, b) => (a.groupID - b.groupID));
-  console.log(group);
+  // console.log(group);
   // 77 ゆうかりん
 
   for(const key of Array.from( result.keys() )) {

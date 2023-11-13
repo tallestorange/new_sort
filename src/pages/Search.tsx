@@ -62,8 +62,8 @@ export default function Search(props: Props) {
           let join = group.joinDate;
           let grad = group.gradDate;
 
-          if (i.dissolveDate !== undefined) {
-            if (value.HPgradDate !== undefined) {
+          if (to !== undefined) {
+            if (grad !== undefined) {
               if ((from! <= grad! && grad! <= to!) || (from! <= join! && join! <= to!) || (join! <= from! && to! <= grad!)) {
                 result.add(key);
                 break;
@@ -77,8 +77,8 @@ export default function Search(props: Props) {
             }
           }
           else {
-            if (value.HPgradDate !== undefined) {
-              if (from! <= grad! || from! <= join!) {
+            if (grad !== undefined) {
+              if (from! <= grad!) {
                 result.add(key);
                 break;
               }
@@ -91,7 +91,7 @@ export default function Search(props: Props) {
         }
       }
     }
-    console.log(Array.from(result).map((v) => {return members.get(v)!.memberName}))
+    console.log(Array.from(result).map((v) => {return members.get(v)!}))
     // console.log(v, members);
   }, [members]);
 
