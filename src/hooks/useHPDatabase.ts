@@ -63,7 +63,7 @@ export interface MemberParsed {
   debutDate?: Date;
   HPgradDate?: Date;
   memberKana: string;
-  birthDate: Date;
+  birthDate?: Date;
   groups: {groupID: number, joinDate: Date, gradDate?: Date}[];
 }
 
@@ -261,7 +261,7 @@ export const nameRenderFunction = (member: MemberParsed):string => {
 
 export const profileRenderFunction = (member: MemberParsed):string[] => {
   const res:string[] = [
-    `誕生日: ${formatDate(member.birthDate)}`,
+    `誕生日: ${member.birthDate ? formatDate(member.birthDate) : "N/A"}`,
     `H!P加入日: ${formatDate(member.HPjoinDate)}`,
     `デビュー日: ${member.debutDate ? formatDate(member.debutDate) : "N/A"}`,
   ];
