@@ -31,6 +31,7 @@ export default function App() {
                 const res:string[] = [
                   `誕生日: ${formatDate(v.birthDate)}`,
                   `H!P加入日: ${formatDate(v.HPjoinDate)}`,
+                  `デビュー日: ${v.debutDate ? formatDate(v.debutDate) : "N/A"}`,
                 ];
                 return res;
               }}
