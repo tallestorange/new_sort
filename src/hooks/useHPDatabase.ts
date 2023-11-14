@@ -189,7 +189,6 @@ export function useHPDatabase(): HPDatabase {
 
   useEffect(() => {
     const result = search(groups);
-    console.log(result);
     setMembers(result);
   }, [groups, search]);
 

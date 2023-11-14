@@ -2,7 +2,7 @@ import Grid from "@material-ui/core/Grid";
 import "../App.css";
 import { TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
-import { SortStartButton } from "../components/SearchConfig";
+import { ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { GroupParsed } from "../hooks/useHPDatabase";
@@ -50,6 +50,9 @@ export default function Search(props: Props) {
             }} 
             />
         </Grid>
+      </Grid>
+      <Grid container item xs={12} justifyContent="center" spacing={0}>
+        <ResultText count={target_members_count} />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SortStartButton enabled={target_members_count > 0} onClick={onSortButtonClicked}/>
