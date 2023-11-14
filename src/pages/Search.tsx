@@ -4,14 +4,14 @@ import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modu
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useRef, useState } from "react";
-import { GroupParsed } from "../hooks/useHPDatabase";
+import { useCallback, useRef } from "react";
+import { GroupParsed, InitParams } from "../hooks/useHPDatabase";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 
 interface Props {
-  allgroups: GroupParsed[];
+  initialState: InitParams;
   target_members_count: number;
   setGroups: (members: GroupParsed[]) => void;
   includeOG: boolean;
@@ -27,10 +27,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Search(props: Props) {
-  const [groupsSelected, setGroupsSelected] = useState<GroupParsed[]>([]);
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
 
-  const {allgroups, target_members_count, setGroups, includeOG, setIncludeOG} = props;
+  const {initialState, target_members_count, setGroups, setIncludeOG, includeOG} = props;
   const classes = useStyles();
 
   const navigate = useNavigate();
@@ -39,13 +38,15 @@ export default function Search(props: Props) {
   }, [navigate]);
 
   const renderGroups = useCallback((v: GroupParsed[]): string => {
-    v.sort((a, b) => { return a.groupID - b.groupID });
-    return v.map((a) => { return a.groupName }).join(', ');
-  }, []);
-  const groupsChanged = useCallback((v: GroupParsed[]) => {
-    setGroupsSelected(v);
-    setGroups(v);
-  }, [setGroups, setGroupsSelected]);
+    if (initialState.initialized) {
+      v.sort((a, b) => { return a.groupID - b.groupID });
+      return v.map((a) => { return a.groupName }).join(', ');
+    }
+    else {
+      return "読み込み中...";
+    }
+  }, [initialState]);
+
   const groupName = useCallback((v: GroupParsed):string => {
     return v.groupName;
   }, []);
@@ -69,12 +70,12 @@ export default function Search(props: Props) {
           <SearchSelect<GroupParsed>
             title="所属グループ"
             id="groups-belong"
-            enabled={true}
-            items={allgroups}
-            default_selected={groupsSelected}
+            enabled={initialState.initialized}
+            items={initialState.allgroups}
+            default_selected={initialState.groups_stored}
             title_convert_func={groupName}
             on_render_func={renderGroups}
-            onValueChanged={groupsChanged}
+            onValueChanged={setGroups}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>

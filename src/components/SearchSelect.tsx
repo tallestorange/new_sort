@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SearchSelectBase = <T extends {}>(props: Props<T>) => {
+const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
   const { default_selected, onValueChanged, items, title, id, enabled, on_render_func } = props;
   const [currentItems, setCurrentItems] = useState<T[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
@@ -55,10 +55,12 @@ const SearchSelectBase = <T extends {}>(props: Props<T>) => {
 
   useEffect(() => {
     selectedSet.current = new Set<number>();
+    const tgt = items.map((v) => {return v.unique_id});
     for (let selected_item of default_selected) {
-      selectedSet.current.add(items.indexOf(selected_item));
+      selectedSet.current.add(tgt.indexOf(selected_item.unique_id));
     }
     setCurrentItems(default_selected)
+    // onValueChanged?.(default_selected)
   }, [default_selected, items]);
 
   const renderValue = useCallback((selected: any) => {

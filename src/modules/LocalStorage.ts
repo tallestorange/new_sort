@@ -1,75 +1,32 @@
-const LOCALSTORAGE_KEY_MBTIS : string = "mbtis";
-const LOCALSTORAGE_KEY_BIRTHPLACES : string = "birthplaces";
-const LOCALSTORAGE_KEY_HEIGHTS : string = "heights";
-const LOCALSTORAGE_KEY_YEARS : string = "years";
-const LOCALSTORAGE_KEY_CAN_VOTE : string = "can_vote_only";
+import { GroupParsed } from "../hooks/useHPDatabase";
 
-export const getMBTIsFromLocalStorage = (onError?: () => void): string[] => {
-  let result = []
+const LOCALSTORAGE_KEY_GROUPS : string = "groups";
+const LOCALSTORAGE_KEY_INCLUDE_OG : string = "include_og";
+
+export const getGroupsFromLocalStorage = (all_groups: GroupParsed[], onError?: () => void): GroupParsed[] => {
+  let keys: number[] = []
   try {
-    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_MBTIS) || "[]");
+    keys = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_GROUPS) || "[]");
   } catch (error) {
     onError?.();
   }
-  return result;
+  return keys.map((v) => {return all_groups[v]});
 }
 
-export const setMBTIsToLocalStorage = (mbtis: string[]): void => {
-  localStorage.setItem(LOCALSTORAGE_KEY_MBTIS, JSON.stringify(mbtis))
+export const setGroupsToLocalStorage = (groups: GroupParsed[]): void => {
+  localStorage.setItem(LOCALSTORAGE_KEY_GROUPS, JSON.stringify(groups.map((v) => {return v.unique_id})))
 }
 
-export const getBirthPlacesFromLocalStorage = (onError?: () => void): string[] => {
-  let result = []
-  try {
-    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_BIRTHPLACES) || "[]");
-  } catch (error) {
-    onError?.();
-  }
-  return result;
-}
-
-export const setBirthPlacesToLocalStorage = (birthplaces: string[]): void => {
-  localStorage.setItem(LOCALSTORAGE_KEY_BIRTHPLACES, JSON.stringify(birthplaces))
-}
-
-export const getHeightsFromLocalStorage = (onError?: () => void): string[] => {
-  let result = []
-  try {
-    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_HEIGHTS) || "[]");
-  } catch (error) {
-    onError?.();
-  }
-  return result;
-}
-
-export const setHeightsToLocalStorage = (heights: string[]): void => {
-  localStorage.setItem(LOCALSTORAGE_KEY_HEIGHTS, JSON.stringify(heights))
-}
-
-export const getYearsFromLocalStorage = (onError?: () => void): string[] => {
-  let result = []
-  try {
-    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_YEARS) || "[]");
-  } catch (error) {
-    onError?.();
-  }
-  return result;
-}
-
-export const setYearsToLocalStorage = (years: string[]): void => {
-  localStorage.setItem(LOCALSTORAGE_KEY_YEARS, JSON.stringify(years))
-}
-
-export const getCanVoteFromLocalStorage = (onError?: () => void): boolean => {
+export const getIncludeOGFromLocalStorage = (onError?: () => void): boolean => {
   let result = false
   try {
-    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_CAN_VOTE) || "false");
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_INCLUDE_OG) || "true");
   } catch (error) {
     onError?.();
   }
   return result;
 }
 
-export const setCanVoteToLocalStorage = (can_vote_only: boolean): void => {
-  localStorage.setItem(LOCALSTORAGE_KEY_CAN_VOTE, JSON.stringify(can_vote_only))
+export const setIncludeOGToLocalStorage = (include_og: boolean): void => {
+  localStorage.setItem(LOCALSTORAGE_KEY_INCLUDE_OG, JSON.stringify(include_og))
 }

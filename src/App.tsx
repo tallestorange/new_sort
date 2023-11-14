@@ -8,7 +8,7 @@ import "./App.css";
 import { MemberParsed, nameRenderFunction, profileRenderFunction, useHPDatabase } from "./hooks/useHPDatabase";
 
 export default function App() {
-  const { allgroups, setGroups, members, includeOG, setIncludeOG } = useHPDatabase();
+  const { initialState, setGroups, members, includeOG, setIncludeOG } = useHPDatabase();
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -16,7 +16,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={
             <Search
-              allgroups={allgroups}
+              initialState={initialState}
               target_members_count={members.size}
               setGroups={setGroups}
               includeOG={includeOG}

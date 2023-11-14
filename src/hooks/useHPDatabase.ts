@@ -2,8 +2,9 @@ import HP_DB_MEMBERS from "../HP_DB/member.csv";
 import HP_DB_JOIN from "../HP_DB/join.csv";
 import HP_DB_GROUP from "../HP_DB/group.csv";
 import { fetchCSVAsync } from "../modules/CSVLoader";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
+import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage } from "../modules/LocalStorage";
 
 export interface Member {
   memberID: number;
@@ -36,6 +37,7 @@ export interface Join {
 // }
 
 export interface GroupParsed {
+  unique_id: number;
   groupID: number;
   groupName: string;
   formDate: Date;
@@ -54,27 +56,51 @@ export interface MemberParsed {
 }
 
 interface HPDatabase {
-  allgroups: GroupParsed[],
+  initialState: InitParams,
   setGroups: (v: GroupParsed[]) => void;
   members: Map<string, MemberParsed>;
   includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
 }
 
-export function useHPDatabase(): HPDatabase {
-  const [allgroups, setAllGroups] = useState<GroupParsed[]>([]);
-  const [allmembers, setAllMembers] = useState<Map<number, MemberParsed>>(new Map<number, MemberParsed>());
-  const [members, setMembers] = useState<Map<string, MemberParsed>>(new Map<string, MemberParsed>());
-  const [groups, setGroups] = useState<GroupParsed[]>([]);
-  const [includeOG, setIncludeOG] = useState<boolean>(true);
+export interface InitParams {
+  allgroups: GroupParsed[],
+  groups_stored: GroupParsed[],
+  members: Map<number, MemberParsed>,
+  initialized: boolean;
+}
 
-  const initializeAsync = async (): Promise<{groups: GroupParsed[], members: Map<number, MemberParsed>}> => { // Map<string, MemberParsed>
+export function useHPDatabase(): HPDatabase {
+  const allgroups = useRef<GroupParsed[]>([]);
+  const groups = useRef<GroupParsed[]>([]);
+  const allmembers = useRef<Map<number, MemberParsed>>(new Map<number, MemberParsed>());
+  const [includeOG, setIncludeOG] = useState<boolean>(true);
+  const include_og = useRef<boolean>(true);
+
+  const [members, setMembers] = useState<Map<string, MemberParsed>>(new Map<string, MemberParsed>());
+  
+  const [initialState, setInitialState] = useState<InitParams>({
+    allgroups: [],
+    groups_stored: [],
+    members: new Map<number, MemberParsed>(),
+    initialized: false,
+  });
+
+  const initializeAsync = async (): Promise<InitParams> => {
+    const include_og_local = getIncludeOGFromLocalStorage(() => {
+      setIncludeOGToLocalStorage(true);
+    });
+    include_og.current = include_og_local;
+    setIncludeOG(include_og_local);
+
     const members = await fetchCSVAsync<Member[]>(HP_DB_MEMBERS);
     const join = await fetchCSVAsync<Join[]>(HP_DB_JOIN);
     const group = await fetchCSVAsync<Group[]>(HP_DB_GROUP);
-  
-    const groupParsed: GroupParsed[] = group.map((v) => { return { groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
-    groupParsed.sort((a, b) => (a.groupID - b.groupID));
+    
+    group.sort((a, b) => (a.groupID - b.groupID));
+    const groupParsed: GroupParsed[] = group.map((v, idx) => { return { unique_id: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
+    
+    allgroups.current = groupParsed;
 
     const result: Map<number, MemberParsed> = new Map<number, MemberParsed>();
     for(const member of members) {
@@ -106,13 +132,19 @@ export function useHPDatabase(): HPDatabase {
     for(const key of Array.from( result.keys() )) {
       result.get(key)!.groups = joinMap.get(key)!
     }
+    allmembers.current = result;
+
+    const groups_stored_local = getGroupsFromLocalStorage(allgroups.current, () => {
+      setGroupsToLocalStorage([]);
+    });
+    groups.current = groups_stored_local;
   
-    return {groups: groupParsed, members: result};
+    return {allgroups: allgroups.current, groups_stored: groups.current, members: result, initialized: true};
   }
 
   const search = useCallback((v: GroupParsed[], includeOG: boolean): Map<string, MemberParsed> => {
     const result = new Set<number>();
-    for (const [key, value] of allmembers) {
+    for (const [key, value] of allmembers.current) {
       if (value.groups === undefined) {
         continue;
       }
@@ -168,36 +200,46 @@ export function useHPDatabase(): HPDatabase {
       }
     }
     const ret: Map<string, MemberParsed> = new Map(Array.from(result).map(i => {
-      const member = allmembers.get(i)!
+      const member = allmembers.current.get(i)!
       return [member.memberName, member]
     }))
     return ret;
-  }, [allmembers]);
+  }, []);
 
   // 初期化処理
   useEffect(() => {
     console.log("initialize started")
-    initializeAsync().then((params) => {
-      const {groups, members} = params;
-      setAllGroups(groups);
-      setAllMembers(members);
+    initializeAsync().then((init_params) => {
+      setInitialState(init_params);
+      const result = search(groups.current, include_og.current);
+      setMembers(result);
     }).then(() => {
       console.log("initialize finished");
     });
     // eslint-disable-next-line
   }, [])
 
-  useEffect(() => {
-    const result = search(groups, includeOG);
+  const setGroups = useCallback((val: GroupParsed[]) => {
+    groups.current = val;
+    setGroupsToLocalStorage(val);
+    const result = search(groups.current, include_og.current);
     setMembers(result);
-  }, [groups, includeOG, search]);
+  }, [search]);
+
+  const setIncludeOGInternal = useCallback((val: boolean) => {
+    include_og.current = val;
+    setIncludeOG(val);
+    setIncludeOGToLocalStorage(val);
+    const result = search(groups.current, include_og.current);
+    setMembers(result);
+  }, [search]);
 
   return {
-    allgroups: allgroups,
+    initialState: initialState,
     setGroups: setGroups,
     members: members,
     includeOG: includeOG,
-    setIncludeOG: setIncludeOG
+    setIncludeOG: setIncludeOGInternal
   }
 }
 
