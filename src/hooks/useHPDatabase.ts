@@ -71,7 +71,8 @@ export function useHPDatabase(): HPDatabase {
     const group = await fetchCSVAsync<Group[]>(HP_DB_GROUP);
   
     const groupParsed: GroupParsed[] = group.map((v) => { return { groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate), dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
-  
+    groupParsed.sort((a, b) => (a.groupID - b.groupID));
+
     const result: Map<number, MemberParsed> = new Map<number, MemberParsed>();
     for(const member of members) {
       const val: MemberParsed = {
