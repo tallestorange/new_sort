@@ -38,7 +38,7 @@ export interface Join {
 export interface GroupParsed {
   groupID: number;
   groupName: string;
-  formDate?: Date;
+  formDate: Date;
   dissolveDate?: Date;
   isUnit: string;
 }
@@ -70,7 +70,7 @@ export function useHPDatabase(): HPDatabase {
     const join = await fetchCSVAsync<Join[]>(HP_DB_JOIN);
     const group = await fetchCSVAsync<Group[]>(HP_DB_GROUP);
   
-    const groupParsed: GroupParsed[] = group.map((v) => { return { groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate), dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
+    const groupParsed: GroupParsed[] = group.map((v) => { return { groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
     groupParsed.sort((a, b) => (a.groupID - b.groupID));
 
     const result: Map<number, MemberParsed> = new Map<number, MemberParsed>();
@@ -141,13 +141,13 @@ export function useHPDatabase(): HPDatabase {
 
           if (to !== undefined) {
             if (grad !== undefined) {
-              if ((from! <= grad! && grad! <= to!) || (from! <= join! && join! <= to!) || (join! <= from! && to! <= grad!)) {
+              if ((from <= grad! && grad! <= to!) || (from <= join && join <= to!) || (join <= from && to! <= grad!)) {
                 result.add(key);
                 break;
               }
             }
             else {
-              if (join! <= to!) {
+              if (join <= to!) {
                 result.add(key);
                 break;
               }
@@ -155,7 +155,7 @@ export function useHPDatabase(): HPDatabase {
           }
           else {
             if (grad !== undefined) {
-              if (from! <= grad!) {
+              if (from <= grad!) {
                 result.add(key);
                 break;
               }

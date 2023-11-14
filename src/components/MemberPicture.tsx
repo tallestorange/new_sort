@@ -3,7 +3,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { IMAGE_DIR } from '../modules/Constants';
+import { IMAGE_DIR, PICTURE_FORMAT } from '../modules/Constants';
 import React from 'react';
 
 interface Props<T> {
@@ -39,7 +39,7 @@ const MemberPictureContent = <T extends {}>(props: {member: T, name_render_funct
       <CardMedia
         component="img"
         alt={memberName}
-        image={`${IMAGE_DIR}${memberName}.jpg`}
+        image={`${IMAGE_DIR}${memberName}.${PICTURE_FORMAT}`}
         title={memberName}
       />
       <CardContent>

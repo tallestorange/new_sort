@@ -13,7 +13,9 @@ groups = BeautifulSoup(group_list.text, 'html.parser').find('nav', {'class': 'ar
 links = groups.find_all('a')
 urls = []
 for pagelink in links:
-    urls.append(BeautifulSoup(str(pagelink), 'html.parser').find('a')['href'])
+    # print(pagelink)
+    urls.append(pagelink['href'])
+    # urls.append(BeautifulSoup(str(pagelink), 'html.parser').find('a')['href'])
 profile_page = []
 for pagelink in urls:
     profile_page.append('http://www.helloproject.com' + pagelink + 'profile/')
@@ -24,12 +26,14 @@ print(profile_page)
 
 group_member_link = []
 for link in profile_page:
+    print(link)
     group_page = requests.get(link)
     group_member_list = BeautifulSoup(group_page.text, 'html.parser')
     group_member_list = group_member_list.find('ul', {'id': 'profile_memberlist'})
 
     for member_link in group_member_list.find_all('div', {'class': 'photo_box'}):
-        member_link = 'http://www.helloproject.com' + BeautifulSoup(str(member_link), 'html.parser').find('a')['href']
+        member_link = 'http://www.helloproject.com' + member_link.find('a')['href']
+        print(member_link)
         group_member_link.append(member_link)
 #↑各メンバーのプロフィールページ取得
 
@@ -44,7 +48,7 @@ for member_profile_page_link in group_member_link:
     print(member_pic_link)
     urllib.request.urlretrieve(member_pic_link, member_name + '.jpg')
     img = Image.open(member_name + '.jpg')
-    img.save(member_name + '.jpg', 'jpeg', quality=85)
+    img.save(member_name + '.webp', quality=60)
     print('\n\n')
 #↑各メンバーの画像取得
 
@@ -79,6 +83,6 @@ for pagelink in og_artists('a'):
 #↑各アーティストの画像URL取得
     urllib.request.urlretrieve(og_pic_link, og_name + '.png')
     img = Image.open(og_name + '.png')
-    img.save(og_name + '.jpg', 'jpeg', quality=85)
+    img.save(member_name + '.webp', quality=60)
     os.remove(og_name + '.png')
 #↑保存及び変換

@@ -5,7 +5,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Box from "@material-ui/core/Box";
 import {GridSize} from "@material-ui/core/Grid";
-import { IMAGE_DIR } from "../modules/Constants";
+import { IMAGE_DIR, PICTURE_FORMAT } from "../modules/Constants";
 
 interface Props {
   name: string;
@@ -48,7 +48,7 @@ export default function ResultPicture(props: Props) {
           <CardMedia
             component="img"
             alt={props.name}
-            image={`${IMAGE_DIR}${props.name}.jpg`}
+            image={`${IMAGE_DIR}${props.name}.${PICTURE_FORMAT}`}
             title={props.name}
             style={styles.media}
           />
