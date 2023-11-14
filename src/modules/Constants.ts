@@ -7,4 +7,4 @@ export const SORT_PATH: string = "sort";
 export const NOW_LOADING: string = "読み込み中...";
 export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/14 実験中)";
 export const MAXIMUM_TWEET_MEMBERS_COUNT: number = 10;
-export const PICTURE_FORMAT: string = "jpg";
+export const PICTURE_FORMAT: string = "webp";

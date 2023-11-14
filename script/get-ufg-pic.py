@@ -83,6 +83,6 @@ for pagelink in og_artists('a'):
 #↑各アーティストの画像URL取得
     urllib.request.urlretrieve(og_pic_link, og_name + '.png')
     img = Image.open(og_name + '.png')
-    img.save(member_name + '.webp', quality=60)
+    img.save(og_name + '.webp', quality=60)
     os.remove(og_name + '.png')
 #↑保存及び変換
