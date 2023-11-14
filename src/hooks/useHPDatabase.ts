@@ -4,7 +4,7 @@ import HP_DB_GROUP from "../HP_DB/group.csv";
 import { fetchCSVAsync } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
-import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage } from "../modules/LocalStorage";
+import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
 
 interface StoredItem<T> {
   /**
@@ -73,6 +73,8 @@ interface HPDatabase {
   members: Map<string, MemberParsed>;
   includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
+  includeTrainee: boolean;
+  setIncludeTrainee: (includeTrainee: boolean) => void;
 }
 
 export interface InitParams {
@@ -88,6 +90,9 @@ export function useHPDatabase(): HPDatabase {
   const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<boolean>(true);
 
+  const [includeTrainee, setIncludeTrainee] = useState<boolean>(true);
+  const include_trainee = useRef<boolean>(true);
+
   const [members, setMembers] = useState<Map<string, MemberParsed>>(new Map<string, MemberParsed>());
   
   const [initialState, setInitialState] = useState<InitParams>({
@@ -101,6 +106,12 @@ export function useHPDatabase(): HPDatabase {
     });
     include_og.current = include_og_local;
     setIncludeOG(include_og_local);
+
+    const include_trainee_local = getIncludeTraineeFromLocalStorage(() => {
+      setIncludeTraineeToLocalStorage(true);
+    });
+    include_trainee.current = include_trainee_local;
+    setIncludeTrainee(include_trainee_local);
 
     const members = await fetchCSVAsync<Member[]>(HP_DB_MEMBERS);
     const join = await fetchCSVAsync<Join[]>(HP_DB_JOIN);
@@ -154,7 +165,7 @@ export function useHPDatabase(): HPDatabase {
     return {allgroups: allgroups.current, groups_stored: groups.current};
   }
 
-  const search = useCallback((v: GroupParsed[], includeOG: boolean): Map<string, MemberParsed> => {
+  const search = useCallback((v: GroupParsed[], includeOG: boolean, includeTrainee: boolean): Map<string, MemberParsed> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
@@ -166,6 +177,11 @@ export function useHPDatabase(): HPDatabase {
           if (now >= value.HPgradDate) {
             continue;
           }
+        }
+      }
+      if (!includeTrainee) {
+        if (value.debutDate === undefined) {
+          continue;
         }
       }
       for (const group of value.groups) {
@@ -223,7 +239,7 @@ export function useHPDatabase(): HPDatabase {
     console.log("initialize started")
     initializeAsync().then((init_params) => {
       setInitialState(init_params);
-      const result = search(groups.current.item, include_og.current);
+      const result = search(groups.current.item, include_og.current, include_trainee.current);
       setMembers(result);
     }).then(() => {
       console.log("initialize finished");
@@ -234,7 +250,7 @@ export function useHPDatabase(): HPDatabase {
   const setGroups = useCallback((val: GroupParsed[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
-    const result = search(groups.current.item, include_og.current);
+    const result = search(groups.current.item, include_og.current, include_trainee.current);
     setMembers(result);
   }, [search]);
 
@@ -242,7 +258,15 @@ export function useHPDatabase(): HPDatabase {
     include_og.current = val;
     setIncludeOG(val);
     setIncludeOGToLocalStorage(val);
-    const result = search(groups.current.item, include_og.current);
+    const result = search(groups.current.item, include_og.current, include_trainee.current);
+    setMembers(result);
+  }, [search]);
+
+  const setIncludeTraineeInternal = useCallback((val: boolean) => {
+    include_trainee.current = val;
+    setIncludeTrainee(val);
+    setIncludeTraineeToLocalStorage(val);
+    const result = search(groups.current.item, include_og.current, include_trainee.current);
     setMembers(result);
   }, [search]);
 
@@ -251,7 +275,9 @@ export function useHPDatabase(): HPDatabase {
     setGroups: setGroups,
     members: members,
     includeOG: includeOG,
-    setIncludeOG: setIncludeOGInternal
+    setIncludeOG: setIncludeOGInternal,
+    includeTrainee: includeTrainee,
+    setIncludeTrainee: setIncludeTraineeInternal
   }
 }
 

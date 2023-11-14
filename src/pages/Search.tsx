@@ -16,6 +16,8 @@ interface Props {
   setGroups: (members: GroupParsed[]) => void;
   includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
+  includeTrainee: boolean;
+  setIncludeTrainee: (includeTrainee: boolean) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -29,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Search(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
 
-  const {initialState, target_members_count, setGroups, setIncludeOG, includeOG} = props;
+  const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee} = props;
   const classes = useStyles();
 
   const navigate = useNavigate();
@@ -74,7 +76,10 @@ export default function Search(props: Props) {
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <LabelCheckBox checked={includeOG} setChecked={setIncludeOG} form_id="checkbox-form-hobby" checkbox_id="checkbox-hobby" label="OGを含める" />
+          <LabelCheckBox checked={includeOG} setChecked={setIncludeOG} form_id="checkbox-form-include-og" checkbox_id="checkbox-include-og" label="OGを含める" />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox checked={includeTrainee} setChecked={setIncludeTrainee} form_id="checkbox-form-promote" checkbox_id="checkbox-promote" label="未昇格メンバーを含む" />
         </Grid>
       </Grid>
       
