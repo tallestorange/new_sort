@@ -27,7 +27,7 @@ export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: 
 export const LabelCheckBox = React.memo((props: {checked: boolean, setChecked?: (canVote: boolean) => void, form_id: string, checkbox_id: string, label: string}) => {
   return (
     <FormGroup>
-      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked?.(event.target.checked) }} />} label={props.label} />
+      <FormControlLabel id={props.form_id} control={<Checkbox color="primary" checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked?.(event.target.checked) }} />} label={props.label} />
     </FormGroup>
   )
 }, (before, after) => {

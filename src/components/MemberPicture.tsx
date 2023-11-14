@@ -4,7 +4,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { IMAGE_DIR, PICTURE_FORMAT } from '../modules/Constants';
-import React from 'react';
+import { memo } from 'react';
 
 interface Props<T> {
   member: T;
@@ -29,7 +29,7 @@ export default function MemberPicture<T extends {}>(props: Props<T>) {
   );
 }
 
-const MemberPictureContent = <T extends {}>(props: {member: T, name_render_function: (member: T) => string, profile_render_function?: (member: T) => string[]}) => {
+const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_function: (member: T) => string, profile_render_function?: (member: T) => string[]}) => {
   const {member, name_render_function, profile_render_function} = props;
   const memberName = name_render_function(member);
   const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
@@ -63,6 +63,8 @@ const MemberPictureContent = <T extends {}>(props: {member: T, name_render_funct
       </CardContent>
     </CardActionArea>
   );
-}//, (before, after) => {
-//  return before.member.name === after.member.name;
-// })
+}
+
+const MemberPictureContent = memo(MemberPictureContentBase, (before, after) => {
+  return before.member === after.member;
+}) as typeof MemberPictureContentBase;
