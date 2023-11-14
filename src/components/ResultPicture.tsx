@@ -17,7 +17,7 @@ export default function ResultPicture(props: Props) {
   {
     media: {
       width: 96,
-      height: 96,
+      height: 80,
       zoom: 1
     }
   };

@@ -60,7 +60,7 @@ export default function Search(props: Props) {
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <FormControl className={classes.formControl} fullWidth>
-            <TextField id="outlined-basic" label="ソート名" defaultValue={DEFAULT_SORT_TITLE} variant="standard" onChange={(v) => {sortTitle.current = v.target.value}} />
+            <TextField id="outlined-basic" label="ソート名(※結果表示に使います)" defaultValue={DEFAULT_SORT_TITLE} variant="standard" onChange={(v) => {sortTitle.current = v.target.value}} />
           </FormControl>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
