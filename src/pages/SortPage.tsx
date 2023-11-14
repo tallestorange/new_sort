@@ -12,12 +12,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
+import { DEFAULT_SORT_TITLE, HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
 import { useCallback } from "react";
+import { useLocation } from 'react-router-dom';
 
 interface Props<T> {
   members: Map<string, T>;
-  sortName: string;
   initialized: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
@@ -30,7 +30,10 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T>(props: Props<T>) {
-  const {members, sortName, initialized, name_render_function, profile_render_function} = props;
+  const {members, initialized, name_render_function, profile_render_function} = props;
+
+  const location = useLocation();
+  const sortName = location.state === null ? DEFAULT_SORT_TITLE : location.state as string;
 
   const sort = useRef<Sorter>();
   const target_members = useRef<Map<string, T>>(members);

@@ -25,7 +25,6 @@ export default function App() {
           <Route path={`/${SORT_PATH}`} element={
             <SortPage<MemberParsed> 
               members={members}
-              sortName={TITLE}
               initialized={true}
               name_render_function={nameRenderFunction}
               profile_render_function={profileRenderFunction}

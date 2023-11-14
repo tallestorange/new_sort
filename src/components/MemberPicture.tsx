@@ -19,9 +19,6 @@ export default function MemberPicture<T>(props: Props<T>) {
   {
     card: {
       maxWidth: 345,
-    },
-    media: {
-      height: "300px"
     }
   };
 
@@ -36,6 +33,12 @@ const MemberPictureContent = <T extends {}>(props: {member: T, name_render_funct
   const {member, name_render_function, profile_render_function} = props;
   const memberName = name_render_function(member);
   const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
+  const styles =
+  {
+    media: {
+      height: "300px"
+    }
+  };
 
   return (
     <CardActionArea>
@@ -44,6 +47,7 @@ const MemberPictureContent = <T extends {}>(props: {member: T, name_render_funct
         alt={memberName}
         image={`${IMAGE_DIR}${memberName}.${PICTURE_FORMAT}`}
         title={memberName}
+        style={styles.media}
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="h2">

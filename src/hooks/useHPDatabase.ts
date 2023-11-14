@@ -103,19 +103,6 @@ export function useHPDatabase(): HPDatabase {
         gradDate: parseDate(joinData.gradDate)});
     }
   
-    // const groupMap: Map<number, {groupName: string, formDate: Date, dissolveDate?: Date, isUnit: string}[]> = new Map<number, {groupName: string, formDate: Date, dissolveDate?: Date, isUnit: string}[]>();
-    // for(const groupData of group) {
-    //   if (!groupMap.has(groupData.groupID)) {
-    //     groupMap.set(groupData.groupID, []);
-    //   }
-    //   groupMap.get(groupData.groupID)!.push({
-    //     groupName: groupData.groupName,
-    //     formDate: parseDate(groupData.formDate)!,
-    //     dissolveDate: parseDate(groupData.dissolveDate),
-    //     isUnit: groupData.isUnit})
-    // }
-  
-    group.sort((a, b) => (a.groupID - b.groupID));
     for(const key of Array.from( result.keys() )) {
       result.get(key)!.groups = joinMap.get(key)!
     }

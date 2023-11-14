@@ -24,16 +24,6 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 120,
     maxWidth: 450,
   },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
   selectAllText: {
     fontWeight: 700
   },
