@@ -29,7 +29,7 @@ interface Props<T> {
  * @param props 
  * @returns 
  */
-export default function SortPage<T>(props: Props<T>) {
+export default function SortPage<T extends {}>(props: Props<T>) {
   const {members, initialized, name_render_function, profile_render_function} = props;
 
   const location = useLocation();
@@ -64,7 +64,7 @@ export default function SortPage<T>(props: Props<T>) {
  * @param props 
  * @returns 
  */
-function NowSortPage<T>(props: {
+function NowSortPage<T extends {}>(props: {
   members: Map<string, T>;
   sortName: string;
   name_render_function: (membeer: T) => string;

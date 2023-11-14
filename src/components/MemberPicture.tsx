@@ -13,7 +13,7 @@ interface Props<T> {
   onClick?: any;
 }
 
-export default function MemberPicture<T>(props: Props<T>) {
+export default function MemberPicture<T extends {}>(props: Props<T>) {
   const {member, name_render_function, profile_render_function} = props;
   const styles =
   {
