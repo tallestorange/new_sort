@@ -48,7 +48,7 @@ export default function ResultPicture(props: Props) {
           <CardMedia
             component="img"
             alt={props.name}
-            image={`${IMAGE_DIR}${props.name}.webp`}
+            image={`${IMAGE_DIR}${props.name}.jpg`}
             title={props.name}
             style={styles.media}
           />

@@ -3,28 +3,13 @@ import Search from './pages/Search';
 import { SORT_PATH, TITLE } from './modules/Constants'
 import Layout from "./components/Layout";
 import SortPage from "./pages/SortPage";
-import useNPDatabase from "./hooks/useNPDatabase";
 
 import "./App.css";
-import { useMemo } from "react";
+import { MemberParsed, useHPDatabase } from "./hooks/useHPDatabase";
+import { formatDate } from "./modules/DateUtils";
 
 export default function App() {
-  const {
-    initial_state,
-    can_vote_only,
-    setMBTIs,
-    setBirthPlaces,
-    setHeights,
-    setYears,
-    setCanVote,
-    members,
-  } = useNPDatabase();
-
-  const initialized = useMemo(() => {
-    const v1 = initial_state.current_birthplaces.initialized && initial_state.current_birthyears.initialized && initial_state.current_heights.initialized && initial_state.current_mbtis.initialized;
-    const v2 = initial_state.initial_birthplaces.initialized && initial_state.initial_birthyears.initialized && initial_state.initial_heights.initialized && initial_state.initial_mbtis.initialized;
-    return v1 && v2;
-  }, [initial_state]);
+  const { allgroups, setGroups, members } = useHPDatabase();
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -32,20 +17,23 @@ export default function App() {
         <Routes>
           <Route path="/" element={
             <Search
-              initial_state={initial_state}
-              can_vote_only={can_vote_only}
+              allgroups={allgroups}
               target_members_count={members.size}
-              setMBTIs={setMBTIs}
-              setBirthPlaces={setBirthPlaces}
-              setHeights={setHeights}
-              setYears={setYears}
-              setCanVote={setCanVote}
+              setGroups={setGroups}
           />} />
           <Route path={`/${SORT_PATH}`} element={
-            <SortPage 
+            <SortPage<MemberParsed> 
               members={members}
               sortName={TITLE}
-              initialized={initialized}
+              initialized={true}
+              name_render_function={(v) => { return v.memberName }}
+              profile_render_function={(v) => {
+                const res:string[] = [
+                  `誕生日: ${formatDate(v.birthDate)}`,
+                  `H!P加入日: ${formatDate(v.HPjoinDate)}`,
+                ];
+                return res;
+              }}
           />} />
         </Routes>
       </Layout>

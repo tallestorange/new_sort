@@ -13,14 +13,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
-import { Member, SortSettings } from "../hooks/useNPDatabase";
-import { useLocation } from 'react-router-dom';
 import { useCallback } from "react";
 
-interface Props {
-  members: Map<string, Member>;
+interface Props<T> {
+  members: Map<string, T>;
   sortName: string;
   initialized: boolean;
+  name_render_function: (membeer: T) => string;
+  profile_render_function?: (membeer: T) => string[];
 }
 
 /**
@@ -29,13 +29,11 @@ interface Props {
  * @param props 
  * @returns 
  */
-export default function SortPage(props: Props) {
-  const location = useLocation();
-  const sort_settings = location.state as SortSettings;
-  const {members, sortName, initialized} = props;
+export default function SortPage<T>(props: Props<T>) {
+  const {members, sortName, initialized, name_render_function, profile_render_function} = props;
 
   const sort = useRef<Sorter>();
-  const target_members = useRef<Map<string, Member>>(members);
+  const target_members = useRef<Map<string, T>>(members);
   const [result, setResult] = useState<boolean>();
 
   if (!sort.current) {
@@ -53,7 +51,7 @@ export default function SortPage(props: Props) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage sortName={sortName} sort={sort.current} /> : <NowSortPage members={members} sortName={sortName} sortConfig={sort_settings} sort={sort.current} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -63,14 +61,15 @@ export default function SortPage(props: Props) {
  * @param props 
  * @returns 
  */
-function NowSortPage(props: {
-  members: Map<string, Member>;
+function NowSortPage<T>(props: {
+  members: Map<string, T>;
   sortName: string;
-  sortConfig: SortSettings;
+  name_render_function: (membeer: T) => string;
+  profile_render_function?: (membeer: T) => string[];
   sort: Sorter;
   onSorted?: (result: boolean) => void;
 }) {
-  const {sort, members, sortName, sortConfig, onSorted} = props;
+  const {sort, members, sortName, name_render_function, profile_render_function, onSorted} = props;
   const [currentRound, setCurrentRound] = useState<number>(sort.currentRound);
 
   const leftWin = useCallback(() => {
@@ -113,16 +112,14 @@ function NowSortPage(props: {
   }, [sort, onSorted]);
 
   // lastChallengeが毎回変わるのでメモ化しない
-  const leftMember = (): Member => {
+  const leftMember = (): T => {
     const member = members.get(sort.lastChallenge[0])!;
-    // console.log(member);
     return member
   }
 
   // lastChallengeが毎回変わるのでメモ化しない
-  const rightMember = (): Member => {
+  const rightMember = (): T => {
     const member = members.get(sort.lastChallenge[1])!;
-    // console.log(member);
     return member;
   }
   
@@ -136,13 +133,15 @@ function NowSortPage(props: {
           <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{currentRound} - {sort.progress}%</p>
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture member={leftMember()}
-            sortConfig={sortConfig}
+          <MemberPicture<T> member={leftMember()}
+            name_render_function={name_render_function}
+            profile_render_function={profile_render_function}
             onClick={leftWin} />
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture member={rightMember()}
-            sortConfig={sortConfig}
+          <MemberPicture<T> member={rightMember()}
+            name_render_function={name_render_function}
+            profile_render_function={profile_render_function}
             onClick={rightWin} />
         </Grid>
         <Grid container item xs={12} justifyContent="center">
