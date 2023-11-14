@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SearchSelect = <T extends {}>(props: Props<T>) => {
+const SearchSelectBase = <T extends {}>(props: Props<T>) => {
   const { default_selected, onValueChanged, items, title, id, enabled, on_render_func } = props;
   const [currentItems, setCurrentItems] = useState<T[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
@@ -135,10 +135,12 @@ const SearchSelect = <T extends {}>(props: Props<T>) => {
       </Select>
     </FormControl>
   );
-}//,
-//(before, after) => {
-//  return before.default_selected === after.default_selected && before.items === after.items;
-//});
+}
+
+const SearchSelect = memo(SearchSelectBase,
+(before, after) => {
+  return before.default_selected === after.default_selected && before.items === after.items;
+}) as typeof SearchSelectBase;
 
 const CustomListItemText = memo((props: { title: string, id: string, index: number}) => {
   return (

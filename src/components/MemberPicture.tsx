@@ -20,6 +20,9 @@ export default function MemberPicture<T>(props: Props<T>) {
     card: {
       maxWidth: 345,
     },
+    media: {
+      height: "300px"
+    }
   };
 
   return (

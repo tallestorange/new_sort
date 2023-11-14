@@ -23,6 +23,18 @@ export default function Search(props: Props) {
     navigate(`/${SORT_PATH}`)
   }, [navigate]);
 
+  const renderGroups = useCallback((v: GroupParsed[]): string => {
+    v.sort((a, b) => { return a.groupID - b.groupID });
+    return v.map((a) => { return a.groupName }).join(', ');
+  }, []);
+  const groupsChanged = useCallback((v: GroupParsed[]) => {
+    setGroupsSelected(v);
+    setGroups(v);
+  }, [setGroups, setGroupsSelected]);
+  const groupName = useCallback((v: GroupParsed):string => {
+    return v.groupName;
+  }, []);
+
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -39,15 +51,9 @@ export default function Search(props: Props) {
             enabled={true}
             items={allgroups}
             default_selected={groupsSelected}
-            title_convert_func={(a) => {return a.groupName}}
-            on_render_func={(v) => { 
-              v.sort((a, b) => { return a.groupID - b.groupID })
-              return v.map((a) => { return a.groupName }).join(', ')
-            }}
-            onValueChanged={(v) => {
-              setGroupsSelected(v);
-              setGroups(v);
-            }} 
+            title_convert_func={groupName}
+            on_render_func={renderGroups}
+            onValueChanged={groupsChanged}
             />
         </Grid>
       </Grid>
