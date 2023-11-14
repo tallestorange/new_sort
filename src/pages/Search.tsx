@@ -2,21 +2,22 @@ import Grid from "@material-ui/core/Grid";
 import "../App.css";
 import { TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
-import { ResultText, SortStartButton } from "../components/SearchConfig";
+import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { GroupParsed } from "../hooks/useHPDatabase";
-import React from "react";
 
 interface Props {
   allgroups: GroupParsed[];
   target_members_count: number;
   setGroups: (members: GroupParsed[]) => void;
+  includeOG: boolean;
+  setIncludeOG: (includeOG: boolean) => void;
 }
 
 export default function Search(props: Props) {
   const [groupsSelected, setGroupsSelected] = useState<GroupParsed[]>([]);
-  const {allgroups, target_members_count, setGroups} = props;
+  const {allgroups, target_members_count, setGroups, includeOG, setIncludeOG} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -56,6 +57,9 @@ export default function Search(props: Props) {
             onValueChanged={groupsChanged}
             />
         </Grid>
+      </Grid>
+      <Grid container item xs={12} justifyContent="center" spacing={0}>
+        <LabelCheckBox checked={includeOG} setChecked={setIncludeOG} form_id="checkbox-form-hobby" checkbox_id="checkbox-hobby" label="OGを含める" />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <ResultText count={target_members_count} />

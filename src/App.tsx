@@ -8,7 +8,7 @@ import "./App.css";
 import { MemberParsed, nameRenderFunction, profileRenderFunction, useHPDatabase } from "./hooks/useHPDatabase";
 
 export default function App() {
-  const { allgroups, setGroups, members } = useHPDatabase();
+  const { allgroups, setGroups, members, includeOG, setIncludeOG } = useHPDatabase();
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -19,6 +19,8 @@ export default function App() {
               allgroups={allgroups}
               target_members_count={members.size}
               setGroups={setGroups}
+              includeOG={includeOG}
+              setIncludeOG={setIncludeOG}
           />} />
           <Route path={`/${SORT_PATH}`} element={
             <SortPage<MemberParsed> 

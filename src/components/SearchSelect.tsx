@@ -122,7 +122,7 @@ const SearchSelectBase = <T extends {}>(props: Props<T>) => {
           id={id + "-item-selectall"}
           onClick={handleSelectAll}
         >
-          <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"}/>
+          <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"} color="primary" />
           <SelectAllText id={id} />
         </MenuItem>
         {items.map((val, index) => {
@@ -179,7 +179,7 @@ const CustomMenuItem = memo((props: { title: string, id: string, index: number, 
 
   return (
     <MenuItem key={index} value={title} id={id + "-item-" + index} onClick={onClicked}>
-      <Checkbox checked={checked} id={id + "-checkbox-" + index} />
+      <Checkbox checked={checked} id={id + "-checkbox-" + index} color="primary" />
       <CustomListItemText title={title} id={id} index={index} />
     </MenuItem>
   )

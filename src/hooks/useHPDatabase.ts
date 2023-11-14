@@ -56,7 +56,9 @@ export interface MemberParsed {
 interface HPDatabase {
   allgroups: GroupParsed[],
   setGroups: (v: GroupParsed[]) => void;
-  members: Map<string, MemberParsed>
+  members: Map<string, MemberParsed>;
+  includeOG: boolean;
+  setIncludeOG: (includeOG: boolean) => void;
 }
 
 export function useHPDatabase(): HPDatabase {
@@ -64,6 +66,7 @@ export function useHPDatabase(): HPDatabase {
   const [allmembers, setAllMembers] = useState<Map<number, MemberParsed>>(new Map<number, MemberParsed>());
   const [members, setMembers] = useState<Map<string, MemberParsed>>(new Map<string, MemberParsed>());
   const [groups, setGroups] = useState<GroupParsed[]>([]);
+  const [includeOG, setIncludeOG] = useState<boolean>(true);
 
   const initializeAsync = async (): Promise<{groups: GroupParsed[], members: Map<number, MemberParsed>}> => { // Map<string, MemberParsed>
     const members = await fetchCSVAsync<Member[]>(HP_DB_MEMBERS);
@@ -120,11 +123,19 @@ export function useHPDatabase(): HPDatabase {
     return {groups: groupParsed, members: result};
   }
 
-  const search = useCallback((v: GroupParsed[]): Map<string, MemberParsed> => {
+  const search = useCallback((v: GroupParsed[], includeOG: boolean): Map<string, MemberParsed> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers) {
       if (value.groups === undefined) {
         continue;
+      }
+      if (!includeOG) {
+        if (value.HPgradDate !== undefined) {
+          const now = new Date();
+          if (now >= value.HPgradDate) {
+            continue;
+          }
+        }
       }
       for (const group of value.groups) {
         if (result.has(key)) {
@@ -190,14 +201,16 @@ export function useHPDatabase(): HPDatabase {
   }, [])
 
   useEffect(() => {
-    const result = search(groups);
+    const result = search(groups, includeOG);
     setMembers(result);
-  }, [groups, search]);
+  }, [groups, includeOG, search]);
 
   return {
     allgroups: allgroups,
     setGroups: setGroups,
-    members: members
+    members: members,
+    includeOG: includeOG,
+    setIncludeOG: setIncludeOG
   }
 }
 
