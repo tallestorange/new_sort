@@ -3,7 +3,7 @@ import HP_DB_JOIN from "../HP_DB/join.csv";
 import HP_DB_GROUP from "../HP_DB/group.csv";
 import { fetchCSVAsync } from "../modules/CSVLoader";
 import { useCallback, useEffect, useState } from "react";
-import { parseDate } from "../modules/DateUtils";
+import { formatDate, parseDate } from "../modules/DateUtils";
 
 export interface Member {
   memberID: number;
@@ -199,4 +199,17 @@ export function useHPDatabase(): HPDatabase {
     setGroups: setGroups,
     members: members
   }
+}
+
+export const nameRenderFunction = (member: MemberParsed):string => {
+  return member.memberName;
+}
+
+export const profileRenderFunction = (member: MemberParsed):string[] => {
+  const res:string[] = [
+    `誕生日: ${formatDate(member.birthDate)}`,
+    `H!P加入日: ${formatDate(member.HPjoinDate)}`,
+    `デビュー日: ${member.debutDate ? formatDate(member.debutDate) : "N/A"}`,
+  ];
+  return res;
 }

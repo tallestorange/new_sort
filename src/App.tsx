@@ -5,8 +5,7 @@ import Layout from "./components/Layout";
 import SortPage from "./pages/SortPage";
 
 import "./App.css";
-import { MemberParsed, useHPDatabase } from "./hooks/useHPDatabase";
-import { formatDate } from "./modules/DateUtils";
+import { MemberParsed, nameRenderFunction, profileRenderFunction, useHPDatabase } from "./hooks/useHPDatabase";
 
 export default function App() {
   const { allgroups, setGroups, members } = useHPDatabase();
@@ -26,15 +25,8 @@ export default function App() {
               members={members}
               sortName={TITLE}
               initialized={true}
-              name_render_function={(v) => { return v.memberName }}
-              profile_render_function={(v) => {
-                const res:string[] = [
-                  `誕生日: ${formatDate(v.birthDate)}`,
-                  `H!P加入日: ${formatDate(v.HPjoinDate)}`,
-                  `デビュー日: ${v.debutDate ? formatDate(v.debutDate) : "N/A"}`,
-                ];
-                return res;
-              }}
+              name_render_function={nameRenderFunction}
+              profile_render_function={profileRenderFunction}
           />} />
         </Routes>
       </Layout>
