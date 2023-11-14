@@ -38,7 +38,7 @@ export default function Search(props: Props) {
   }, [navigate]);
 
   const renderGroups = useCallback((v: GroupParsed[]): string => {
-    v.sort((a, b) => { return a.groupID - b.groupID });
+    v.sort((a, b) => { return a.unique_id - b.unique_id });
     return v.map((a) => { return a.groupName }).join(', ');
   }, []);
 
