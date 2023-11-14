@@ -41,6 +41,7 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_f
   };
 
   return (
+    
     <CardActionArea>
       <CardMedia
         component="img"
@@ -53,15 +54,18 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_f
         <Typography gutterBottom variant="h6" component="h2">
           {memberName}
         </Typography>
-        {profiles.map((val) => {
+        {profiles.map((val, idx) => {
           return (
-            <Typography variant="body2" color="textSecondary" component="p">
-              {val}
-            </Typography>
+            <div key={idx}>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {val}
+              </Typography>
+            </div>
           )
         })}
       </CardContent>
     </CardActionArea>
+    
   );
 }
 
