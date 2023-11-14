@@ -40,7 +40,7 @@ export default function Search(props: Props) {
   const renderGroups = useCallback((v: GroupParsed[]): string => {
     v.sort((a, b) => { return a.groupID - b.groupID });
     return v.map((a) => { return a.groupName }).join(', ');
-  }, [initialState]);
+  }, []);
 
   const groupName = useCallback((v: GroupParsed):string => {
     return v.groupName;
@@ -63,9 +63,9 @@ export default function Search(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect<GroupParsed>
-            title="所属グループ"
+            title={initialState.allgroups.initialized ? "所属グループ" : "所属グループ(読み込み中...)"}
             id="groups-belong"
-            enabled={initialState.allgroups.initialized}
+            enabled={initialState.allgroups.initialized && initialState.groups_stored.initialized}
             items={initialState.allgroups.item}
             default_selected={initialState.groups_stored.item}
             title_convert_func={groupName}
