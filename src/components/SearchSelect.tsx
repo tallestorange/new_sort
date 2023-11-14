@@ -59,8 +59,7 @@ const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
     for (let selected_item of default_selected) {
       selectedSet.current.add(tgt.indexOf(selected_item.unique_id));
     }
-    setCurrentItems(default_selected)
-    // onValueChanged?.(default_selected)
+    setCurrentItems([...default_selected])
   }, [default_selected, items]);
 
   const renderValue = useCallback((selected: any) => {

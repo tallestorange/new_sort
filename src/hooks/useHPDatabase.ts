@@ -6,6 +6,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
 import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage } from "../modules/LocalStorage";
 
+interface StoredItem<T> {
+  /**
+   * データの中身
+   */
+  item: T,
+
+  /**
+   * 初期化済みかどうか
+   */
+  initialized: boolean
+}
+
 export interface Member {
   memberID: number;
   memberName: string;
@@ -64,26 +76,23 @@ interface HPDatabase {
 }
 
 export interface InitParams {
-  allgroups: GroupParsed[],
-  groups_stored: GroupParsed[],
-  members: Map<number, MemberParsed>,
-  initialized: boolean;
+  allgroups: StoredItem<GroupParsed[]>,
+  groups_stored: StoredItem<GroupParsed[]>,
 }
 
 export function useHPDatabase(): HPDatabase {
-  const allgroups = useRef<GroupParsed[]>([]);
-  const groups = useRef<GroupParsed[]>([]);
-  const allmembers = useRef<Map<number, MemberParsed>>(new Map<number, MemberParsed>());
+  const allgroups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
+  const groups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
+  const allmembers = useRef<StoredItem<Map<number, MemberParsed>>>({item: new Map<number, MemberParsed>(), initialized: false});
+  
   const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<boolean>(true);
 
   const [members, setMembers] = useState<Map<string, MemberParsed>>(new Map<string, MemberParsed>());
   
   const [initialState, setInitialState] = useState<InitParams>({
-    allgroups: [],
-    groups_stored: [],
-    members: new Map<number, MemberParsed>(),
-    initialized: false,
+    allgroups: { item: [], initialized: false},
+    groups_stored: { item: [], initialized: false},
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
@@ -100,7 +109,8 @@ export function useHPDatabase(): HPDatabase {
     group.sort((a, b) => (a.groupID - b.groupID));
     const groupParsed: GroupParsed[] = group.map((v, idx) => { return { unique_id: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
     
-    allgroups.current = groupParsed;
+    allgroups.current.item = groupParsed;
+    allgroups.current.initialized = true;
 
     const result: Map<number, MemberParsed> = new Map<number, MemberParsed>();
     for(const member of members) {
@@ -132,19 +142,21 @@ export function useHPDatabase(): HPDatabase {
     for(const key of Array.from( result.keys() )) {
       result.get(key)!.groups = joinMap.get(key)!
     }
-    allmembers.current = result;
+    allmembers.current.item = result;
+    allmembers.current.initialized = true;
 
-    const groups_stored_local = getGroupsFromLocalStorage(allgroups.current, () => {
+    const groups_stored_local = getGroupsFromLocalStorage(allgroups.current.item, () => {
       setGroupsToLocalStorage([]);
     });
-    groups.current = groups_stored_local;
+    groups.current.item = groups_stored_local;
+    groups.current.initialized = true;
   
-    return {allgroups: allgroups.current, groups_stored: groups.current, members: result, initialized: true};
+    return {allgroups: allgroups.current, groups_stored: groups.current};
   }
 
   const search = useCallback((v: GroupParsed[], includeOG: boolean): Map<string, MemberParsed> => {
     const result = new Set<number>();
-    for (const [key, value] of allmembers.current) {
+    for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
         continue;
       }
@@ -200,7 +212,7 @@ export function useHPDatabase(): HPDatabase {
       }
     }
     const ret: Map<string, MemberParsed> = new Map(Array.from(result).map(i => {
-      const member = allmembers.current.get(i)!
+      const member = allmembers.current.item.get(i)!
       return [member.memberName, member]
     }))
     return ret;
@@ -211,7 +223,7 @@ export function useHPDatabase(): HPDatabase {
     console.log("initialize started")
     initializeAsync().then((init_params) => {
       setInitialState(init_params);
-      const result = search(groups.current, include_og.current);
+      const result = search(groups.current.item, include_og.current);
       setMembers(result);
     }).then(() => {
       console.log("initialize finished");
@@ -220,9 +232,9 @@ export function useHPDatabase(): HPDatabase {
   }, [])
 
   const setGroups = useCallback((val: GroupParsed[]) => {
-    groups.current = val;
+    groups.current.item = val;
     setGroupsToLocalStorage(val);
-    const result = search(groups.current, include_og.current);
+    const result = search(groups.current.item, include_og.current);
     setMembers(result);
   }, [search]);
 
@@ -230,7 +242,7 @@ export function useHPDatabase(): HPDatabase {
     include_og.current = val;
     setIncludeOG(val);
     setIncludeOGToLocalStorage(val);
-    const result = search(groups.current, include_og.current);
+    const result = search(groups.current.item, include_og.current);
     setMembers(result);
   }, [search]);
 
