@@ -75,8 +75,8 @@ export default function Search(props: Props) {
             onValueChanged={setGroups}
             />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <DateRangePicker />
+        <Grid container item xs={6} justifyContent="center" spacing={0}>
+          <DateRangePicker onDateRangeChanged={(v) => {console.log(v)}}/>
         </Grid>       
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox checked={includeOG} setChecked={setIncludeOG} form_id="checkbox-form-include-og" checkbox_id="checkbox-include-og" label="OGを含める" />
