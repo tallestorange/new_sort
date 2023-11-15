@@ -4,7 +4,7 @@ import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modu
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { DateRange, GroupParsed, InitParams } from "../hooks/useHPDatabase";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Search(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
+  const [error, setError] = useState<boolean>(false);
 
   const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee, setDateRangeChanged} = props;
   const classes = useStyles();
@@ -89,6 +90,7 @@ export default function Search(props: Props) {
             dateTo={initialState.date_range.item.to}
             startText="生年月日(開始日)"
             endText="生年月日(終了日)"
+            onError={setError}
             onDateRangeChanged={setDateRangeChanged} />
         </Grid>       
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -110,10 +112,10 @@ export default function Search(props: Props) {
       </Grid>
       
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <ResultText count={target_members_count} />
+        <ResultText count={error ? 0 : target_members_count} />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <SortStartButton enabled={target_members_count > 0} onClick={onSortButtonClicked}/>
+        <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>
       </Grid>
 
       <Grid container item xs={12} justifyContent="center" spacing={0}>

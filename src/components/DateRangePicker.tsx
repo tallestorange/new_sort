@@ -15,6 +15,7 @@ interface Props {
   dateInitFrom: Date | null,
   dateInitTo: Date | null,
   onDateRangeChanged?: (dateRange: DateRange) => void,
+  onError?: (error: boolean) => void,
   startText?: string,
   endText?: string
 }
@@ -43,6 +44,9 @@ const DateRangePicker = memo((props: Props) => {
   const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
   const selectedDateFromRef = useRef<Date | null>(null);
   const selectedDateToRef = useRef<Date | null>(null);
+
+  const stateA = useRef<boolean>(false);
+  const stateB = useRef<boolean>(false);
 
   useEffect(() => {
     setSelectedDateFrom(dateFrom);
@@ -80,6 +84,10 @@ const DateRangePicker = memo((props: Props) => {
               minDate={dateInitFrom}
               maxDate={selectedDateTo}
               onChange={setSelectedDateFrom}
+              onError={(a,_) => {
+                stateA.current = a !== ""
+                props.onError?.(stateA.current || stateB.current)
+              }}
               cancelLabel="キャンセル"
               okLabel="選択"
               animateYearScrolling={false}
@@ -99,6 +107,10 @@ const DateRangePicker = memo((props: Props) => {
               minDate={selectedDateFrom}
               maxDate={dateInitTo}
               onChange={setSelectedDateTo}
+              onError={(a,_) => {
+                stateB.current = a !== ""
+                props.onError?.(stateA.current || stateB.current)
+              }}
               cancelLabel="キャンセル"
               okLabel="選択"
               animateYearScrolling={false}
