@@ -1,5 +1,5 @@
 export const TITLE: string = "ハロプロソート(3)";
-export const HASHTAGS: string = "ハロプロソート";
+export const HASHTAGS: string = "ハロプロソート,ハロプロソート3";
 export const DEFAULT_SORT_TITLE: string = "ハロプロソート";
 export const VERSION: string = "1.0.0";
 export const IMAGE_DIR: string = "member_pics/";
