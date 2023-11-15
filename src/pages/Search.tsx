@@ -4,14 +4,12 @@ import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modu
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { GroupParsed, InitParams } from "../hooks/useHPDatabase";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
-import { makeStyles } from "@material-ui/core/styles";
-import { DateRangePicker, DateRange, DateRangeDelimiter } from "@material-ui/pickers";
-import { LocalizationProvider } from "@material-ui/pickers/LocalizationProvider";
-import AdapterDateFns from '@date-io/date-fns';
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import DateRangePicker from "../components/DateRangePicker";
 
 interface Props {
   initialState: InitParams;
@@ -36,8 +34,6 @@ export default function Search(props: Props) {
 
   const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee} = props;
   const classes = useStyles();
-
-  const [selectedDate, handleDateChange] = useState<DateRange>([null, null]);
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -80,34 +76,14 @@ export default function Search(props: Props) {
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <DateRangePicker />
+        </Grid>       
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox checked={includeOG} setChecked={setIncludeOG} form_id="checkbox-form-include-og" checkbox_id="checkbox-include-og" label="OGを含める" />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox checked={includeTrainee} setChecked={setIncludeTrainee} form_id="checkbox-form-promote" checkbox_id="checkbox-promote" label="未昇格メンバーを含む" />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <LocalizationProvider dateAdapter={AdapterDateFns} >
-            <DateRangePicker
-              startText="開始日"
-              endText="終了日"
-              value={selectedDate}
-              onChange={date => handleDateChange(date)}
-              inputFormat="yyyy年MM月dd日"              
-              renderInput={(startProps, endProps) => {
-                console.log(startProps, endProps);
-                startProps.helperText = "";
-                endProps.helperText = "";
-                return (
-                <>
-                  <TextField {...startProps} />
-                  <DateRangeDelimiter> 〜 </DateRangeDelimiter>
-                  <TextField {...endProps} />
-                </>
-              )}
-            }
-            />
-          </LocalizationProvider>
-        </Grid>       
+        </Grid> 
       </Grid>
       
       <Grid container item xs={12} justifyContent="center" spacing={0}>
