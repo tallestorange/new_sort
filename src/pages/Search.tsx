@@ -5,12 +5,11 @@ import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useRef } from "react";
-import { GroupParsed, InitParams } from "../hooks/useHPDatabase";
+import { DateRange, GroupParsed, InitParams } from "../hooks/useHPDatabase";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import DateRangePicker from "../components/DateRangePicker";
-import { DateRange } from "@material-ui/pickers";
 
 interface Props {
   initialState: InitParams;
@@ -20,7 +19,7 @@ interface Props {
   setIncludeOG: (includeOG: boolean) => void;
   includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
-  setDateRange: (val: DateRange) => void;
+  setDateRangeChanged: (dateRange: DateRange) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Search(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
 
-  const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee, setDateRange} = props;
+  const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee, setDateRangeChanged} = props;
   const classes = useStyles();
 
   const navigate = useNavigate();
@@ -82,13 +81,15 @@ export default function Search(props: Props) {
             onValueChanged={setGroups}
             />
         </Grid>
-        <Grid container item xs={6} justifyContent="center" spacing={0}>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
           <DateRangePicker
+            dateInitFrom={initialState.init_date_range.item.from}
+            dateInitTo={initialState.init_date_range.item.to}
             dateFrom={initialState.date_range.item.from}
             dateTo={initialState.date_range.item.to}
             startText="生年月日(開始日)"
             endText="生年月日(終了日)"
-            onDateRangeChanged={setDateRange} />
+            onDateRangeChanged={setDateRangeChanged} />
         </Grid>       
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox

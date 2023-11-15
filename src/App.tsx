@@ -28,7 +28,7 @@ export default function App() {
               setIncludeOG={setIncludeOG}
               includeTrainee={includeTrainee}
               setIncludeTrainee={setIncludeTrainee}
-              setDateRange={setDateRange}
+              setDateRangeChanged={setDateRange}
           />} />
           <Route path={`/${SORT_PATH}`} element={
             <SortPage<MemberParsed> 

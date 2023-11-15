@@ -7,7 +7,6 @@ import { formatDate, parseDate } from "../modules/DateUtils";
 import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
 import max from "date-fns/max";
 import min from "date-fns/min";
-import { DateRange } from "@material-ui/pickers";
 
 interface StoredItem<T> {
   /**
@@ -81,7 +80,7 @@ interface HPDatabase {
   setDateRange: (val: DateRange) => void;
 }
 
-interface HPDateRange {
+export interface DateRange {
   from: Date | null,
   to: Date | null
 }
@@ -89,14 +88,15 @@ interface HPDateRange {
 export interface InitParams {
   allgroups: StoredItem<GroupParsed[]>,
   groups_stored: StoredItem<GroupParsed[]>,
-  date_range: StoredItem<HPDateRange>
+  date_range: StoredItem<DateRange>,
+  init_date_range: StoredItem<DateRange>
 }
 
 export function useHPDatabase(): HPDatabase {
   const allgroups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
   const groups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
   const allmembers = useRef<StoredItem<Map<number, MemberParsed>>>({item: new Map<number, MemberParsed>(), initialized: false});
-  const daterange = useRef<StoredItem<HPDateRange>>({item: {from: new Date(), to: new Date()}, initialized: false});
+  const daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
 
   const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<boolean>(true);
@@ -109,7 +109,8 @@ export function useHPDatabase(): HPDatabase {
   const [initialState, setInitialState] = useState<InitParams>({
     allgroups: { item: [], initialized: false},
     groups_stored: { item: [], initialized: false},
-    date_range: { item: {from: null, to: null}, initialized: false}
+    date_range: { item: {from: null, to: null}, initialized: false},
+    init_date_range: { item: {from: null, to: null}, initialized: false}
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
@@ -187,7 +188,7 @@ export function useHPDatabase(): HPDatabase {
     groups.current.item = groups_stored_local;
     groups.current.initialized = true;
   
-    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current};
+    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}};
   }
 
   const search = useCallback((v: GroupParsed[], includeOG: boolean, includeTrainee: boolean, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, MemberParsed> => {
@@ -214,6 +215,9 @@ export function useHPDatabase(): HPDatabase {
       }
       // 生年月日で区切る
       const birthDate = value.birthDate;
+      if (birthDate === undefined) {
+        continue;
+      }
       if (birthDate !== undefined && birthDateFrom !== undefined && birthDateTo !== undefined) {
         if (!(birthDateFrom! <= birthDate && birthDate <= birthDateTo!)) {
           continue;
@@ -307,8 +311,8 @@ export function useHPDatabase(): HPDatabase {
   }, [search]);
 
   const setDateRange = useCallback((val: DateRange) => {
-    daterange.current.item.from = val[0];
-    daterange.current.item.to = val[1];
+    daterange.current.item.from = val.from;
+    daterange.current.item.to = val.to;
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search]);
