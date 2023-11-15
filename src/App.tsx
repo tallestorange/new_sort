@@ -9,7 +9,7 @@ import { MemberParsed, nameRenderFunction, profileRenderFunction, useHPDatabase 
 import { useMemo } from "react";
 
 export default function App() {
-  const { initialState, setGroups, members, includeOG, setIncludeOG, includeTrainee, setIncludeTrainee } = useHPDatabase();
+  const { initialState, setGroups, members, includeOG, setIncludeOG, includeTrainee, setIncludeTrainee, setDateRange } = useHPDatabase();
 
   const initialized = useMemo(() => {
     return initialState.allgroups.initialized && initialState.groups_stored.initialized;
@@ -28,6 +28,7 @@ export default function App() {
               setIncludeOG={setIncludeOG}
               includeTrainee={includeTrainee}
               setIncludeTrainee={setIncludeTrainee}
+              setDateRange={setDateRange}
           />} />
           <Route path={`/${SORT_PATH}`} element={
             <SortPage<MemberParsed> 

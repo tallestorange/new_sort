@@ -2,10 +2,18 @@ import { DateRangePicker as DRPicker, DateRange, DateRangeDelimiter } from "@mat
 import { LocalizationProvider } from "@material-ui/pickers/LocalizationProvider";
 import AdapterDateFns from '@date-io/date-fns';
 import TextField from "@material-ui/core/TextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from "@material-ui/core/FormControl";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+
+interface Props {
+  dateFrom: Date | null,
+  dateTo: Date | null,
+  onDateRangeChanged?: (dateRange: DateRange) => void,
+  startText?: string,
+  endText?: string
+}
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -15,20 +23,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const DateRangePicker = (props: {onDateRangeChanged?: (dateRange: DateRange) => void}) => {
-  const [selectedDate, handleDateChange] = useState<DateRange>([null, new Date()]);
+const DateRangePicker = (props: Props) => {
   const classes = useStyles();
+  const {dateFrom, dateTo} = props;
+  const [selectedDate, handleDateChange] = useState<DateRange>([dateFrom, dateTo]);
+
+  useEffect(() => {
+    handleDateChange([dateFrom, dateTo]);
+  }, [dateFrom, dateTo]);
 
   return (
     <FormControl fullWidth className={classes.formControl}>
       <LocalizationProvider dateAdapter={AdapterDateFns} locale={ja} >
         <DRPicker
-          startText="生年月日(開始日)"
-          endText="生年月日(終了日)"
+          startText={props.startText}
+          endText={props.endText}
           value={selectedDate}
           onChange={date => {
             handleDateChange(date);
-            console.log(date[0], date[1])
             props.onDateRangeChanged?.(date);
           }}
           inputFormat="yyyy年MM月dd日"

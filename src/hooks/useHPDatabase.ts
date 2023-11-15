@@ -5,6 +5,9 @@ import { fetchCSVAsync } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
 import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
+import max from "date-fns/max";
+import min from "date-fns/min";
+import { DateRange } from "@material-ui/pickers";
 
 interface StoredItem<T> {
   /**
@@ -75,18 +78,26 @@ interface HPDatabase {
   setIncludeOG: (includeOG: boolean) => void;
   includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
+  setDateRange: (val: DateRange) => void;
+}
+
+interface HPDateRange {
+  from: Date | null,
+  to: Date | null
 }
 
 export interface InitParams {
   allgroups: StoredItem<GroupParsed[]>,
   groups_stored: StoredItem<GroupParsed[]>,
+  date_range: StoredItem<HPDateRange>
 }
 
 export function useHPDatabase(): HPDatabase {
   const allgroups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
   const groups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
   const allmembers = useRef<StoredItem<Map<number, MemberParsed>>>({item: new Map<number, MemberParsed>(), initialized: false});
-  
+  const daterange = useRef<StoredItem<HPDateRange>>({item: {from: new Date(), to: new Date()}, initialized: false});
+
   const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<boolean>(true);
 
@@ -98,6 +109,7 @@ export function useHPDatabase(): HPDatabase {
   const [initialState, setInitialState] = useState<InitParams>({
     allgroups: { item: [], initialized: false},
     groups_stored: { item: [], initialized: false},
+    date_range: { item: {from: null, to: null}, initialized: false}
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
@@ -124,6 +136,9 @@ export function useHPDatabase(): HPDatabase {
     allgroups.current.initialized = true;
 
     const result: Map<number, MemberParsed> = new Map<number, MemberParsed>();
+    let date_max = parseDate("1900/1/1")!;
+    let date_min = new Date();
+
     for(const member of members) {
       const val: MemberParsed = {
         memberName: member.memberName,
@@ -134,10 +149,20 @@ export function useHPDatabase(): HPDatabase {
         birthDate: parseDate(member.birthDate)!,
         groups: []
       }
+
+      const birthDate = parseDate(member.birthDate);
+      if (birthDate !== undefined) {
+        date_max = max([date_max, birthDate]);
+        date_min = min([date_min, birthDate]);
+      }
   
       const memberID = member.memberID;
       result.set(memberID, val);
     }
+
+    daterange.current.item.from = date_min;
+    daterange.current.item.to = date_max;
+    daterange.current.initialized = true;
   
     const joinMap: Map<number, {groupID: number, joinDate: Date, gradDate?: Date}[]> = new Map<number, {groupID: number, joinDate: Date, gradDate?: Date}[]>();
     for(const joinData of join) {
@@ -162,15 +187,17 @@ export function useHPDatabase(): HPDatabase {
     groups.current.item = groups_stored_local;
     groups.current.initialized = true;
   
-    return {allgroups: allgroups.current, groups_stored: groups.current};
+    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current};
   }
 
-  const search = useCallback((v: GroupParsed[], includeOG: boolean, includeTrainee: boolean): Map<string, MemberParsed> => {
+  const search = useCallback((v: GroupParsed[], includeOG: boolean, includeTrainee: boolean, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, MemberParsed> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
         continue;
       }
+
+      // OGを含むかどうか
       if (!includeOG) {
         if (value.HPgradDate !== undefined) {
           const now = new Date();
@@ -179,11 +206,20 @@ export function useHPDatabase(): HPDatabase {
           }
         }
       }
+      // 未昇格のメンバを含むかどうか
       if (!includeTrainee) {
         if (value.debutDate === undefined) {
           continue;
         }
       }
+      // 生年月日で区切る
+      const birthDate = value.birthDate;
+      if (birthDate !== undefined && birthDateFrom !== undefined && birthDateTo !== undefined) {
+        if (!(birthDateFrom! <= birthDate && birthDate <= birthDateTo!)) {
+          continue;
+        }
+      }
+
       for (const group of value.groups) {
         if (result.has(key)) {
           break
@@ -239,7 +275,7 @@ export function useHPDatabase(): HPDatabase {
     console.log("initialize started")
     initializeAsync().then((init_params) => {
       setInitialState(init_params);
-      const result = search(groups.current.item, include_og.current, include_trainee.current);
+      const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
       setMembers(result);
     }).then(() => {
       console.log("initialize finished");
@@ -250,7 +286,7 @@ export function useHPDatabase(): HPDatabase {
   const setGroups = useCallback((val: GroupParsed[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
-    const result = search(groups.current.item, include_og.current, include_trainee.current);
+    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search]);
 
@@ -258,7 +294,7 @@ export function useHPDatabase(): HPDatabase {
     include_og.current = val;
     setIncludeOG(val);
     setIncludeOGToLocalStorage(val);
-    const result = search(groups.current.item, include_og.current, include_trainee.current);
+    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search]);
 
@@ -266,7 +302,14 @@ export function useHPDatabase(): HPDatabase {
     include_trainee.current = val;
     setIncludeTrainee(val);
     setIncludeTraineeToLocalStorage(val);
-    const result = search(groups.current.item, include_og.current, include_trainee.current);
+    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    setMembers(result);
+  }, [search]);
+
+  const setDateRange = useCallback((val: DateRange) => {
+    daterange.current.item.from = val[0];
+    daterange.current.item.to = val[1];
+    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search]);
 
@@ -277,7 +320,8 @@ export function useHPDatabase(): HPDatabase {
     includeOG: includeOG,
     setIncludeOG: setIncludeOGInternal,
     includeTrainee: includeTrainee,
-    setIncludeTrainee: setIncludeTraineeInternal
+    setIncludeTrainee: setIncludeTraineeInternal,
+    setDateRange: setDateRange
   }
 }
 
