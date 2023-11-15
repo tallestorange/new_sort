@@ -41,7 +41,6 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_f
   };
 
   return (
-    
     <CardActionArea>
       <CardMedia
         component="img"
@@ -65,7 +64,6 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_f
         })}
       </CardContent>
     </CardActionArea>
-    
   );
 }
 

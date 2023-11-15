@@ -88,6 +88,7 @@ export default function Search(props: Props) {
             dateInitTo={initialState.init_date_range.item.to}
             dateFrom={initialState.date_range.item.from}
             dateTo={initialState.date_range.item.to}
+            disabled={!(initialState.date_range.initialized && initialState.init_date_range.initialized)}
             startText="生年月日(開始日)"
             endText="生年月日(終了日)"
             onError={setError}

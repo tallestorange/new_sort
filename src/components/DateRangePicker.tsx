@@ -16,8 +16,9 @@ interface Props {
   dateInitTo: Date | null,
   onDateRangeChanged?: (dateRange: DateRange) => void,
   onError?: (error: boolean) => void,
-  startText?: string,
-  endText?: string
+  startText: string,
+  endText: string,
+  disabled?: boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -39,7 +40,7 @@ class ExtendedUtils extends DateFnsUtils {
 
 const DateRangePicker = memo((props: Props) => {
   const classes = useStyles();
-  const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged} = props;
+  const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText} = props;
   const [selectedDateFrom, setSelectedDateFrom] = useState<Date | null>(null);
   const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
   const selectedDateFromRef = useRef<Date | null>(null);
@@ -77,12 +78,13 @@ const DateRangePicker = memo((props: Props) => {
               margin="normal"
               fullWidth
               id="date-picker-dialog-from"
-              label={props.startText}
+              label={disabled ? startText + "(読み込み中...)" : startText}
               format="yyyy/MM/dd"
               mask="____/__/__"
               value={selectedDateFrom}
               minDate={dateInitFrom}
               maxDate={selectedDateTo}
+              disabled={disabled}
               onChange={setSelectedDateFrom}
               onError={(a,_) => {
                 stateA.current = a !== ""
@@ -92,7 +94,7 @@ const DateRangePicker = memo((props: Props) => {
               okLabel="選択"
               animateYearScrolling={false}
               KeyboardButtonProps={{
-                'aria-label': 'change date',
+                'aria-label': 'change start date',
               }}
             />
           </Grid>
@@ -101,11 +103,12 @@ const DateRangePicker = memo((props: Props) => {
               margin="normal"
               fullWidth
               id="date-picker-dialog-to"
-              label={props.endText}
+              label={disabled ? endText + "(読み込み中...)" : endText}
               format="yyyy/MM/dd"
               value={selectedDateTo}
               minDate={selectedDateFrom}
               maxDate={dateInitTo}
+              disabled={disabled}
               onChange={setSelectedDateTo}
               onError={(a,_) => {
                 stateB.current = a !== ""
@@ -115,7 +118,7 @@ const DateRangePicker = memo((props: Props) => {
               okLabel="選択"
               animateYearScrolling={false}
               KeyboardButtonProps={{
-                'aria-label': 'change date',
+                'aria-label': 'change finish date',
               }}
             />
           </Grid>
