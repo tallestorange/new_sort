@@ -1,4 +1,4 @@
-import { DateRangePicker as DRPicker, DateRange, DateRangeDelimiter } from "@material-ui/pickers";
+import { MobileDateRangePicker as DRPicker, DateRange, DateRangeDelimiter } from "@material-ui/pickers";
 import { LocalizationProvider } from "@material-ui/pickers/LocalizationProvider";
 import AdapterDateFns from '@date-io/date-fns';
 import TextField from "@material-ui/core/TextField";
@@ -43,7 +43,8 @@ const DateRangePicker = (props: Props) => {
             handleDateChange(date);
             props.onDateRangeChanged?.(date);
           }}
-          inputFormat="yyyy年MM月dd日"
+          inputFormat='yyyy/MM/dd'
+          mask='____/__/__'
           maxDate={new Date()}
           renderInput={(startProps, endProps) => {
             startProps.helperText = "";
