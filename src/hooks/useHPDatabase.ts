@@ -75,7 +75,7 @@ interface HPDatabase {
   includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRange: (val: DateRange) => void;
-  setExternalSortParam: (groups: string | null) => void;
+  setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean) => void;
   shareURL: string | undefined;
 }
 
@@ -194,7 +194,9 @@ export function useHPDatabase(): HPDatabase {
     groups.current.initialized = true;
 
     const bitList = generateGroupBitList(groups_stored_local);
-    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=";
+    const include_og_str = include_og.current ? "&include_og=True" : "";
+    const include_trainee_str = include_trainee.current ? "&include_not_debut=True" : "";
+    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + include_og_str + include_trainee_str + "&sort_title=";
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
   
@@ -308,9 +310,12 @@ export function useHPDatabase(): HPDatabase {
   const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
+
     const bitList = generateGroupBitList(val);
-    const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title="
-    shareurl.current.item = url;
+    const include_og_str = include_og.current ? "&include_og=True" : "";
+    const include_trainee_str = include_trainee.current ? "&include_not_debut=True" : "";
+    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + include_og_str + include_trainee_str + "&sort_title=";
+    shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
@@ -340,12 +345,12 @@ export function useHPDatabase(): HPDatabase {
     setMembers(result);
   }, [search]);
 
-  const setExternalSortParam = useCallback((groups: string | null) => {
-    if (groups === null) {
+  const setExternalSortParam = useCallback((groups_bitset: string | null, include_og: boolean, include_not_debut: boolean) => {
+    if (groups_bitset === null) {
       return;
     }
     const result: Group[] = [];
-    const grp_list = groups.split(",");
+    const grp_list = groups_bitset.split(",");
     for (const [idx, val] of grp_list.entries()) {
       const id = Number(val);
       if (Number.isNaN(id)) {
@@ -366,7 +371,7 @@ export function useHPDatabase(): HPDatabase {
     const bitList = generateGroupBitList(result);
     const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=";
     setShareURL(url);
-    const search_result = search(result, null, null, null, null);
+    const search_result = search(result, include_og, include_not_debut, null, null);
     setMembers(search_result);
   }, [search, generateGroupBitList]);
 

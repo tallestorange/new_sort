@@ -219,7 +219,6 @@ function SortResultPage(props: {
       }
     }
     tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(url);
-    console.log(tweet_url);
 
     return tweet_url;
   }, [sort, sortName, url]);

@@ -7,7 +7,7 @@ interface Props<T> {
   members: Map<string, T>;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
-  set_custom_params?: (params: string | null) => void;
+  set_custom_params?: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean) => void;
   share_url?: string;
 }
 
@@ -26,7 +26,9 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
   useEffect(() => {
     if (initialized) {
       const groups_bit = searchParams.get("groups");
-      set_custom_params?.(groups_bit);
+      const include_og = searchParams.get("include_og") === "True";
+      const include_not_debut = searchParams.get("include_not_debut") === "True";
+      set_custom_params?.(groups_bit, include_og, include_not_debut);
     }
   }, [initialized, searchParams, set_custom_params]);
 
