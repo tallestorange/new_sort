@@ -18,6 +18,7 @@ import { useLocation } from 'react-router-dom';
 
 interface Props<T> {
   members: Map<string, T>;
+  sort_name?: string;
   initialized: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
@@ -33,8 +34,14 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   const {members, initialized, name_render_function, profile_render_function} = props;
 
   const location = useLocation();
-  const sortName = location.state === null ? DEFAULT_SORT_TITLE : location.state as string;
-
+  let sortName = "";
+  if (props.sort_name === undefined) {
+    sortName = location.state === null ? DEFAULT_SORT_TITLE : location.state as string;
+  }
+  else {
+    sortName = props.sort_name;
+  }
+  
   const sort = useRef<Sorter>();
   const target_members = useRef<Map<string, T>>(members);
   const [result, setResult] = useState<boolean>();

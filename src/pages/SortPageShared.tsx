@@ -20,10 +20,12 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
   const [searchParams] = useSearchParams();
   const [initializedInternal, setInitializedInternal] = useState<boolean>(false);
   const {initialized, members, set_custom_params} = props;
+  const sortTitle = searchParams.get("sort_title") === null ? undefined : searchParams.get("sort_title")!;
 
   useEffect(() => {
     if (initialized) {
-      set_custom_params?.(searchParams.get("groups"));
+      const groups_bit = searchParams.get("groups");
+      set_custom_params?.(groups_bit);
     }
   }, [initialized, searchParams, set_custom_params]);
 
@@ -33,5 +35,5 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
     }
   }, [members, initialized]);
 
-  return <SortPage members={members} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
+  return <SortPage sort_name={sortTitle} members={members} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
 }
