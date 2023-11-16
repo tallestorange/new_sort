@@ -5,7 +5,7 @@ import Layout from "./components/Layout";
 import SortPage from "./pages/SortPage";
 
 import "./App.css";
-import { MemberParsed, nameRenderFunction, profileRenderFunction, useHPDatabase } from "./hooks/useHPDatabase";
+import { Member, nameRenderFunction, profileRenderFunction, useHPDatabase } from "./hooks/useHPDatabase";
 import { useMemo } from "react";
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
               setDateRangeChanged={setDateRange}
           />} />
           <Route path={`/${SORT_PATH}`} element={
-            <SortPage<MemberParsed> 
+            <SortPage<Member> 
               members={members}
               initialized={initialized}
               name_render_function={nameRenderFunction}

@@ -5,7 +5,7 @@ import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useRef, useState } from "react";
-import { DateRange, GroupParsed, InitParams } from "../hooks/useHPDatabase";
+import { DateRange, Group, InitParams } from "../hooks/useHPDatabase";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -14,7 +14,7 @@ import DateRangePicker from "../components/DateRangePicker";
 interface Props {
   initialState: InitParams;
   target_members_count: number;
-  setGroups: (members: GroupParsed[]) => void;
+  setGroups: (members: Group[]) => void;
   includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
   includeTrainee: boolean;
@@ -42,12 +42,12 @@ export default function Search(props: Props) {
     navigate(`/${SORT_PATH}`, { state: sortTitle.current })
   }, [navigate]);
 
-  const renderGroups = useCallback((v: GroupParsed[]): string => {
+  const renderGroups = useCallback((v: Group[]): string => {
     v.sort((a, b) => { return a.unique_id - b.unique_id });
     return v.map((a) => { return a.groupName }).join(', ');
   }, []);
 
-  const groupName = useCallback((v: GroupParsed):string => {
+  const groupName = useCallback((v: Group):string => {
     return v.groupName;
   }, []);
 
@@ -71,7 +71,7 @@ export default function Search(props: Props) {
           </FormControl>
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<GroupParsed>
+          <SearchSelect<Group>
             title={initialState.allgroups.initialized ? "所属グループ" : "所属グループ(読み込み中...)"}
             id="groups-belong"
             enabled={initialState.allgroups.initialized && initialState.groups_stored.initialized}

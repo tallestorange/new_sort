@@ -1,10 +1,10 @@
-import { GroupParsed } from "../hooks/useHPDatabase";
+import { Group } from "../hooks/useHPDatabase";
 
 const LOCALSTORAGE_KEY_GROUPS : string = "groups";
 const LOCALSTORAGE_KEY_INCLUDE_OG : string = "include_og";
 const LOCALSTORAGE_KEY_INCLUDE_TRAINEE : string = "include_trainee";
 
-export const getGroupsFromLocalStorage = (all_groups: GroupParsed[], onError?: () => void): GroupParsed[] => {
+export const getGroupsFromLocalStorage = (all_groups: Group[], onError?: () => void): Group[] => {
   let keys: number[] = []
   try {
     keys = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_GROUPS) || "[]");
@@ -14,7 +14,7 @@ export const getGroupsFromLocalStorage = (all_groups: GroupParsed[], onError?: (
   return keys.map((v) => {return all_groups[v]});
 }
 
-export const setGroupsToLocalStorage = (groups: GroupParsed[]): void => {
+export const setGroupsToLocalStorage = (groups: Group[]): void => {
   localStorage.setItem(LOCALSTORAGE_KEY_GROUPS, JSON.stringify(groups.map((v) => {return v.unique_id})))
 }
 

@@ -20,7 +20,7 @@ interface StoredItem<T> {
   initialized: boolean
 }
 
-export interface Member {
+interface MemberRaw {
   memberID: number;
   memberName: string;
   HPjoinDate: string;
@@ -30,7 +30,7 @@ export interface Member {
   birthDate: string;
 }
 
-export interface Group {
+interface GroupRaw {
   groupID: number;
   groupName: string;
   formDate: string;
@@ -38,19 +38,14 @@ export interface Group {
   isUnit: string;
 }
 
-export interface Join {
+interface JoinRaw {
   memberID: number;
   groupID: number;
   joinDate: string;
   gradDate: string;
 }
 
-// interface GroupColor {
-//   groupID: string;
-//   colorCode: string;
-// }
-
-export interface GroupParsed {
+export interface Group {
   unique_id: number;
   groupID: number;
   groupName: string;
@@ -59,7 +54,7 @@ export interface GroupParsed {
   isUnit: string;
 }
 
-export interface MemberParsed {
+export interface Member {
   memberName: string;
   HPjoinDate: Date;
   debutDate?: Date;
@@ -71,8 +66,8 @@ export interface MemberParsed {
 
 interface HPDatabase {
   initialState: InitParams,
-  setGroups: (v: GroupParsed[]) => void;
-  members: Map<string, MemberParsed>;
+  setGroups: (v: Group[]) => void;
+  members: Map<string, Member>;
   includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
   includeTrainee: boolean;
@@ -86,16 +81,16 @@ export interface DateRange {
 }
 
 export interface InitParams {
-  allgroups: StoredItem<GroupParsed[]>,
-  groups_stored: StoredItem<GroupParsed[]>,
+  allgroups: StoredItem<Group[]>,
+  groups_stored: StoredItem<Group[]>,
   date_range: StoredItem<DateRange>,
   init_date_range: StoredItem<DateRange>
 }
 
 export function useHPDatabase(): HPDatabase {
-  const allgroups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
-  const groups = useRef<StoredItem<GroupParsed[]>>({item: [], initialized: false});
-  const allmembers = useRef<StoredItem<Map<number, MemberParsed>>>({item: new Map<number, MemberParsed>(), initialized: false});
+  const allgroups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
+  const groups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
+  const allmembers = useRef<StoredItem<Map<number, Member>>>({item: new Map<number, Member>(), initialized: false});
   const daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
 
   const [includeOG, setIncludeOG] = useState<boolean>(true);
@@ -104,7 +99,7 @@ export function useHPDatabase(): HPDatabase {
   const [includeTrainee, setIncludeTrainee] = useState<boolean>(true);
   const include_trainee = useRef<boolean>(true);
 
-  const [members, setMembers] = useState<Map<string, MemberParsed>>(new Map<string, MemberParsed>());
+  const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
   
   const [initialState, setInitialState] = useState<InitParams>({
     allgroups: { item: [], initialized: false},
@@ -126,22 +121,22 @@ export function useHPDatabase(): HPDatabase {
     include_trainee.current = include_trainee_local;
     setIncludeTrainee(include_trainee_local);
 
-    const members = await fetchCSVAsync<Member[]>(HP_DB_MEMBERS);
-    const join = await fetchCSVAsync<Join[]>(HP_DB_JOIN);
-    const group = await fetchCSVAsync<Group[]>(HP_DB_GROUP);
+    const members = await fetchCSVAsync<MemberRaw[]>(HP_DB_MEMBERS);
+    const join = await fetchCSVAsync<JoinRaw[]>(HP_DB_JOIN);
+    const group = await fetchCSVAsync<GroupRaw[]>(HP_DB_GROUP);
     
     group.sort((a, b) => (a.groupID - b.groupID));
-    const groupParsed: GroupParsed[] = group.map((v, idx) => { return { unique_id: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
+    const groupParsed: Group[] = group.map((v, idx) => { return { unique_id: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
     
     allgroups.current.item = groupParsed;
     allgroups.current.initialized = true;
 
-    const result: Map<number, MemberParsed> = new Map<number, MemberParsed>();
+    const result: Map<number, Member> = new Map<number, Member>();
     let date_max = parseDate("1900/1/1")!;
     let date_min = new Date();
 
     for(const member of members) {
-      const val: MemberParsed = {
+      const val: Member = {
         memberName: member.memberName,
         HPjoinDate: parseDate(member.HPjoinDate)!,
         debutDate: parseDate(member.debutDate),
@@ -191,7 +186,7 @@ export function useHPDatabase(): HPDatabase {
     return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}};
   }
 
-  const search = useCallback((v: GroupParsed[], includeOG: boolean, includeTrainee: boolean, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, MemberParsed> => {
+  const search = useCallback((v: Group[], includeOG: boolean, includeTrainee: boolean, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, Member> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
@@ -267,7 +262,7 @@ export function useHPDatabase(): HPDatabase {
         }
       }
     }
-    const ret: Map<string, MemberParsed> = new Map(Array.from(result).map(i => {
+    const ret: Map<string, Member> = new Map(Array.from(result).map(i => {
       const member = allmembers.current.item.get(i)!
       return [member.memberName, member]
     }))
@@ -287,7 +282,7 @@ export function useHPDatabase(): HPDatabase {
     // eslint-disable-next-line
   }, [])
 
-  const setGroups = useCallback((val: GroupParsed[]) => {
+  const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
@@ -329,11 +324,11 @@ export function useHPDatabase(): HPDatabase {
   }
 }
 
-export const nameRenderFunction = (member: MemberParsed):string => {
+export const nameRenderFunction = (member: Member):string => {
   return member.memberName;
 }
 
-export const profileRenderFunction = (member: MemberParsed):string[] => {
+export const profileRenderFunction = (member: Member):string[] => {
   const res:string[] = [
     `誕生日: ${member.birthDate ? formatDate(member.birthDate) : "N/A"}`,
     `H!P加入日: ${formatDate(member.HPjoinDate)}`,
