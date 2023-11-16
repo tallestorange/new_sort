@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Sorter from "../modules/Sorter";
@@ -19,6 +19,7 @@ import { useLocation } from 'react-router-dom';
 interface Props<T> {
   members: Map<string, T>;
   sort_name?: string;
+  share_url?: string;
   initialized: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
@@ -31,7 +32,7 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T extends {}>(props: Props<T>) {
-  const {members, initialized, name_render_function, profile_render_function} = props;
+  const {members, initialized, name_render_function, profile_render_function, share_url} = props;
 
   const location = useLocation();
   let sortName = "";
@@ -41,6 +42,8 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   else {
     sortName = props.sort_name;
   }
+
+  console.log(share_url+encodeURI(sortName))
   
   const sort = useRef<Sorter>();
   const target_members = useRef<Map<string, T>>(members);
@@ -61,7 +64,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage share_url={share_url} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -179,8 +182,9 @@ function NowSortPage<T extends {}>(props: {
 function SortResultPage(props: {
   sortName: string;
   sort: Sorter;
+  share_url?: string;
 }) {
-  const {sort, sortName} = props;
+  const {sort, sortName, share_url} = props;
 
   const getRankTable = useCallback((): JSX.Element[] => {
     const rankTable: JSX.Element[] = [];
@@ -189,6 +193,10 @@ function SortResultPage(props: {
     }
     return rankTable;
   }, [sort]);
+
+  const url = useMemo(() => {
+    return share_url === undefined ? PAGE_URL : share_url
+  }, [share_url]);
 
   const getTwitterIntentURL = useCallback((max_output: number): string => {
     let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}結果\n`);
@@ -200,10 +208,10 @@ function SortResultPage(props: {
         count++;
       }
     }
-    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(url);
 
     return tweet_url;
-  }, [sort, sortName]);
+  }, [sort, sortName, url]);
 
   const getResultPictures = useCallback((min: number, max: number) => {
     const result: JSX.Element[] = [];

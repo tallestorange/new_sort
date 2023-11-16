@@ -7,7 +7,7 @@ import { formatDate, parseDate } from "../modules/DateUtils";
 import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
 import max from "date-fns/max";
 import min from "date-fns/min";
-import { PAGE_URL } from "../modules/Constants";
+import { PAGE_URL_FOR_SHARE } from "../modules/Constants";
 
 interface StoredItem<T> {
   /**
@@ -76,6 +76,7 @@ interface HPDatabase {
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRange: (val: DateRange) => void;
   setExternalSortParam: (groups: string | null) => void;
+  shareURL: string | undefined;
 }
 
 export interface DateRange {
@@ -87,7 +88,7 @@ export interface InitParams {
   allgroups: StoredItem<Group[]>,
   groups_stored: StoredItem<Group[]>,
   date_range: StoredItem<DateRange>,
-  init_date_range: StoredItem<DateRange>
+  init_date_range: StoredItem<DateRange>,
 }
 
 export function useHPDatabase(): HPDatabase {
@@ -102,13 +103,15 @@ export function useHPDatabase(): HPDatabase {
   const [includeTrainee, setIncludeTrainee] = useState<boolean>(true);
   const include_trainee = useRef<boolean>(true);
 
+  const [shareURL, setShareURL] = useState<string>();
+
   const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
   
   const [initialState, setInitialState] = useState<InitParams>({
-    allgroups: { item: [], initialized: false},
-    groups_stored: { item: [], initialized: false},
-    date_range: { item: {from: null, to: null}, initialized: false},
-    init_date_range: { item: {from: null, to: null}, initialized: false}
+    allgroups: { item: [], initialized: false },
+    groups_stored: { item: [], initialized: false },
+    date_range: { item: {from: null, to: null}, initialized: false },
+    init_date_range: { item: {from: null, to: null}, initialized: false} ,
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
@@ -298,8 +301,9 @@ export function useHPDatabase(): HPDatabase {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
     const bitList = generateGroupBitList(val);
-    const url = PAGE_URL + "sort_shared?groups=" + bitList.join(",") + "&sort_title=" + encodeURI("アンジュルム＆スマイレージソート")
+    const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=" //+ encodeURI("アンジュルム＆スマイレージソート")
     console.log(url);
+    setShareURL(url);
 
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
@@ -332,7 +336,6 @@ export function useHPDatabase(): HPDatabase {
     if (groups === null) {
       return;
     }
-    // 35,37,43
     const result: Group[] = [];
     const grp_list = groups.split(",");
     for (const [idx, val] of grp_list.entries()) {
@@ -365,7 +368,8 @@ export function useHPDatabase(): HPDatabase {
     includeTrainee: includeTrainee,
     setIncludeTrainee: setIncludeTraineeInternal,
     setDateRange: setDateRange,
-    setExternalSortParam: setExternalSortParam
+    setExternalSortParam: setExternalSortParam,
+    shareURL: shareURL
   }
 }
 

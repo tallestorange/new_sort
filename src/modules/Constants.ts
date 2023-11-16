@@ -4,6 +4,7 @@ export const DEFAULT_SORT_TITLE: string = "ハロプロソート";
 export const VERSION: string = "1.0.0";
 export const IMAGE_DIR: string = "member_pics/";
 export const PAGE_URL: string = "https://hpsort3.192.works/";
+export const PAGE_URL_FOR_SHARE: string = "https://hpsort3.192.works/sort_shared";
 export const SORT_PATH: string = "sort";
 export const NOW_LOADING: string = "読み込み中...";
 export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/16 実験中)";

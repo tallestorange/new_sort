@@ -8,6 +8,7 @@ interface Props<T> {
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
   set_custom_params?: (params: string | null) => void;
+  share_url?: string;
 }
 
 /**
@@ -19,8 +20,9 @@ interface Props<T> {
 export default function SortPageShared<T extends {}>(props: Props<T>) {
   const [searchParams] = useSearchParams();
   const [initializedInternal, setInitializedInternal] = useState<boolean>(false);
-  const {initialized, members, set_custom_params} = props;
+  const {initialized, members, set_custom_params, share_url} = props;
   const sortTitle = searchParams.get("sort_title") === null ? undefined : searchParams.get("sort_title")!;
+  // console.log(share_url+encodeURI(sortTitle!))
 
   useEffect(() => {
     if (initialized) {
@@ -35,5 +37,5 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
     }
   }, [members, initialized]);
 
-  return <SortPage sort_name={sortTitle} members={members} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
+  return <SortPage share_url={share_url} sort_name={sortTitle} members={members} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
 }

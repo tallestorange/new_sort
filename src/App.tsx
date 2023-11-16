@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import SortPageShared from "./pages/SortPageShared";
 
 export default function App() {
-  const { initialState, setGroups, members, includeOG, setIncludeOG, includeTrainee, setIncludeTrainee, setDateRange, setExternalSortParam } = useHPDatabase();
+  const { initialState, setGroups, members, includeOG, setIncludeOG, includeTrainee, setIncludeTrainee, setDateRange, setExternalSortParam, shareURL } = useHPDatabase();
 
   const initialized = useMemo(() => {
     return initialState.allgroups.initialized && initialState.groups_stored.initialized;
@@ -34,6 +34,7 @@ export default function App() {
           <Route path={`/${SORT_PATH}`} element={
             <SortPage<Member> 
               members={members}
+              share_url={shareURL}
               initialized={initialized}
               name_render_function={nameRenderFunction}
               profile_render_function={profileRenderFunction}
@@ -41,6 +42,7 @@ export default function App() {
           <Route path={`/sort_shared`} element={
             <SortPageShared<Member>
               members={members}
+              share_url={shareURL}
               initialized={initialized}
               name_render_function={nameRenderFunction}
               profile_render_function={profileRenderFunction}
