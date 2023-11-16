@@ -39,7 +39,8 @@ export default function App() {
               profile_render_function={profileRenderFunction}
           />} />
           <Route path={`/sort_shared`} element={
-            <SortPageShared<Member> 
+            <SortPageShared<Member>
+              members={members}
               initialized={initialized}
               name_render_function={nameRenderFunction}
               profile_render_function={profileRenderFunction}

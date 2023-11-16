@@ -1,10 +1,10 @@
 import { useSearchParams } from "react-router-dom";
 import SortPage from "./SortPage";
 import { useEffect, useState } from "react";
-import { Member } from "../hooks/useHPDatabase";
 
 interface Props<T> {
   initialized: boolean;
+  members: Map<string, T>;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
   set_custom_params?: (params: string | null) => void;
@@ -17,16 +17,21 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPageShared<T extends {}>(props: Props<T>) {
-  const [searchParams, set_custom_params] = useSearchParams();
-  const [groups, setGroups] = useState<string | null>(searchParams.get("groups"));
-  const [members, setMembers] = useState<Map<string, T>>(new Map<string, T>());
-  const {initialized} = props;
+  const [searchParams] = useSearchParams();
+  const [initializedInternal, setInitializedInternal] = useState<boolean>(false);
+  const {initialized, members, set_custom_params} = props;
 
   useEffect(() => {
     if (initialized) {
-      props.set_custom_params?.(groups);
-    }    
-  }, [groups, initialized]);
+      set_custom_params?.(searchParams.get("groups"));
+    }
+  }, [initialized, searchParams, set_custom_params]);
 
-  return <SortPage members={members} initialized={true} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
+  useEffect(() => {
+    if (initialized) {
+      setInitializedInternal(true);
+    }
+  }, [members, initialized]);
+
+  return <SortPage members={members} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
 }

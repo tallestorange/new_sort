@@ -189,7 +189,7 @@ export function useHPDatabase(): HPDatabase {
     return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}};
   }
 
-  const search = useCallback((v: Group[], includeOG: boolean, includeTrainee: boolean, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, Member> => {
+  const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, Member> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
@@ -197,7 +197,7 @@ export function useHPDatabase(): HPDatabase {
       }
 
       // OGを含むかどうか
-      if (!includeOG) {
+      if (includeOG === false) {
         if (value.HPgradDate !== undefined) {
           const now = new Date();
           if (now >= value.HPgradDate) {
@@ -206,7 +206,7 @@ export function useHPDatabase(): HPDatabase {
         }
       }
       // 未昇格のメンバを含むかどうか
-      if (!includeTrainee) {
+      if (includeTrainee === false) {
         if (value.debutDate === undefined) {
           continue;
         }
@@ -216,7 +216,7 @@ export function useHPDatabase(): HPDatabase {
       if (birthDate === undefined) {
         continue;
       }
-      if (birthDate !== undefined && birthDateFrom !== undefined && birthDateTo !== undefined) {
+      if (birthDateFrom !== null && birthDateTo !== null) {
         if (!(birthDateFrom! <= birthDate && birthDate <= birthDateTo!)) {
           continue;
         }
@@ -319,22 +319,28 @@ export function useHPDatabase(): HPDatabase {
     if (groups === null) {
       return;
     }
-    console.log(groups)
-    const id = 4//Number(groups);
-    console.log(id)
-    if (Number.isNaN(id)) {
-      return;
+    // 35,37,43
+    const result: Group[] = [];
+    const grp_list = groups.split(",");
+    for (const [idx, val] of grp_list.entries()) {
+      const id = Number(val);
+      if (Number.isNaN(id)) {
+        return;
+      }
+      for(let i=0; i<31; i++) {
+        const form_order_idx = idx * 31 + i;
+        if (id & (1 << i)) {
+          for (const group of allgroups.current.item) {
+            if (group.form_order === form_order_idx) {
+              result.push(group);
+              break;
+            }
+          }
+        }
+      }
     }
-    // console.log(allgroups.current.item.length)
-    for(let i=0; i<allgroups.current.item.length; i++) {
-      // console.log(id & (1 << i))
-      // console.log((id & (1 << i)) >> i)
-      // if (id & (1 << i)) {
-      //   console.log(i)
-      // }
-      console.log(i, 1<<i)
-    }
-
+    const search_result = search(result, null, null, null, null);
+    setMembers(search_result);
   }, [search]);
 
   return {
