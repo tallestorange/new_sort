@@ -49,9 +49,11 @@ export default function SortPage<T extends {}>(props: Props<T>) {
 
   const full_url = useMemo(() => {
     const url = share_url + encodeURI(sortName);
-    console.log(url);
+    if (initialized) {
+      console.log(url);
+    }
     return url;
-  }, [share_url, sortName]);
+  }, [share_url, sortName, initialized]);
 
   if (!sort.current) {
     // 初期化処理

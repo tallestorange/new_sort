@@ -34,7 +34,7 @@ export default function App() {
           <Route path={`/${SORT_PATH}`} element={
             <SortPage<Member> 
               members={members}
-              share_url={shareURL}
+              share_url={initialState.share_url.item}
               initialized={initialized}
               name_render_function={nameRenderFunction}
               profile_render_function={profileRenderFunction}

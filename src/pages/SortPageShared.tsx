@@ -31,7 +31,7 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
   }, [initialized, searchParams, set_custom_params]);
 
   useEffect(() => {
-    if (initialized) {
+    if (initialized && members.size > 0) {
       setInitializedInternal(true);
     }
   }, [members, initialized]);

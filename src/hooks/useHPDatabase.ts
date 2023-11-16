@@ -89,6 +89,7 @@ export interface InitParams {
   groups_stored: StoredItem<Group[]>,
   date_range: StoredItem<DateRange>,
   init_date_range: StoredItem<DateRange>,
+  share_url: StoredItem<string>
 }
 
 export function useHPDatabase(): HPDatabase {
@@ -96,6 +97,7 @@ export function useHPDatabase(): HPDatabase {
   const groups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const allmembers = useRef<StoredItem<Map<number, Member>>>({item: new Map<number, Member>(), initialized: false});
   const daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
+  const shareurl = useRef<StoredItem<string>>({item: "", initialized: false});
 
   const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<boolean>(true);
@@ -111,7 +113,8 @@ export function useHPDatabase(): HPDatabase {
     allgroups: { item: [], initialized: false },
     groups_stored: { item: [], initialized: false },
     date_range: { item: {from: null, to: null}, initialized: false },
-    init_date_range: { item: {from: null, to: null}, initialized: false} ,
+    init_date_range: { item: {from: null, to: null}, initialized: false },
+    share_url: { item: "", initialized: false }
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
@@ -189,8 +192,13 @@ export function useHPDatabase(): HPDatabase {
     });
     groups.current.item = groups_stored_local;
     groups.current.initialized = true;
+
+    const bitList = generateGroupBitList(groups_stored_local);
+    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=";
+    shareurl.current.item = share_url;
+    shareurl.current.initialized = true;
   
-    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}};
+    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}, share_url: shareurl.current};
   }
 
   const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, Member> => {
@@ -302,7 +310,8 @@ export function useHPDatabase(): HPDatabase {
     setGroupsToLocalStorage(val);
     const bitList = generateGroupBitList(val);
     const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title="
-    setShareURL(url);
+    shareurl.current.item = url;
+    shareurl.current.initialized = true;
 
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
