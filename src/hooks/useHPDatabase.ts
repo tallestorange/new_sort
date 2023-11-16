@@ -47,6 +47,7 @@ interface JoinRaw {
 
 export interface Group {
   unique_id: number;
+  form_order: number;
   groupID: number;
   groupName: string;
   formDate: Date;
@@ -73,6 +74,7 @@ interface HPDatabase {
   includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRange: (val: DateRange) => void;
+  setExternalSortParam: (groups: string | null) => void;
 }
 
 export interface DateRange {
@@ -125,10 +127,11 @@ export function useHPDatabase(): HPDatabase {
     const join = await fetchCSVAsync<JoinRaw[]>(HP_DB_JOIN);
     const group = await fetchCSVAsync<GroupRaw[]>(HP_DB_GROUP);
     
-    group.sort((a, b) => (a.groupID - b.groupID));
-    const groupParsed: Group[] = group.map((v, idx) => { return { unique_id: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
-    
-    allgroups.current.item = groupParsed;
+    const groupParsed1: Group[] = group.map((v, idx) => { return { unique_id: idx, form_order: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
+    groupParsed1.sort((a, b) => (a.groupID - b.groupID));
+    const groupParsed2: Group[] = groupParsed1.map((v, idx) => { return { unique_id: idx, form_order: v.form_order, groupID: v.groupID, groupName: v.groupName, formDate: v.formDate, dissolveDate: v.dissolveDate, isUnit: v.isUnit } })
+
+    allgroups.current.item = groupParsed2;
     allgroups.current.initialized = true;
 
     const result: Map<number, Member> = new Map<number, Member>();
@@ -312,6 +315,28 @@ export function useHPDatabase(): HPDatabase {
     setMembers(result);
   }, [search]);
 
+  const setExternalSortParam = useCallback((groups: string | null) => {
+    if (groups === null) {
+      return;
+    }
+    console.log(groups)
+    const id = 4//Number(groups);
+    console.log(id)
+    if (Number.isNaN(id)) {
+      return;
+    }
+    // console.log(allgroups.current.item.length)
+    for(let i=0; i<allgroups.current.item.length; i++) {
+      // console.log(id & (1 << i))
+      // console.log((id & (1 << i)) >> i)
+      // if (id & (1 << i)) {
+      //   console.log(i)
+      // }
+      console.log(i, 1<<i)
+    }
+
+  }, [search]);
+
   return {
     initialState: initialState,
     setGroups: setGroups,
@@ -320,7 +345,8 @@ export function useHPDatabase(): HPDatabase {
     setIncludeOG: setIncludeOGInternal,
     includeTrainee: includeTrainee,
     setIncludeTrainee: setIncludeTraineeInternal,
-    setDateRange: setDateRange
+    setDateRange: setDateRange,
+    setExternalSortParam: setExternalSortParam
   }
 }
 
