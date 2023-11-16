@@ -22,7 +22,6 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
   const [initializedInternal, setInitializedInternal] = useState<boolean>(false);
   const {initialized, members, set_custom_params, share_url} = props;
   const sortTitle = searchParams.get("sort_title") === null ? undefined : searchParams.get("sort_title")!;
-  // console.log(share_url+encodeURI(sortTitle!))
 
   useEffect(() => {
     if (initialized) {

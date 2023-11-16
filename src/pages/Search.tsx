@@ -4,7 +4,7 @@ import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modu
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DateRange, Group, InitParams } from "../hooks/useHPDatabase";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -49,6 +49,10 @@ export default function Search(props: Props) {
 
   const groupName = useCallback((v: Group):string => {
     return v.groupName;
+  }, []);
+
+  useEffect(() => {
+    document.title = TITLE;
   }, []);
 
   return (

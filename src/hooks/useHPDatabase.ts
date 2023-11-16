@@ -301,8 +301,7 @@ export function useHPDatabase(): HPDatabase {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
     const bitList = generateGroupBitList(val);
-    const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=" //+ encodeURI("アンジュルム＆スマイレージソート")
-    console.log(url);
+    const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title="
     setShareURL(url);
 
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
@@ -355,9 +354,12 @@ export function useHPDatabase(): HPDatabase {
         }
       }
     }
+    const bitList = generateGroupBitList(result);
+    const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=";
+    setShareURL(url);
     const search_result = search(result, null, null, null, null);
     setMembers(search_result);
-  }, [search]);
+  }, [search, generateGroupBitList]);
 
   return {
     initialState: initialState,

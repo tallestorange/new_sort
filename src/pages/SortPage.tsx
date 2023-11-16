@@ -43,17 +43,25 @@ export default function SortPage<T extends {}>(props: Props<T>) {
     sortName = props.sort_name;
   }
 
-  console.log(share_url+encodeURI(sortName))
-  
   const sort = useRef<Sorter>();
   const target_members = useRef<Map<string, T>>(members);
   const [result, setResult] = useState<boolean>();
+
+  const full_url = useMemo(() => {
+    const url = share_url + encodeURI(sortName);
+    console.log(url);
+    return url;
+  }, [share_url, sortName]);
 
   if (!sort.current) {
     // 初期化処理
     sort.current = new Sorter(Array.from(members.keys()));
     setResult(sort.current.sort());
   }
+
+  useEffect(() => {
+    document.title = sortName;
+  }, [sortName])
 
   useEffect(() => {
     if (members.size !== target_members.current.size) {
@@ -64,7 +72,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage share_url={share_url} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage share_url={full_url} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
