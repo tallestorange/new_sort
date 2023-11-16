@@ -7,6 +7,7 @@ import { formatDate, parseDate } from "../modules/DateUtils";
 import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
 import max from "date-fns/max";
 import min from "date-fns/min";
+import { PAGE_URL } from "../modules/Constants";
 
 interface StoredItem<T> {
   /**
@@ -285,12 +286,24 @@ export function useHPDatabase(): HPDatabase {
     // eslint-disable-next-line
   }, [])
 
+  const generateGroupBitList = useCallback((groups: Group[]): number[] => {
+    const result: number[] = [0, 0, 0];
+    for (const group of groups) {
+      result[group.form_order / 31 | 0] += 1 << (group.form_order % 31)
+    }
+    return result;
+  }, []);
+
   const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
+    const bitList = generateGroupBitList(val);
+    const url = PAGE_URL + "sort_shared?groups=" + bitList.join(",") + "&sort_title=" + encodeURI("アンジュルム＆スマイレージソート")
+    console.log(url);
+
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
-  }, [search]);
+  }, [search, generateGroupBitList]);
 
   const setIncludeOGInternal = useCallback((val: boolean) => {
     include_og.current = val;
