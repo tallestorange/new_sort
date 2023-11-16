@@ -141,8 +141,14 @@ const CustomListItemText = memo((props: { title: string, id: string, index: numb
   return before.title === after.title;
 })
 
+const useStyles2 = makeStyles(() => ({
+  selectAllText: {
+    fontWeight: 700
+  }
+}));
+
 const SelectAllText = memo((props: {id: string}) => {
-  const classes = useStyles();
+  const classes = useStyles2();
   const {id} = props;
   return (
     <ListItemText
