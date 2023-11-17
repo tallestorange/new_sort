@@ -1,5 +1,5 @@
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from "@material-ui/core/FormControl";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -43,6 +43,7 @@ const DateRangePicker = memo((props: Props) => {
   const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText} = props;
   const [selectedDateFrom, setSelectedDateFrom] = useState<Date | null>(null);
   const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
+
   const selectedDateFromRef = useRef<Date | null>(null);
   const selectedDateToRef = useRef<Date | null>(null);
 
@@ -50,24 +51,26 @@ const DateRangePicker = memo((props: Props) => {
   const stateB = useRef<boolean>(false);
 
   useEffect(() => {
+    selectedDateFromRef.current = dateFrom;
     setSelectedDateFrom(dateFrom);
   }, [dateFrom]);
 
   useEffect(() => {
+    selectedDateToRef.current = dateTo;
     setSelectedDateTo(dateTo);
   }, [dateTo]);
 
-  useEffect(() => {
-    if (selectedDateFrom === null || selectedDateTo === null) {
-      return;
-    }
-    if (isEqual(selectedDateFrom!, selectedDateFromRef.current!) && isEqual(selectedDateTo!, selectedDateToRef.current!)) {
-      return;
-    }
-    selectedDateFromRef.current = selectedDateFrom;
-    selectedDateToRef.current = selectedDateTo;
-    onDateRangeChanged?.({from: selectedDateFrom, to: selectedDateTo});
-  }, [selectedDateFrom, selectedDateTo, onDateRangeChanged]);
+  const onChangedFrom = useCallback((date: Date | null) => {
+    selectedDateFromRef.current = date;
+    setSelectedDateFrom(date);
+    onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
+  },[onDateRangeChanged]);
+
+  const onChangedTo = useCallback((date: Date | null) => {
+    selectedDateToRef.current = date;
+    setSelectedDateTo(date);
+    onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
+  },[onDateRangeChanged]);
 
   return (
     <FormControl fullWidth className={classes.formControl}>
@@ -85,7 +88,7 @@ const DateRangePicker = memo((props: Props) => {
               minDate={dateInitFrom}
               maxDate={selectedDateTo}
               disabled={disabled}
-              onChange={setSelectedDateFrom}
+              onChange={onChangedFrom}
               onError={(a,_) => {
                 stateA.current = a !== ""
                 props.onError?.(stateA.current || stateB.current)
@@ -109,7 +112,7 @@ const DateRangePicker = memo((props: Props) => {
               minDate={selectedDateFrom}
               maxDate={dateInitTo}
               disabled={disabled}
-              onChange={setSelectedDateTo}
+              onChange={onChangedTo}
               onError={(a,_) => {
                 stateB.current = a !== ""
                 props.onError?.(stateA.current || stateB.current)

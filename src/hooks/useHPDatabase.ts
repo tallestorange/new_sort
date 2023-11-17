@@ -316,7 +316,6 @@ export function useHPDatabase(): HPDatabase {
       date_range_str = `&date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`;
     }
     const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + date_range_str + include_og_str + include_trainee_str;
-    console.log(share_url);
     return share_url;
   }, []);
 
