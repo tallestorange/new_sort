@@ -90,7 +90,9 @@ export interface InitParams {
   groups_stored: StoredItem<Group[]>,
   date_range: StoredItem<DateRange>,
   init_date_range: StoredItem<DateRange>,
-  share_url: StoredItem<string>
+  share_url: StoredItem<string>,
+  include_og: StoredItem<boolean>,
+  include_trainee: StoredItem<boolean>
 }
 
 export function useHPDatabase(): HPDatabase {
@@ -102,10 +104,10 @@ export function useHPDatabase(): HPDatabase {
   const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
 
   const [includeOG, setIncludeOG] = useState<boolean>(true);
-  const include_og = useRef<boolean>(true);
+  const include_og = useRef<StoredItem<boolean>>({ item: false, initialized: false });
 
   const [includeTrainee, setIncludeTrainee] = useState<boolean>(true);
-  const include_trainee = useRef<boolean>(true);
+  const include_trainee = useRef<StoredItem<boolean>>({ item: false, initialized: false });
 
   const [shareURL, setShareURL] = useState<string>();
 
@@ -116,21 +118,23 @@ export function useHPDatabase(): HPDatabase {
     groups_stored: { item: [], initialized: false },
     date_range: { item: {from: null, to: null}, initialized: false },
     init_date_range: { item: {from: null, to: null}, initialized: false },
-    share_url: { item: "", initialized: false }
+    share_url: { item: "", initialized: false },
+    include_og: { item: false, initialized: false },
+    include_trainee: { item: false, initialized: false }
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
     const include_og_local = getIncludeOGFromLocalStorage(() => {
       setIncludeOGToLocalStorage(true);
     });
-    include_og.current = include_og_local;
-    setIncludeOG(include_og_local);
+    include_og.current.item = include_og_local;
+    include_og.current.initialized = true;
 
     const include_trainee_local = getIncludeTraineeFromLocalStorage(() => {
       setIncludeTraineeToLocalStorage(true);
     });
-    include_trainee.current = include_trainee_local;
-    setIncludeTrainee(include_trainee_local);
+    include_trainee.current.item = include_trainee_local;
+    include_trainee.current.initialized = true;
 
     const members = await fetchCSVAsync<MemberRaw[]>(HP_DB_MEMBERS);
     const join = await fetchCSVAsync<JoinRaw[]>(HP_DB_JOIN);
@@ -198,11 +202,11 @@ export function useHPDatabase(): HPDatabase {
     groups.current.item = groups_stored_local;
     groups.current.initialized = true;
 
-    const share_url = generateShareURL(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
   
-    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}, share_url: shareurl.current};
+    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}, share_url: shareurl.current, include_og: include_og.current, include_trainee: include_trainee.current};
   }
 
   const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom?: Date | null, birthDateTo?: Date | null): Map<string, Member> => {
@@ -293,7 +297,7 @@ export function useHPDatabase(): HPDatabase {
     console.log("initialize started")
     initializeAsync().then((init_params) => {
       setInitialState(init_params);
-      const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+      const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
       setMembers(result);
     }).then(() => {
       console.log("initialize finished");
@@ -323,37 +327,37 @@ export function useHPDatabase(): HPDatabase {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
 
-    const share_url = generateShareURL(val, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const share_url = generateShareURL(val, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
-    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search, generateShareURL]);
 
   const setIncludeOGInternal = useCallback((val: boolean) => {
-    include_og.current = val;
+    include_og.current.item = val;
     setIncludeOG(val);
     setIncludeOGToLocalStorage(val);
 
-    const share_url = generateShareURL(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
-    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search, generateShareURL]);
 
   const setIncludeTraineeInternal = useCallback((val: boolean) => {
-    include_trainee.current = val;
+    include_trainee.current.item = val;
     setIncludeTrainee(val);
     setIncludeTraineeToLocalStorage(val);
 
-    const share_url = generateShareURL(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
-    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search, generateShareURL]);
 
@@ -361,11 +365,11 @@ export function useHPDatabase(): HPDatabase {
     daterange.current.item.from = val.from;
     daterange.current.item.to = val.to;
 
-    const share_url = generateShareURL(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
-    const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search, generateShareURL]);
 

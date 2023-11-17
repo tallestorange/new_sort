@@ -36,7 +36,6 @@ export default function Search(props: Props) {
 
   const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee, setDateRangeChanged} = props;
   const classes = useStyles();
-  console.log(initialState, includeOG, includeTrainee, target_members_count);
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -101,16 +100,18 @@ export default function Search(props: Props) {
         </Grid>       
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox
-            checked={includeOG}
-            setChecked={setIncludeOG}
+            default_checked={initialState.include_og.item}
+            disabled={!initialState.include_og.initialized}
+            valueChanged={setIncludeOG}
             form_id="checkbox-form-include-og"
             checkbox_id="checkbox-include-og"
             label="OGを含める" />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox
-            checked={includeTrainee}
-            setChecked={setIncludeTrainee}
+            default_checked={initialState.include_trainee.item}
+            disabled={!initialState.include_og.initialized}
+            valueChanged={setIncludeTrainee}
             form_id="checkbox-form-promote"
             checkbox_id="checkbox-promote"
             label="未昇格メンバーを含む" />

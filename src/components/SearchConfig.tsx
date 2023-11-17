@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState, memo } from "react";
 import Typography from "@material-ui/core/Typography/Typography";
 import Button from "@material-ui/core/Button/Button";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
@@ -24,12 +24,22 @@ export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: 
   )
 });
 
-export const LabelCheckBox = React.memo((props: {checked: boolean, setChecked?: (canVote: boolean) => void, form_id: string, checkbox_id: string, label: string}) => {
+export const LabelCheckBox = memo((props: {default_checked: boolean, valueChanged?: (checked: boolean) => void, form_id: string, checkbox_id: string, label: string, disabled: boolean}) => {
+  const {default_checked, valueChanged, form_id, checkbox_id, label, disabled} = props;
+  const [checked, setChecked] = useState<boolean>(props.default_checked)
+
+  useEffect(() => {
+    setChecked(default_checked);
+  }, [default_checked]);
+
+  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+    valueChanged?.(event.target.checked);
+  }, [setChecked, valueChanged]);
+
   return (
     <FormGroup>
-      <FormControlLabel id={props.form_id} control={<Checkbox color="primary" checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked?.(event.target.checked) }} />} label={props.label} />
+      <FormControlLabel id={form_id} control={<Checkbox color="primary" disabled={disabled} checked={checked} id={checkbox_id} onChange={onChange} />} label={label} />
     </FormGroup>
   )
-}, (before, after) => {
-  return before.checked === after.checked;
 });
