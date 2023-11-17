@@ -61,20 +61,20 @@ const DateRangePicker = memo((props: Props) => {
   }, [dateTo]);
 
   const onChangedFrom = useCallback((date: Date | null) => {
+    selectedDateFromRef.current = date;
+    setSelectedDateFrom(date);
     if (date !== null && Number.isNaN(date.getTime())) {
       return;
     }
-    selectedDateFromRef.current = date;
-    setSelectedDateFrom(date);
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
   const onChangedTo = useCallback((date: Date | null) => {
+    selectedDateToRef.current = date;
+    setSelectedDateTo(date);
     if (date !== null && Number.isNaN(date.getTime())) {
       return;
     }
-    selectedDateToRef.current = date;
-    setSelectedDateTo(date);
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
@@ -108,6 +108,7 @@ const DateRangePicker = memo((props: Props) => {
               onError={onErrorFrom}
               cancelLabel="キャンセル"
               okLabel="選択"
+              allowKeyboardControl
               animateYearScrolling={false}
               KeyboardButtonProps={{
                 'aria-label': 'change start date',
@@ -129,6 +130,7 @@ const DateRangePicker = memo((props: Props) => {
               onError={onErrorTo}
               cancelLabel="キャンセル"
               okLabel="選択"
+              allowKeyboardControl
               animateYearScrolling={false}
               KeyboardButtonProps={{
                 'aria-label': 'change finish date',
