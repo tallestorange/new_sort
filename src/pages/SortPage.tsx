@@ -218,14 +218,14 @@ function SortResultPage(props: {
         count++;
       }
     }
-    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURIComponent(PAGE_URL);
 
     return tweet_url;
   }, [sort, sortName]);
 
   const getTwitterIntentURL2 = useCallback((): string => {
     let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}を作成しました！\n`);
-    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(url);
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURIComponent(url);
     return tweet_url;
   }, [sortName, url]);
 
