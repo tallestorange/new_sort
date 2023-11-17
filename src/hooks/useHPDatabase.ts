@@ -75,7 +75,7 @@ interface HPDatabase {
   includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRange: (val: DateRange) => void;
-  setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean) => void;
+  setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from: string | null, date_to: string | null) => void;
   shareURL: string | undefined;
 }
 
@@ -194,16 +194,14 @@ export function useHPDatabase(): HPDatabase {
     groups.current.initialized = true;
 
     const bitList = generateGroupBitList(groups_stored_local);
-    const include_og_str = include_og.current ? "&include_og=True" : "";
-    const include_trainee_str = include_trainee.current ? "&include_not_debut=True" : "";
-    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + include_og_str + include_trainee_str + "&sort_title=";
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
   
     return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}, share_url: shareurl.current};
   }
 
-  const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom: Date | null, birthDateTo: Date | null): Map<string, Member> => {
+  const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom?: Date | null, birthDateTo?: Date | null): Map<string, Member> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
@@ -230,7 +228,7 @@ export function useHPDatabase(): HPDatabase {
       if (birthDate === undefined) {
         continue;
       }
-      if (birthDateFrom !== null && birthDateTo !== null) {
+      if (birthDateFrom !== null && birthDateTo !== null && birthDateFrom !== undefined && birthDateTo !== undefined) {
         if (!(birthDateFrom! <= birthDate && birthDate <= birthDateTo!)) {
           continue;
         }
@@ -307,20 +305,25 @@ export function useHPDatabase(): HPDatabase {
     return result;
   }, []);
 
+  const generateShareURL = useCallback((bitList: number[], include_og: boolean, include_not_debut: boolean):string => {
+    const include_og_str = include_og ? "&include_og=True" : "";
+    const include_trainee_str = include_not_debut ? "&include_not_debut=True" : "";
+    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + include_og_str + include_trainee_str + "&sort_title=";
+    return share_url;
+  }, []);
+
   const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
 
     const bitList = generateGroupBitList(val);
-    const include_og_str = include_og.current ? "&include_og=True" : "";
-    const include_trainee_str = include_trainee.current ? "&include_not_debut=True" : "";
-    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + include_og_str + include_trainee_str + "&sort_title=";
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
-  }, [search, generateGroupBitList]);
+  }, [search, generateGroupBitList, generateShareURL]);
 
   const setIncludeOGInternal = useCallback((val: boolean) => {
     include_og.current = val;
@@ -345,35 +348,42 @@ export function useHPDatabase(): HPDatabase {
     setMembers(result);
   }, [search]);
 
-  const setExternalSortParam = useCallback((groups_bitset: string | null, include_og: boolean, include_not_debut: boolean) => {
+  const setExternalSortParam = useCallback((groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from_string: string | null, date_to_string: string | null) => {
+    let result: Group[] = [];
     if (groups_bitset === null) {
-      return;
+      result = [...allgroups.current.item];
     }
-    const result: Group[] = [];
-    const grp_list = groups_bitset.split(",");
-    for (const [idx, val] of grp_list.entries()) {
-      const id = Number(val);
-      if (Number.isNaN(id)) {
-        return;
-      }
-      for(let i=0; i<31; i++) {
-        const form_order_idx = idx * 31 + i;
-        if (id & (1 << i)) {
-          for (const group of allgroups.current.item) {
-            if (group.form_order === form_order_idx) {
-              result.push(group);
-              break;
+    else {
+      const grp_list = groups_bitset.split(",");
+      for (const [idx, val] of grp_list.entries()) {
+        const id = Number(val);
+        if (Number.isNaN(id)) {
+          return;
+        }
+        for(let i=0; i<31; i++) {
+          const form_order_idx = idx * 31 + i;
+          if (id & (1 << i)) {
+            for (const group of allgroups.current.item) {
+              if (group.form_order === form_order_idx) {
+                result.push(group);
+                break;
+              }
             }
           }
         }
       }
     }
+
+    const date_from = parseDate(date_from_string, "yyyy-MM-dd");
+    const date_to = parseDate(date_to_string, "yyyy-MM-dd");
+    
     const bitList = generateGroupBitList(result);
-    const url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + "&sort_title=";
-    setShareURL(url);
-    const search_result = search(result, include_og, include_not_debut, null, null);
+    const share_url = generateShareURL(bitList, include_og, include_not_debut);
+    setShareURL(share_url);
+
+    const search_result = search(result, include_og, include_not_debut, date_from, date_to);
     setMembers(search_result);
-  }, [search, generateGroupBitList]);
+  }, [search, generateGroupBitList, generateShareURL]);
 
   return {
     initialState: initialState,
