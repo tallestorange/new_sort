@@ -71,9 +71,7 @@ interface HPDatabase {
   initialState: InitParams,
   setGroups: (v: Group[]) => void;
   members: Map<string, Member>;
-  includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
-  includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRange: (val: DateRange) => void;
   setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from: string | null, date_to: string | null) => void;
@@ -103,14 +101,10 @@ export function useHPDatabase(): HPDatabase {
   const shareurl = useRef<StoredItem<string>>({item: "", initialized: false});
   const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
 
-  const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<StoredItem<boolean>>({ item: false, initialized: false });
-
-  const [includeTrainee, setIncludeTrainee] = useState<boolean>(true);
   const include_trainee = useRef<StoredItem<boolean>>({ item: false, initialized: false });
 
   const [shareURL, setShareURL] = useState<string>();
-
   const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
   
   const [initialState, setInitialState] = useState<InitParams>({
@@ -337,7 +331,6 @@ export function useHPDatabase(): HPDatabase {
 
   const setIncludeOGInternal = useCallback((val: boolean) => {
     include_og.current.item = val;
-    setIncludeOG(val);
     setIncludeOGToLocalStorage(val);
 
     const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
@@ -350,7 +343,6 @@ export function useHPDatabase(): HPDatabase {
 
   const setIncludeTraineeInternal = useCallback((val: boolean) => {
     include_trainee.current.item = val;
-    setIncludeTrainee(val);
     setIncludeTraineeToLocalStorage(val);
 
     const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
@@ -414,9 +406,7 @@ export function useHPDatabase(): HPDatabase {
     initialState: initialState,
     setGroups: setGroups,
     members: members,
-    includeOG: includeOG,
     setIncludeOG: setIncludeOGInternal,
-    includeTrainee: includeTrainee,
     setIncludeTrainee: setIncludeTraineeInternal,
     setDateRange: setDateRange,
     setExternalSortParam: setExternalSortParam,

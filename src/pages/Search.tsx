@@ -15,9 +15,7 @@ interface Props {
   initialState: InitParams;
   target_members_count: number;
   setGroups: (members: Group[]) => void;
-  includeOG: boolean;
   setIncludeOG: (includeOG: boolean) => void;
-  includeTrainee: boolean;
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRangeChanged: (dateRange: DateRange) => void;
 }
@@ -34,7 +32,7 @@ export default function Search(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
 
-  const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee, setDateRangeChanged} = props;
+  const {initialState, target_members_count, setGroups, setIncludeOG, setIncludeTrainee, setDateRangeChanged} = props;
   const classes = useStyles();
 
   const navigate = useNavigate();

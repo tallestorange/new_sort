@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import SortPageShared from "./pages/SortPageShared";
 
 export default function App() {
-  const { initialState, setGroups, members, includeOG, setIncludeOG, includeTrainee, setIncludeTrainee, setDateRange, setExternalSortParam, shareURL } = useHPDatabase();
+  const { initialState, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange, setExternalSortParam, shareURL } = useHPDatabase();
 
   const initialized = useMemo(() => {
     return initialState.allgroups.initialized && initialState.groups_stored.initialized;
@@ -25,9 +25,7 @@ export default function App() {
               initialState={initialState}
               target_members_count={members.size}
               setGroups={setGroups}
-              includeOG={includeOG}
               setIncludeOG={setIncludeOG}
-              includeTrainee={includeTrainee}
               setIncludeTrainee={setIncludeTrainee}
               setDateRangeChanged={setDateRange}
           />} />
