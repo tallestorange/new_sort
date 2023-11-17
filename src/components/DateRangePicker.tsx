@@ -61,12 +61,18 @@ const DateRangePicker = memo((props: Props) => {
   }, [dateTo]);
 
   const onChangedFrom = useCallback((date: Date | null) => {
+    if (date !== null && Number.isNaN(date.getTime())) {
+      return;
+    }
     selectedDateFromRef.current = date;
     setSelectedDateFrom(date);
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
   const onChangedTo = useCallback((date: Date | null) => {
+    if (date !== null && Number.isNaN(date.getTime())) {
+      return;
+    }
     selectedDateToRef.current = date;
     setSelectedDateTo(date);
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
