@@ -8,6 +8,7 @@ import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTrai
 import max from "date-fns/max";
 import min from "date-fns/min";
 import { PAGE_URL_FOR_SHARE } from "../modules/Constants";
+import { isEqual } from "date-fns";
 
 interface StoredItem<T> {
   /**
@@ -98,6 +99,7 @@ export function useHPDatabase(): HPDatabase {
   const allmembers = useRef<StoredItem<Map<number, Member>>>({item: new Map<number, Member>(), initialized: false});
   const daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
   const shareurl = useRef<StoredItem<string>>({item: "", initialized: false});
+  const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
 
   const [includeOG, setIncludeOG] = useState<boolean>(true);
   const include_og = useRef<boolean>(true);
@@ -166,6 +168,9 @@ export function useHPDatabase(): HPDatabase {
       result.set(memberID, val);
     }
 
+    initial_daterange.current.initialized = true;
+    initial_daterange.current.item = {from: date_min, to: date_max};
+
     daterange.current.item.from = date_min;
     daterange.current.item.to = date_max;
     daterange.current.initialized = true;
@@ -194,7 +199,7 @@ export function useHPDatabase(): HPDatabase {
     groups.current.initialized = true;
 
     const bitList = generateGroupBitList(groups_stored_local);
-    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current);
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
   
@@ -305,10 +310,16 @@ export function useHPDatabase(): HPDatabase {
     return result;
   }, []);
 
-  const generateShareURL = useCallback((bitList: number[], include_og: boolean, include_not_debut: boolean):string => {
+  const generateShareURL = useCallback((bitList: number[], include_og: boolean, include_not_debut: boolean, date_from?: Date | null, date_to?: Date | null):string => {
     const include_og_str = include_og ? "&include_og=True" : "";
     const include_trainee_str = include_not_debut ? "&include_not_debut=True" : "";
-    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + include_og_str + include_trainee_str + "&sort_title=";
+    let date_range_str = "";
+    const can_use_date_from = (initial_daterange.current.item.from !== null && date_from !== null && date_from !== undefined);
+    const can_use_date_to = (initial_daterange.current.item.to !== null && date_to !== null && date_to !== undefined);
+    if (can_use_date_from && can_use_date_to && (!isEqual(date_from, initial_daterange.current.item.from!) || !isEqual(date_to, initial_daterange.current.item.to!))) {
+      date_range_str = `&date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`;
+    }
+    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + date_range_str + include_og_str + include_trainee_str + "&sort_title=";
     return share_url;
   }, []);
 
@@ -317,7 +328,7 @@ export function useHPDatabase(): HPDatabase {
     setGroupsToLocalStorage(val);
 
     const bitList = generateGroupBitList(val);
-    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current);
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
@@ -329,24 +340,42 @@ export function useHPDatabase(): HPDatabase {
     include_og.current = val;
     setIncludeOG(val);
     setIncludeOGToLocalStorage(val);
+
+    const bitList = generateGroupBitList(groups.current.item);
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    shareurl.current.item = share_url;
+    shareurl.current.initialized = true;
+
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
-  }, [search]);
+  }, [search, generateShareURL, generateGroupBitList]);
 
   const setIncludeTraineeInternal = useCallback((val: boolean) => {
     include_trainee.current = val;
     setIncludeTrainee(val);
     setIncludeTraineeToLocalStorage(val);
+
+    const bitList = generateGroupBitList(groups.current.item);
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    shareurl.current.item = share_url;
+    shareurl.current.initialized = true;
+
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
-  }, [search]);
+  }, [search, generateShareURL, generateGroupBitList]);
 
   const setDateRange = useCallback((val: DateRange) => {
     daterange.current.item.from = val.from;
     daterange.current.item.to = val.to;
+
+    const bitList = generateGroupBitList(groups.current.item);
+    const share_url = generateShareURL(bitList, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
+    shareurl.current.item = share_url;
+    shareurl.current.initialized = true;
+
     const result = search(groups.current.item, include_og.current, include_trainee.current, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
-  }, [search]);
+  }, [search, generateShareURL, generateGroupBitList]);
 
   const setExternalSortParam = useCallback((groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from_string: string | null, date_to_string: string | null) => {
     let result: Group[] = [];
@@ -360,6 +389,7 @@ export function useHPDatabase(): HPDatabase {
         if (Number.isNaN(id)) {
           return;
         }
+        // 31ビット x 3 = 93ビットでグループ選択状況を管理する
         for(let i=0; i<31; i++) {
           const form_order_idx = idx * 31 + i;
           if (id & (1 << i)) {
@@ -378,7 +408,7 @@ export function useHPDatabase(): HPDatabase {
     const date_to = parseDate(date_to_string, "yyyy-MM-dd");
     
     const bitList = generateGroupBitList(result);
-    const share_url = generateShareURL(bitList, include_og, include_not_debut);
+    const share_url = generateShareURL(bitList, include_og, include_not_debut, date_from, date_to);
     setShareURL(share_url);
 
     const search_result = search(result, include_og, include_not_debut, date_from, date_to);
