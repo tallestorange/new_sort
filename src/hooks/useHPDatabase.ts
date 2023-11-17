@@ -319,7 +319,8 @@ export function useHPDatabase(): HPDatabase {
     if (can_use_date_from && can_use_date_to && (!isEqual(date_from, initial_daterange.current.item.from!) || !isEqual(date_to, initial_daterange.current.item.to!))) {
       date_range_str = `&date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`;
     }
-    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + date_range_str + include_og_str + include_trainee_str + "&sort_title=";
+    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + date_range_str + include_og_str + include_trainee_str;
+    console.log(share_url);
     return share_url;
   }, []);
 
