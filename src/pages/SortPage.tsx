@@ -208,7 +208,7 @@ function SortResultPage(props: {
     return share_url === undefined ? PAGE_URL : share_url
   }, [share_url]);
 
-  const getTwitterIntentURL = useCallback((max_output: number): string => {
+  const getTwitterIntentURL1 = useCallback((max_output: number): string => {
     let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}結果\n`);
 
     let count = 1;
@@ -218,10 +218,16 @@ function SortResultPage(props: {
         count++;
       }
     }
-    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(url);
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
 
     return tweet_url;
-  }, [sort, sortName, url]);
+  }, [sort, sortName]);
+
+  const getTwitterIntentURL2 = useCallback((): string => {
+    let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}を作成しました！\n`);
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(url);
+    return tweet_url;
+  }, [sortName, url]);
 
   const getResultPictures = useCallback((min: number, max: number) => {
     const result: JSX.Element[] = [];
@@ -275,7 +281,13 @@ function SortResultPage(props: {
     <Grid container item xs={12} justifyContent="center">
       <br />
       <p>
-        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
+        <Button href={getTwitterIntentURL1(MAXIMUM_TWEET_MEMBERS_COUNT)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
+      </p>
+    </Grid>
+    <Grid container item xs={12} justifyContent="center">
+      <br />
+      <p>
+        <Button href={getTwitterIntentURL2()} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>ソートをツイート</Button>
       </p>
     </Grid>
   </Grid>)
