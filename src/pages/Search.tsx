@@ -36,7 +36,7 @@ export default function Search(props: Props) {
 
   const {initialState, target_members_count, setGroups, setIncludeOG, includeOG, includeTrainee, setIncludeTrainee, setDateRangeChanged} = props;
   const classes = useStyles();
-  console.log(initialState);
+  console.log(initialState, includeOG, includeTrainee, target_members_count);
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {

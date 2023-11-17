@@ -1,5 +1,5 @@
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from "@material-ui/core/FormControl";
 import makeStyles from "@material-ui/core/styles/makeStyles";
@@ -40,7 +40,7 @@ class ExtendedUtils extends DateFnsUtils {
 
 const DateRangePicker = memo((props: Props) => {
   const classes = useStyles();
-  const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText} = props;
+  const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText, onError} = props;
   const [selectedDateFrom, setSelectedDateFrom] = useState<Date | null>(null);
   const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
 
@@ -72,6 +72,16 @@ const DateRangePicker = memo((props: Props) => {
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
+  const onErrorFrom = useCallback((a: ReactNode, b: any) => {
+    stateA.current = a !== ""
+    onError?.(stateA.current || stateB.current)
+  }, [onError]);
+
+  const onErrorTo = useCallback((a: ReactNode, b: any) => {
+    stateB.current = a !== ""
+    onError?.(stateA.current || stateB.current)
+  }, [onError]);
+
   return (
     <FormControl fullWidth className={classes.formControl}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -89,10 +99,7 @@ const DateRangePicker = memo((props: Props) => {
               maxDate={selectedDateTo}
               disabled={disabled}
               onChange={onChangedFrom}
-              onError={(a,_) => {
-                stateA.current = a !== ""
-                props.onError?.(stateA.current || stateB.current)
-              }}
+              onError={onErrorFrom}
               cancelLabel="キャンセル"
               okLabel="選択"
               animateYearScrolling={false}
@@ -113,10 +120,7 @@ const DateRangePicker = memo((props: Props) => {
               maxDate={dateInitTo}
               disabled={disabled}
               onChange={onChangedTo}
-              onError={(a,_) => {
-                stateB.current = a !== ""
-                props.onError?.(stateA.current || stateB.current)
-              }}
+              onError={onErrorTo}
               cancelLabel="キャンセル"
               okLabel="選択"
               animateYearScrolling={false}
