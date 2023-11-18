@@ -72,21 +72,29 @@ const DateRangePicker = memo((props: Props) => {
   return (
     <FormControl fullWidth sx={{ m: 1, minWidth: 120, maxWidth: 450 }}>
       <Grid container item xs={12} justifyContent="center" spacing={3}>
-        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
+        <LocalizationProvider
+          dateAdapter={AdapterDateFns}
+          adapterLocale={ja}
+          dateFormats={{ monthAndYear: "yyyy/M" }}
+          localeText={{
+            previousMonth: "前月を表示",
+            nextMonth: "次月を表示",
+            cancelButtonLabel: "キャンセル",
+            okButtonLabel: "選択",
+          }}
+        >
           <Grid container item sm={12} md={6} justifyContent="center" spacing={0}>
             <DatePicker
               id="date-picker-dialog-from"
               label={disabled ? `${startText}(${NOW_LOADING})` : startText}
               format="yyyy/MM/dd"
-              mask="____/__/__"
+              mask="____年__月__日"
               value={selectedDateFrom}
               minDate={dateInitFrom}
               maxDate={selectedDateTo}
               disabled={disabled}
               onChange={onChangedFrom}
               onError={onErrorFrom}
-              cancelLabel="キャンセル"
-              okLabel="選択"
               allowKeyboardControl
               animateYearScrolling={false}
               KeyboardButtonProps={{
@@ -100,14 +108,13 @@ const DateRangePicker = memo((props: Props) => {
               id="date-picker-dialog-to"
               label={disabled ? `${endText}(${NOW_LOADING})` : endText}
               format="yyyy/MM/dd"
+              mask="____年__月__日"
               value={selectedDateTo}
               minDate={selectedDateFrom}
               maxDate={dateInitTo}
               disabled={disabled}
               onChange={onChangedTo}
               onError={onErrorTo}
-              cancelLabel="キャンセル"
-              okLabel="選択"
               allowKeyboardControl
               animateYearScrolling={false}
               KeyboardButtonProps={{
