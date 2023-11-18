@@ -79,8 +79,8 @@ interface HPDatabase {
 }
 
 export interface DateRange {
-  from: Date | null,
-  to: Date | null
+  from?: Date,
+  to?: Date
 }
 
 export interface InitParams {
@@ -97,9 +97,9 @@ export function useHPDatabase(): HPDatabase {
   const allgroups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const groups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const allmembers = useRef<StoredItem<Map<number, Member>>>({item: new Map<number, Member>(), initialized: false});
-  const daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
+  const daterange = useRef<StoredItem<DateRange>>({item: {from: undefined, to: undefined}, initialized: false});
   const shareurl = useRef<StoredItem<string>>({item: "", initialized: false});
-  const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
+  const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: undefined, to: undefined}, initialized: false});
 
   const include_og = useRef<StoredItem<boolean>>({ item: false, initialized: false });
   const include_trainee = useRef<StoredItem<boolean>>({ item: false, initialized: false });
@@ -110,8 +110,8 @@ export function useHPDatabase(): HPDatabase {
   const [initialState, setInitialState] = useState<InitParams>({
     allgroups: { item: [], initialized: false },
     groups_stored: { item: [], initialized: false },
-    date_range: { item: {from: null, to: null}, initialized: false },
-    init_date_range: { item: {from: null, to: null}, initialized: false },
+    date_range: { item: {from: undefined, to: undefined}, initialized: false },
+    init_date_range: { item: {from: undefined, to: undefined}, initialized: false },
     share_url: { item: "", initialized: false },
     include_og: { item: false, initialized: false },
     include_trainee: { item: false, initialized: false }
@@ -319,12 +319,12 @@ export function useHPDatabase(): HPDatabase {
       params.push("include_not_debut=True");
     }
 
-    const can_use_date_from = (initial_daterange.current.item.from !== null && date_from !== null && date_from !== undefined);
-    const can_use_date_to = (initial_daterange.current.item.to !== null && date_to !== null && date_to !== undefined);
+    const can_use_date_from = (initial_daterange.current.item.from !== undefined && date_from !== null && date_from !== undefined);
+    const can_use_date_to = (initial_daterange.current.item.to !== undefined && date_to !== null && date_to !== undefined);
     if (can_use_date_from && can_use_date_to && (!isEqual(date_from, initial_daterange.current.item.from!) || !isEqual(date_to, initial_daterange.current.item.to!))) {
       params.push(`date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`);
     }
-    
+
     const share_url = PAGE_URL_FOR_SHARE + (params.length > 0 ? "?" : "") + params.join("&");
     return share_url;
   }, []);

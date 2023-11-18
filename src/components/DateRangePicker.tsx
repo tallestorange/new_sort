@@ -1,5 +1,5 @@
 import { DatePicker, DateValidationError, LocalizationProvider } from '@mui/x-date-pickers';
-import { ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from '@mui/material/FormControl';
 import { DateRange } from "../hooks/useHPDatabase";
@@ -9,10 +9,10 @@ import { NOW_LOADING } from "../modules/Constants";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 interface Props {
-  dateFrom: Date | null,
-  dateTo: Date | null,
-  dateInitFrom: Date | null,
-  dateInitTo: Date | null,
+  dateFrom?: Date,
+  dateTo?: Date,
+  dateInitFrom?: Date,
+  dateInitTo?: Date,
   onDateRangeChanged?: (dateRange: DateRange) => void,
   onError?: (error: boolean) => void,
   startText: string,
@@ -22,11 +22,11 @@ interface Props {
 
 const DateRangePicker = memo((props: Props) => {
   const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText, onError} = props;
-  const [selectedDateFrom, setSelectedDateFrom] = useState<Date | null>(null);
-  const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
+  const [selectedDateFrom, setSelectedDateFrom] = useState<Date>();
+  const [selectedDateTo, setSelectedDateTo] = useState<Date>();
 
-  const selectedDateFromRef = useRef<Date | null>(null);
-  const selectedDateToRef = useRef<Date | null>(null);
+  const selectedDateFromRef = useRef<Date>();
+  const selectedDateToRef = useRef<Date>();
 
   const stateA = useRef<boolean>(false);
   const stateB = useRef<boolean>(false);
@@ -42,18 +42,26 @@ const DateRangePicker = memo((props: Props) => {
   }, [dateTo]);
 
   const onChangedFrom = useCallback((date: Date | null) => {
+    if (date === null) {return;}
     selectedDateFromRef.current = date;
     setSelectedDateFrom(date);
     if (date !== null && Number.isNaN(date.getTime())) {
+      return;
+    }
+    if (selectedDateFromRef.current === undefined || selectedDateToRef.current === undefined) {
       return;
     }
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
   const onChangedTo = useCallback((date: Date | null) => {
+    if (date === null) {return;}
     selectedDateToRef.current = date;
     setSelectedDateTo(date);
     if (date !== null && Number.isNaN(date.getTime())) {
+      return;
+    }
+    if (selectedDateFromRef.current === undefined || selectedDateToRef.current === undefined) {
       return;
     }
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
