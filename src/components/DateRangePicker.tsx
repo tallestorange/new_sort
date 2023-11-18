@@ -2,7 +2,6 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from '@mui/material/FormControl';
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { DateRange } from "../hooks/useHPDatabase";
 import Grid from '@mui/material/Grid';
 import isEqual from "date-fns/isEqual";
@@ -21,16 +20,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 450,
-  }
-}));
-
 const DateRangePicker = memo((props: Props) => {
-  const classes = useStyles();
   const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText, onError} = props;
   const [selectedDateFrom, setSelectedDateFrom] = useState<Date | null>(null);
   const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
@@ -80,7 +70,7 @@ const DateRangePicker = memo((props: Props) => {
   }, [onError]);
 
   return (
-    <FormControl fullWidth className={classes.formControl}>
+    <FormControl fullWidth sx={{ m: 1, minWidth: 120, maxWidth: 450 }}>
       <Grid container item xs={12} justifyContent="center" spacing={3}>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
           <Grid container item sm={12} md={6} justifyContent="center" spacing={0}>

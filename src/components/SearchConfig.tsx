@@ -6,8 +6,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import styled from '@mui/material/styles/styled';
 import { DEFAULT_SORT_TITLE } from "../modules/Constants";
 
 export const ResultText = React.memo((props: { count: number }) => {
@@ -49,16 +47,7 @@ export const LabelCheckBox = memo((props: {default_checked: boolean, valueChange
   )
 });
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 450,
-  }
-}));
-
 export const SortTitleInput = memo((props: {onChanged?: (text: string) => void}) => {
-  const classes = useStyles();
   const {onChanged}  = props;
   const onChangedCallback  = useCallback((cb: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const text = cb.target.value;
@@ -66,7 +55,7 @@ export const SortTitleInput = memo((props: {onChanged?: (text: string) => void})
   }, [onChanged]);
 
   return (
-    <FormControl className={classes.formControl} fullWidth>
+    <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 450 }} fullWidth>
       <TextField
         id="outlined-basic"
         label="ソート名(※結果表示に使います)"

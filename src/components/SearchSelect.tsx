@@ -5,7 +5,6 @@ import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import makeStyles from "@material-ui/core/styles/makeStyles";
 
 interface Props<T> {
   title: string;
@@ -18,23 +17,6 @@ interface Props<T> {
   onValueChanged?: (items: T[]) => void;
 }
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 450,
-  },
-  selectAllText: {
-    fontWeight: 700
-  },
-  selectedAll: {
-    backgroundColor: "rgba(0, 0, 0, 0.08)",
-    "&:hover": {
-      backgroundColor: "rgba(0, 0, 0, 0.08)"
-    }
-  }
-}));
-
 const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
   const { default_selected, onValueChanged, items, title, id, enabled, on_render_func } = props;
   const [currentItems, setCurrentItems] = useState<T[]>(default_selected);
@@ -46,7 +28,6 @@ const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
     }
     return v;
   }, [items]); 
-  const classes = useStyles();
 
   const selectedSet = useRef<Set<number>>();
   if (!selectedSet.current) {
@@ -93,7 +74,7 @@ const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
   }, [items, onValueChanged, isAllSelected, allSelectedSet]);
 
   return (
-    <FormControl disabled={!enabled} className={classes.formControl} fullWidth>
+    <FormControl disabled={!enabled} sx={{ m: 1, minWidth: 120, maxWidth: 450 }} fullWidth>
       <InputLabel id={id + "-select-label"}>{title}</InputLabel>
       <Select
         label={title}
@@ -107,9 +88,6 @@ const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
       >
         <MenuItem
           value="all"
-          classes={{
-            root: isAllSelected ? classes.selectedAll : ""
-          }}
           id={id + "-item-selectall"}
           onClick={handleSelectAll}
         >
@@ -141,18 +119,13 @@ const CustomListItemText = memo((props: { title: string, id: string, index: numb
   return before.title === after.title;
 })
 
-const useStyles2 = makeStyles(() => ({
-  selectAllText: {
-    fontWeight: 700
-  }
-}));
-
 const SelectAllText = memo((props: {id: string}) => {
-  const classes = useStyles2();
   const {id} = props;
   return (
     <ListItemText
-      classes={{ primary: classes.selectAllText }}
+      primaryTypographyProps={{
+        fontWeight: 700,
+      }}
       primary="すべて選択する"
       id={id + "-text-selectall"}
     />
