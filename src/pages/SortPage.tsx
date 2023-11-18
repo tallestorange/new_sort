@@ -204,11 +204,8 @@ function SortResultPage(props: {
     return rankTable;
   }, [sort]);
 
-  const url = useMemo(() => {
-    return share_url === undefined ? PAGE_URL : share_url
-  }, [share_url]);
-
   const getTwitterIntentURL = useCallback((max_output: number): string => {
+    const url = share_url === undefined ? PAGE_URL : share_url;
     let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}結果\n`);
 
     let count = 1;
@@ -221,7 +218,7 @@ function SortResultPage(props: {
     tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURIComponent(url);
 
     return tweet_url;
-  }, [sort, sortName, url]);
+  }, [sort, sortName, share_url]);
 
   const getResultPictures = useCallback((min: number, max: number) => {
     const result: JSX.Element[] = [];

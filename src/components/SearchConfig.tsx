@@ -4,6 +4,10 @@ import Button from "@material-ui/core/Button/Button";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup/FormGroup";
+import TextField from "@material-ui/core/TextField";
+import FormControl from "@material-ui/core/FormControl";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import { DEFAULT_SORT_TITLE } from "../modules/Constants";
 
 export const ResultText = React.memo((props: { count: number }) => {
   return (
@@ -41,5 +45,33 @@ export const LabelCheckBox = memo((props: {default_checked: boolean, valueChange
     <FormGroup>
       <FormControlLabel id={form_id} control={<Checkbox color="primary" disabled={disabled} checked={checked} id={checkbox_id} onChange={onChange} />} label={label} />
     </FormGroup>
+  )
+});
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 450,
+  }
+}));
+
+export const SortTitleInput = memo((props: {onChanged?: (text: string) => void}) => {
+  const classes = useStyles();
+  const {onChanged}  = props;
+  const onChangedCallback  = useCallback((cb: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const text = cb.target.value;
+    onChanged?.(text);
+  }, [onChanged]);
+
+  return (
+    <FormControl className={classes.formControl} fullWidth>
+      <TextField
+        id="outlined-basic"
+        label="ソート名(※結果表示に使います)"
+        defaultValue={DEFAULT_SORT_TITLE}
+        variant="standard"
+        onChange={onChangedCallback} />
+    </FormControl>
   )
 });

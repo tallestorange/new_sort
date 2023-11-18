@@ -2,13 +2,10 @@ import Grid from "@material-ui/core/Grid";
 import "../App.css";
 import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
-import { LabelCheckBox, ResultText, SortStartButton } from "../components/SearchConfig";
+import { LabelCheckBox, ResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DateRange, Group, InitParams } from "../hooks/useHPDatabase";
-import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import DateRangePicker from "../components/DateRangePicker";
 
 interface Props {
@@ -20,20 +17,10 @@ interface Props {
   setDateRangeChanged: (dateRange: DateRange) => void;
 }
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 450,
-  }
-}));
-
 export default function Search(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-
   const {initialState, target_members_count, setGroups, setIncludeOG, setIncludeTrainee, setDateRangeChanged} = props;
-  const classes = useStyles();
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -47,6 +34,10 @@ export default function Search(props: Props) {
 
   const groupName = useCallback((v: Group):string => {
     return v.groupName;
+  }, []);
+
+  const setSortName = useCallback((v: string) => {
+    sortTitle.current = v;
   }, []);
 
   useEffect(() => {
@@ -63,14 +54,7 @@ export default function Search(props: Props) {
       </Grid>      
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <FormControl className={classes.formControl} fullWidth>
-            <TextField
-              id="outlined-basic"
-              label="ソート名(※結果表示に使います)"
-              defaultValue={DEFAULT_SORT_TITLE}
-              variant="standard"
-              onChange={(v) => {sortTitle.current = v.target.value}} />
-          </FormControl>
+          <SortTitleInput onChanged={setSortName} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect<Group>
