@@ -1,11 +1,10 @@
-import Grid from "@material-ui/core/Grid";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import Box from "@material-ui/core/Box";
-import {GridSize} from "@material-ui/core/Grid";
-import { IMAGE_DIR } from "../modules/Constants";
+import Grid, { GridSize } from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import { IMAGE_DIR, PICTURE_FORMAT } from "../modules/Constants";
 
 interface Props {
   name: string;
@@ -17,7 +16,7 @@ export default function ResultPicture(props: Props) {
   {
     media: {
       width: 96,
-      height: 96,
+      height: 80,
       zoom: 1
     }
   };
@@ -38,7 +37,7 @@ export default function ResultPicture(props: Props) {
   } else if (props.rank >= 7) {
     styles.media.width *= 8 / 9;
     name_font_size -= 2;
-    card_width = 2;
+    card_width = 3;
   }
 
   return (
@@ -48,7 +47,7 @@ export default function ResultPicture(props: Props) {
           <CardMedia
             component="img"
             alt={props.name}
-            image={`${IMAGE_DIR}${props.name}.webp`}
+            image={`${IMAGE_DIR}${props.name}.${PICTURE_FORMAT}`}
             title={props.name}
             style={styles.media}
           />

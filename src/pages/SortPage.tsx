@@ -1,26 +1,28 @@
-import { useEffect, useRef, useState } from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import Sorter from "../modules/Sorter";
 import MemberPicture from "../components/MemberPicture";
 import ResultPicture from "../components/ResultPicture";
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import { HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
-import { Member, SortSettings } from "../hooks/useNPDatabase";
-import { useLocation } from 'react-router-dom';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { DEFAULT_SORT_TITLE, HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
 import { useCallback } from "react";
+import { useLocation } from 'react-router-dom';
 
-interface Props {
-  members: Map<string, Member>;
-  sortName: string;
+interface Props<T> {
+  members: Map<string, T>;
+  sort_name?: string;
+  share_url?: string;
   initialized: boolean;
+  name_render_function: (membeer: T) => string;
+  profile_render_function?: (membeer: T) => string[];
 }
 
 /**
@@ -29,20 +31,39 @@ interface Props {
  * @param props 
  * @returns 
  */
-export default function SortPage(props: Props) {
+export default function SortPage<T extends {}>(props: Props<T>) {
+  const {members, initialized, name_render_function, profile_render_function, share_url} = props;
+
   const location = useLocation();
-  const sort_settings = location.state as SortSettings;
-  const {members, sortName, initialized} = props;
+  let sortName = "";
+  if (props.sort_name === undefined) {
+    sortName = location.state === null ? DEFAULT_SORT_TITLE : location.state as string;
+  }
+  else {
+    sortName = props.sort_name;
+  }
 
   const sort = useRef<Sorter>();
-  const target_members = useRef<Map<string, Member>>(members);
+  const target_members = useRef<Map<string, T>>(members);
   const [result, setResult] = useState<boolean>();
+
+  const full_url = useMemo(() => {
+    const url = sortName === DEFAULT_SORT_TITLE ? share_url : share_url + encodeURI(sortName);
+    if (initialized) {
+      console.log(url);
+    }
+    return url;
+  }, [share_url, sortName, initialized]);
 
   if (!sort.current) {
     // 初期化処理
     sort.current = new Sorter(Array.from(members.keys()));
     setResult(sort.current.sort());
   }
+
+  useEffect(() => {
+    document.title = sortName;
+  }, [sortName])
 
   useEffect(() => {
     if (members.size !== target_members.current.size) {
@@ -53,7 +74,7 @@ export default function SortPage(props: Props) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage sortName={sortName} sort={sort.current} /> : <NowSortPage members={members} sortName={sortName} sortConfig={sort_settings} sort={sort.current} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage share_url={full_url} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -63,14 +84,15 @@ export default function SortPage(props: Props) {
  * @param props 
  * @returns 
  */
-function NowSortPage(props: {
-  members: Map<string, Member>;
+function NowSortPage<T extends {}>(props: {
+  members: Map<string, T>;
   sortName: string;
-  sortConfig: SortSettings;
+  name_render_function: (membeer: T) => string;
+  profile_render_function?: (membeer: T) => string[];
   sort: Sorter;
   onSorted?: (result: boolean) => void;
 }) {
-  const {sort, members, sortName, sortConfig, onSorted} = props;
+  const {sort, members, sortName, name_render_function, profile_render_function, onSorted} = props;
   const [currentRound, setCurrentRound] = useState<number>(sort.currentRound);
 
   const leftWin = useCallback(() => {
@@ -113,16 +135,14 @@ function NowSortPage(props: {
   }, [sort, onSorted]);
 
   // lastChallengeが毎回変わるのでメモ化しない
-  const leftMember = (): Member => {
+  const leftMember = (): T => {
     const member = members.get(sort.lastChallenge[0])!;
-    // console.log(member);
     return member
   }
 
   // lastChallengeが毎回変わるのでメモ化しない
-  const rightMember = (): Member => {
+  const rightMember = (): T => {
     const member = members.get(sort.lastChallenge[1])!;
-    // console.log(member);
     return member;
   }
   
@@ -136,13 +156,15 @@ function NowSortPage(props: {
           <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{currentRound} - {sort.progress}%</p>
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture member={leftMember()}
-            sortConfig={sortConfig}
+          <MemberPicture<T> member={leftMember()}
+            name_render_function={name_render_function}
+            profile_render_function={profile_render_function}
             onClick={leftWin} />
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture member={rightMember()}
-            sortConfig={sortConfig}
+          <MemberPicture<T> member={rightMember()}
+            name_render_function={name_render_function}
+            profile_render_function={profile_render_function}
             onClick={rightWin} />
         </Grid>
         <Grid container item xs={12} justifyContent="center">
@@ -170,8 +192,9 @@ function NowSortPage(props: {
 function SortResultPage(props: {
   sortName: string;
   sort: Sorter;
+  share_url?: string;
 }) {
-  const {sort, sortName} = props;
+  const {sort, sortName, share_url} = props;
 
   const getRankTable = useCallback((): JSX.Element[] => {
     const rankTable: JSX.Element[] = [];
@@ -182,6 +205,7 @@ function SortResultPage(props: {
   }, [sort]);
 
   const getTwitterIntentURL = useCallback((max_output: number): string => {
+    const url = share_url === undefined ? PAGE_URL : share_url;
     let tweet_url: string = "https://twitter.com/intent/tweet?text=" + encodeURI(`${sortName}結果\n`);
 
     let count = 1;
@@ -191,10 +215,10 @@ function SortResultPage(props: {
         count++;
       }
     }
-    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURI(PAGE_URL);
+    tweet_url += "&hashtags=" + encodeURI(HASHTAGS) + "&url=" + encodeURIComponent(url);
 
     return tweet_url;
-  }, [sort, sortName]);
+  }, [sort, sortName, share_url]);
 
   const getResultPictures = useCallback((min: number, max: number) => {
     const result: JSX.Element[] = [];
@@ -226,7 +250,7 @@ function SortResultPage(props: {
         {getResultPictures(4, 6)}
       </Grid>
       <Grid container item xs={12} justifyContent="center">
-        {getResultPictures(7, 11)}
+        {getResultPictures(7, 10)}
       </Grid>
     </Grid>
 

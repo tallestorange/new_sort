@@ -1,41 +1,12 @@
-export const TITLE: string = "日プソート";
-export const HASHTAGS: string = "日プソート,日プ,日プ女子,PRODUCE101JAPANTHEGIRLS";
+export const TITLE: string = "ハロプロソート(3)";
+export const HASHTAGS: string = "ハロプロソート,ハロプロソート3";
+export const DEFAULT_SORT_TITLE: string = "ハロプロソート";
 export const VERSION: string = "1.0.0";
 export const IMAGE_DIR: string = "member_pics/";
-export const BOARDER: number = 50;
-export const PAGE_URL: string = "https://np-sort.web.app/";
+export const PAGE_URL: string = "https://hpsort3.192.works/";
+export const PAGE_URL_FOR_SHARE: string = "https://hpsort3.192.works/sort_shared";
 export const SORT_PATH: string = "sort";
 export const NOW_LOADING: string = "読み込み中...";
-export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/11 ソート結果表示ページの修正)";
-export const MAXIMUM_TWEET_MEMBERS_COUNT = 11;
-
-export const PREF_SORT_MAP: Map<string, number> = new Map<string, number>([
-  ['北海道', 0],
-  ['岩手', 1],
-  ['宮城', 2],
-  ['福島', 3],
-  ['栃木', 4],
-  ['群馬', 5],
-  ['埼玉', 6],
-  ['千葉', 7],
-  ['東京', 8],
-  ['神奈川', 9],
-  ['新潟', 10],
-  ['石川', 11],
-  ['長野', 12],
-  ['愛知', 13],
-  ['三重', 14],
-  ['京都', 15],
-  ['大阪', 16],
-  ['兵庫', 17],
-  ['奈良', 18],
-  ['岡山', 19],
-  ['広島', 20],
-  ['徳島', 21],
-  ['香川', 22],
-  ['福岡', 23],
-  ['熊本', 24],
-  ['宮崎', 25],
-  ['アメリカ', 26],
-  ['インドネシア', 27]
-]);
+export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/18 実験中)";
+export const MAXIMUM_TWEET_MEMBERS_COUNT: number = 10;
+export const PICTURE_FORMAT: string = "webp";

@@ -1,53 +1,25 @@
 import { useState, useEffect, memo, useCallback, useMemo, useRef } from "react";
-import Select from '@material-ui/core/Select';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import { makeStyles } from '@material-ui/core/styles';
+import Select from '@mui/material/Select';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
-interface Props {
+interface Props<T> {
   title: string;
   id: string;
-  items: string[];
-  default_selected: string[];
-  sort: boolean;
-  sortFunction?: (left: string, right: string) => number;
+  items: T[];
+  default_selected: T[];
+  title_convert_func: (input: T) => string;
+  on_render_func: (input: T[]) => string;
   enabled: boolean;
-  onValueChanged?: (items: string[]) => void;
+  onValueChanged?: (items: T[]) => void;
 }
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 450,
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
-  selectAllText: {
-    fontWeight: 700
-  },
-  selectedAll: {
-    backgroundColor: "rgba(0, 0, 0, 0.08)",
-    "&:hover": {
-      backgroundColor: "rgba(0, 0, 0, 0.08)"
-    }
-  }
-}));
-
-const SearchSelect = memo((props: Props) => {
-  const { default_selected, onValueChanged, items, title, id, sort, enabled, sortFunction } = props;
-  const [currentItems, setCurrentItems] = useState<string[]>(default_selected);
+const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
+  const { default_selected, onValueChanged, items, title, id, enabled, on_render_func } = props;
+  const [currentItems, setCurrentItems] = useState<T[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );
   const allSelectedSet = useMemo(() => {
     const v = new Set<number>();
@@ -56,7 +28,6 @@ const SearchSelect = memo((props: Props) => {
     }
     return v;
   }, [items]); 
-  const classes = useStyles();
 
   const selectedSet = useRef<Set<number>>();
   if (!selectedSet.current) {
@@ -65,19 +36,17 @@ const SearchSelect = memo((props: Props) => {
 
   useEffect(() => {
     selectedSet.current = new Set<number>();
+    const tgt = items.map((v) => {return v.unique_id});
     for (let selected_item of default_selected) {
-      selectedSet.current.add(items.indexOf(selected_item));
+      selectedSet.current.add(tgt.indexOf(selected_item.unique_id));
     }
-    setCurrentItems(default_selected)
+    setCurrentItems([...default_selected])
   }, [default_selected, items]);
 
   const renderValue = useCallback((selected: any) => {
-    let result: string[] = selected;
-    if (sort) {
-      result.sort(sortFunction);
-    }
-    return result.join(', ');
-  }, [sortFunction, sort]);
+    let result: T[] = selected;
+    return on_render_func(result);
+  }, [on_render_func]);
 
   const handleChange = useCallback((index: number, selected: boolean) => {
     if (selected) {
@@ -98,14 +67,14 @@ const SearchSelect = memo((props: Props) => {
       onValueChanged?.([])
     }
     else {
-      selectedSet.current = allSelectedSet;
+      selectedSet.current = new Set(allSelectedSet);
       setCurrentItems(items)
       onValueChanged?.(items)
     }
   }, [items, onValueChanged, isAllSelected, allSelectedSet]);
 
   return (
-    <FormControl disabled={!enabled} className={classes.formControl} fullWidth>
+    <FormControl disabled={!enabled} sx={{ m: 1, minWidth: 120, maxWidth: 450 }} fullWidth>
       <InputLabel id={id + "-select-label"}>{title}</InputLabel>
       <Select
         label={title}
@@ -119,29 +88,28 @@ const SearchSelect = memo((props: Props) => {
       >
         <MenuItem
           value="all"
-          classes={{
-            root: isAllSelected ? classes.selectedAll : ""
-          }}
           id={id + "-item-selectall"}
           onClick={handleSelectAll}
         >
-          <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"}/>
+          <Checkbox checked={isAllSelected} id={id + "-checkbox-selectall"} color="primary" />
           <SelectAllText id={id} />
         </MenuItem>
         {items.map((val, index) => {
           return (
             <div key={index}>
-              <CustomMenuItem title={val} id={id} index={index} default_checked={selectedSet.current!.has(index)} onSelected={handleChange} />
+              <CustomMenuItem title={props.title_convert_func(val)} id={id} index={index} default_checked={selectedSet.current!.has(index)} onSelected={handleChange} />
             </div>
           )
         })}
       </Select>
     </FormControl>
   );
-},
+}
+
+const SearchSelect = memo(SearchSelectBase,
 (before, after) => {
   return before.default_selected === after.default_selected && before.items === after.items;
-});
+}) as typeof SearchSelectBase;
 
 const CustomListItemText = memo((props: { title: string, id: string, index: number}) => {
   return (
@@ -152,11 +120,12 @@ const CustomListItemText = memo((props: { title: string, id: string, index: numb
 })
 
 const SelectAllText = memo((props: {id: string}) => {
-  const classes = useStyles();
   const {id} = props;
   return (
     <ListItemText
-      classes={{ primary: classes.selectAllText }}
+      primaryTypographyProps={{
+        fontWeight: 700,
+      }}
       primary="すべて選択する"
       id={id + "-text-selectall"}
     />
@@ -180,7 +149,7 @@ const CustomMenuItem = memo((props: { title: string, id: string, index: number, 
 
   return (
     <MenuItem key={index} value={title} id={id + "-item-" + index} onClick={onClicked}>
-      <Checkbox checked={checked} id={id + "-checkbox-" + index} />
+      <Checkbox checked={checked} id={id + "-checkbox-" + index} color="primary" />
       <CustomListItemText title={title} id={id} index={index} />
     </MenuItem>
   )

@@ -1,83 +1,72 @@
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import { IMAGE_DIR } from '../modules/Constants';
-import React from 'react';
-import { Member, SortSettings } from '../hooks/useNPDatabase';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { IMAGE_DIR, PICTURE_FORMAT } from '../modules/Constants';
+import { memo } from 'react';
 
-interface Props {
-  member: Member;
-  sortConfig: SortSettings;
+interface Props<T> {
+  member: T;
+  name_render_function: (member: T) => string;
+  profile_render_function?: (member: T) => string[];
   onClick?: any;
 }
 
-export default function MemberPicture(props: Props) {
+export default function MemberPicture<T extends {}>(props: Props<T>) {
+  const {member, name_render_function, profile_render_function} = props;
   const styles =
   {
     card: {
       maxWidth: 345,
-    },
+    }
   };
 
   return (
     <Card onClick={props.onClick} style={styles.card}>
-      <MemberPictureContent member={props.member} sortConfig={props.sortConfig} />
+      <MemberPictureContent<T> member={member} name_render_function={name_render_function} profile_render_function={profile_render_function} />
     </Card>
   );
 }
 
-const MemberPictureContent = React.memo((props: {member: Member, sortConfig: SortSettings}) => {
-  const ranking_change = ():string => {
-    const show_week_6 = props.member.week_6_rank !== ""
-    let result = ""
-    if (show_week_6) {
-      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位`
+const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_function: (member: T) => string, profile_render_function?: (member: T) => string[]}) => {
+  const {member, name_render_function, profile_render_function} = props;
+  const memberName = name_render_function(member);
+  const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
+  const styles =
+  {
+    media: {
+      height: "300px"
     }
-    else {
-      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位`
-    }
-    return result;
-  }
+  };
 
   return (
     <CardActionArea>
       <CardMedia
         component="img"
-        alt={props.member.name}
-        image={`${IMAGE_DIR}${props.member.name}.webp`}
-        title={props.member.name}
+        alt={memberName}
+        image={`${IMAGE_DIR}${memberName}.${PICTURE_FORMAT}`}
+        title={memberName}
+        style={styles.media}
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="h2">
-          {props.member.name}
+          {memberName}
         </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          生年月日: {props.member.birth_date}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          出身地: {props.member.birth_place}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          MBTI: {props.member.mbti}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          身長: {props.member.height}cm
-        </Typography>
-
-        {props.sortConfig.show_hobby && <Typography variant="body2" color="textSecondary" component="p">
-          趣味: {props.member.hobby}
-        </Typography>}
-        {props.sortConfig.show_skill && <Typography variant="body2" color="textSecondary" component="p">
-          特技: {props.member.special_skill}
-        </Typography>}
-        {props.sortConfig.show_ranking && <Typography variant="body2" color="textSecondary" component="p">
-          順位: {ranking_change()}
-        </Typography>}
+        {profiles.map((val, idx) => {
+          return (
+            <div key={idx}>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {val}
+              </Typography>
+            </div>
+          )
+        })}
       </CardContent>
     </CardActionArea>
   );
-}, (before, after) => {
-  return before.member.name === after.member.name;
-})
+}
+
+const MemberPictureContent = memo(MemberPictureContentBase, (before, after) => {
+  return before.member === after.member;
+}) as typeof MemberPictureContentBase;

@@ -1,22 +1,12 @@
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup/FormGroup";
-import { useEffect, useState } from "react";
-import React from "react";
-import { SortSettings } from "../hooks/useNPDatabase";
-import Typography from "@material-ui/core/Typography/Typography";
-import Button from "@material-ui/core/Button/Button";
-import { BOARDER } from "../modules/Constants";
-
-export const CanVoteCheckBox = React.memo((props: { canVote: boolean, setCanVote?: (canVote: boolean) => void }) => {
-  return (
-    <FormGroup>
-      <FormControlLabel id="checkbox-form-vote" control={<Checkbox checked={props.canVote} id="checkbox-vote" onChange={(event) => { props.setCanVote?.(event.target.checked) }} />} label={`投票対象(〜${BOARDER}位)のみ`} />
-    </FormGroup>
-  )
-}, (before, after) => {
-  return before.canVote === after.canVote
-})
+import React, { useCallback, useEffect, useState, memo } from "react";
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import { DEFAULT_SORT_TITLE } from "../modules/Constants";
 
 export const ResultText = React.memo((props: { count: number }) => {
   return (
@@ -31,44 +21,46 @@ export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: 
     <Button
       disabled={!props.enabled}
       onClick={props.onClick}
-      color="secondary">
+      color="primary">
       ソート開始
     </Button>
   )
 });
 
-const LabelCheckBox = React.memo((props: {checked: boolean, setChecked?: (canVote: boolean) => void, form_id: string, checkbox_id: string, label: string}) => {
-  return (
-    <FormGroup>
-      <FormControlLabel id={props.form_id} control={<Checkbox checked={props.checked} id={props.checkbox_id} onChange={(event) => { props.setChecked?.(event.target.checked) }} />} label={props.label} />
-    </FormGroup>
-  )
-}, (before, after) => {
-  return before.checked === after.checked;
-});
-
-interface Props {
-  onSortSettingsUpdated?: (setting: SortSettings) => void;
-}
-
-const SearchConfig = React.memo((props: Props) => {
-  const [showHobby, setShowHobby] = useState<boolean>(false);
-  const [showRanking, setShowRanking] = useState<boolean>(false);
-  const [showSkill, setShowSkill] = useState<boolean>(false);
+export const LabelCheckBox = memo((props: {default_checked: boolean, valueChanged?: (checked: boolean) => void, form_id: string, checkbox_id: string, label: string, disabled: boolean}) => {
+  const {default_checked, valueChanged, form_id, checkbox_id, label, disabled} = props;
+  const [checked, setChecked] = useState<boolean>(props.default_checked)
 
   useEffect(() => {
-    props.onSortSettingsUpdated?.({ show_hobby: showHobby, show_skill: showSkill, show_ranking: showRanking })
-    // eslint-disable-next-line
-  }, [showHobby, showSkill, showRanking])
+    setChecked(default_checked);
+  }, [default_checked]);
+
+  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+    valueChanged?.(event.target.checked);
+  }, [setChecked, valueChanged]);
 
   return (
     <FormGroup>
-      <LabelCheckBox checked={showHobby} setChecked={setShowHobby} form_id="checkbox-form-hobby" checkbox_id="checkbox-hobby" label="ソート時に趣味欄を表示する" />
-      <LabelCheckBox checked={showSkill} setChecked={setShowSkill} form_id="checkbox-form-skill" checkbox_id="checkbox-skill" label="ソート時に特技欄を表示する" />
-      <LabelCheckBox checked={showRanking} setChecked={setShowRanking} form_id="checkbox-form-ranking" checkbox_id="checkbox-rankings" label="ソート時に順位変動を表示する" />
+      <FormControlLabel id={form_id} control={<Checkbox color="primary" disabled={disabled} checked={checked} id={checkbox_id} onChange={onChange} />} label={label} />
     </FormGroup>
-  );
-}, (before, after) => {
-  return before.onSortSettingsUpdated === after.onSortSettingsUpdated;
+  )
 });
-export default SearchConfig;
+
+export const SortTitleInput = memo((props: {onChanged?: (text: string) => void}) => {
+  const {onChanged}  = props;
+  const onChangedCallback  = useCallback((cb: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const text = cb.target.value;
+    onChanged?.(text);
+  }, [onChanged]);
+
+  return (
+    <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 450 }} fullWidth>
+      <TextField
+        id="outlined-basic"
+        label="ソート名(※結果表示に使います)"
+        defaultValue={DEFAULT_SORT_TITLE}
+        onChange={onChangedCallback} />
+    </FormControl>
+  )
+});

@@ -1,9 +1,9 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import HomeIcon from '@material-ui/icons/Home';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import HomeIcon from '@mui/icons-material/Home';
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 
 function Header(props: Props) {
   return (
-    <AppBar position="static" style={{ color: 'white', backgroundColor: "rgb(237, 114, 176)", boxShadow: "none" }}>
+    <AppBar position="static" style={{ color: 'white', backgroundColor: "rgb(33, 150, 243)", boxShadow: "none" }}>
       <Toolbar>
         <Typography variant="h5" style={{ flexGrow: 1, fontWeight: 500 }}>{props.children}</Typography>
         <IconButton
