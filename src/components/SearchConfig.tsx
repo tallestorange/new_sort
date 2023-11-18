@@ -60,7 +60,6 @@ export const SortTitleInput = memo((props: {onChanged?: (text: string) => void})
         id="outlined-basic"
         label="ソート名(※結果表示に使います)"
         defaultValue={DEFAULT_SORT_TITLE}
-        variant="standard"
         onChange={onChangedCallback} />
     </FormControl>
   )
