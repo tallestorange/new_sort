@@ -2,17 +2,17 @@ import { DatePicker, DateValidationError, LocalizationProvider } from '@mui/x-da
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from '@mui/material/FormControl';
-import { DateRange } from "../hooks/useHPDatabase";
+import { DateRange } from "../hooks/useHPMemberDatabase";
 import Grid from '@mui/material/Grid';
 import isEqual from "date-fns/isEqual";
 import { NOW_LOADING } from "../modules/Constants";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 interface Props {
-  dateFrom?: Date,
-  dateTo?: Date,
-  dateInitFrom?: Date,
-  dateInitTo?: Date,
+  dateFrom: Date | null,
+  dateTo: Date | null,
+  dateInitFrom: Date | null,
+  dateInitTo: Date | null,
   onDateRangeChanged?: (dateRange: DateRange) => void,
   onError?: (error: boolean) => void,
   startText: string,
@@ -22,46 +22,40 @@ interface Props {
 
 const DateRangePicker = memo((props: Props) => {
   const {dateFrom, dateTo, dateInitFrom, dateInitTo, onDateRangeChanged, disabled, startText, endText, onError} = props;
-  const [selectedDateFrom, setSelectedDateFrom] = useState<Date>();
-  const [selectedDateTo, setSelectedDateTo] = useState<Date>();
+  const [selectedDateFrom, setSelectedDateFrom] = useState<Date | null>(null);
+  const [selectedDateTo, setSelectedDateTo] = useState<Date | null>(null);
 
-  const selectedDateFromRef = useRef<Date>();
-  const selectedDateToRef = useRef<Date>();
+  const selectedDateFromRef = useRef<Date | null>(null);
+  const selectedDateToRef = useRef<Date | null>(null);
 
   const stateA = useRef<boolean>(false);
   const stateB = useRef<boolean>(false);
 
   useEffect(() => {
     selectedDateFromRef.current = dateFrom;
-    setSelectedDateFrom(dateFrom);
+    setSelectedDateFrom(dateFrom!);
   }, [dateFrom]);
 
   useEffect(() => {
     selectedDateToRef.current = dateTo;
-    setSelectedDateTo(dateTo);
+    setSelectedDateTo(dateTo!);
   }, [dateTo]);
 
   const onChangedFrom = useCallback((date: Date | null) => {
-    if (date === null) {return;}
+    console.log(date);
     selectedDateFromRef.current = date;
     setSelectedDateFrom(date);
     if (date !== null && Number.isNaN(date.getTime())) {
-      return;
-    }
-    if (selectedDateFromRef.current === undefined || selectedDateToRef.current === undefined) {
       return;
     }
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
   const onChangedTo = useCallback((date: Date | null) => {
-    if (date === null) {return;}
+    console.log(date);
     selectedDateToRef.current = date;
     setSelectedDateTo(date);
     if (date !== null && Number.isNaN(date.getTime())) {
-      return;
-    }
-    if (selectedDateFromRef.current === undefined || selectedDateToRef.current === undefined) {
       return;
     }
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
@@ -98,8 +92,8 @@ const DateRangePicker = memo((props: Props) => {
               format="yyyy/MM/dd"
               mask="____年__月__日"
               value={selectedDateFrom}
-              minDate={dateInitFrom}
-              maxDate={selectedDateTo}
+              minDate={dateInitFrom !== null ? dateInitFrom : undefined}
+              maxDate={selectedDateTo !== null ? selectedDateTo : undefined}
               disabled={disabled}
               onChange={onChangedFrom}
               onError={onErrorFrom}
@@ -118,8 +112,8 @@ const DateRangePicker = memo((props: Props) => {
               format="yyyy/MM/dd"
               mask="____年__月__日"
               value={selectedDateTo}
-              minDate={selectedDateFrom}
-              maxDate={dateInitTo}
+              minDate={selectedDateFrom !== null ? selectedDateFrom : undefined}
+              maxDate={dateInitTo !== null ? dateInitTo : undefined}
               disabled={disabled}
               onChange={onChangedTo}
               onError={onErrorTo}

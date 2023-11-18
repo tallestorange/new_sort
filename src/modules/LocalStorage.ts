@@ -1,4 +1,4 @@
-import { Group } from "../hooks/useHPDatabase";
+import { Group } from "../hooks/useHPMemberDatabase";
 
 const LOCALSTORAGE_KEY_GROUPS : string = "groups";
 const LOCALSTORAGE_KEY_INCLUDE_OG : string = "include_og";

@@ -23,6 +23,7 @@ interface Props<T> {
   initialized: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
+  initialize_function?: () => void;
 }
 
 /**
@@ -32,7 +33,7 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T extends {}>(props: Props<T>) {
-  const {members, initialized, name_render_function, profile_render_function, share_url} = props;
+  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function} = props;
 
   const location = useLocation();
   let sortName = "";
@@ -60,6 +61,11 @@ export default function SortPage<T extends {}>(props: Props<T>) {
     sort.current = new Sorter(Array.from(members.keys()));
     setResult(sort.current.sort());
   }
+
+  useEffect(() => {
+    initialize_function?.();
+    // eslint-disable-next-line
+  }, [])
 
   useEffect(() => {
     document.title = sortName;

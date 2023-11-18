@@ -75,12 +75,13 @@ interface HPDatabase {
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRange: (val: DateRange) => void;
   setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from: string | null, date_to: string | null) => void;
+  setMemberDBInitialized: (initialize: boolean) => void;
   shareURL: string | undefined;
 }
 
 export interface DateRange {
-  from?: Date,
-  to?: Date
+  from: Date | null,
+  to: Date | null
 }
 
 export interface InitParams {
@@ -97,21 +98,22 @@ export function useHPDatabase(): HPDatabase {
   const allgroups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const groups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const allmembers = useRef<StoredItem<Map<number, Member>>>({item: new Map<number, Member>(), initialized: false});
-  const daterange = useRef<StoredItem<DateRange>>({item: {from: undefined, to: undefined}, initialized: false});
+  const daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
   const shareurl = useRef<StoredItem<string>>({item: "", initialized: false});
-  const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: undefined, to: undefined}, initialized: false});
+  const initial_daterange = useRef<StoredItem<DateRange>>({item: {from: null, to: null}, initialized: false});
 
   const include_og = useRef<StoredItem<boolean>>({ item: false, initialized: false });
   const include_trainee = useRef<StoredItem<boolean>>({ item: false, initialized: false });
 
   const [shareURL, setShareURL] = useState<string>();
+  const [initialized, setInitialized] = useState<boolean>(false);
   const [members, setMembers] = useState<Map<string, Member>>(new Map<string, Member>());
   
   const [initialState, setInitialState] = useState<InitParams>({
     allgroups: { item: [], initialized: false },
     groups_stored: { item: [], initialized: false },
-    date_range: { item: {from: undefined, to: undefined}, initialized: false },
-    init_date_range: { item: {from: undefined, to: undefined}, initialized: false },
+    date_range: { item: {from: null, to: null}, initialized: false },
+    init_date_range: { item: {from: null, to: null}, initialized: false },
     share_url: { item: "", initialized: false },
     include_og: { item: false, initialized: false },
     include_trainee: { item: false, initialized: false }
@@ -288,16 +290,18 @@ export function useHPDatabase(): HPDatabase {
 
   // 初期化処理
   useEffect(() => {
-    console.log("initialize started")
-    initializeAsync().then((init_params) => {
-      setInitialState(init_params);
-      const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-      setMembers(result);
-    }).then(() => {
-      console.log("initialize finished");
-    });
+    if (initialized) {
+      console.log("initialize started")
+      initializeAsync().then((init_params) => {
+        setInitialState(init_params);
+        const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
+        setMembers(result);
+      }).then(() => {
+        console.log("initialize finished");
+      });
+    }
     // eslint-disable-next-line
-  }, [])
+  }, [initialized])
 
   const generateShareURL = useCallback((groups: Group[], include_og: boolean, include_not_debut: boolean, date_from?: Date | null, date_to?: Date | null):string => {    
     const params: string[] = [];
@@ -319,8 +323,8 @@ export function useHPDatabase(): HPDatabase {
       params.push("include_not_debut=True");
     }
 
-    const can_use_date_from = (initial_daterange.current.item.from !== undefined && date_from !== null && date_from !== undefined);
-    const can_use_date_to = (initial_daterange.current.item.to !== undefined && date_to !== null && date_to !== undefined);
+    const can_use_date_from = (initial_daterange.current.item.from !== null && date_from !== null && date_from !== undefined);
+    const can_use_date_to = (initial_daterange.current.item.to !== null && date_to !== null && date_to !== undefined);
     if (can_use_date_from && can_use_date_to && (!isEqual(date_from, initial_daterange.current.item.from!) || !isEqual(date_to, initial_daterange.current.item.to!))) {
       params.push(`date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`);
     }
@@ -407,6 +411,7 @@ export function useHPDatabase(): HPDatabase {
     setIncludeTrainee: setIncludeTraineeInternal,
     setDateRange: setDateRange,
     setExternalSortParam: setExternalSortParam,
+    setMemberDBInitialized: setInitialized,
     shareURL: shareURL
   }
 }
