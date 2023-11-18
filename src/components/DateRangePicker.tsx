@@ -1,4 +1,4 @@
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker, DateValidationError, LocalizationProvider } from '@mui/x-date-pickers';
 import { ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from '@mui/material/FormControl';
@@ -59,13 +59,13 @@ const DateRangePicker = memo((props: Props) => {
     onDateRangeChanged?.({from: selectedDateFromRef.current, to: selectedDateToRef.current});
   },[onDateRangeChanged]);
 
-  const onErrorFrom = useCallback((a: ReactNode, b: any) => {
-    stateA.current = a !== ""
+  const onErrorFrom = useCallback((a: DateValidationError, b: Date | null) => {
+    stateA.current = a !== null;
     onError?.(stateA.current || stateB.current)
   }, [onError]);
 
-  const onErrorTo = useCallback((a: ReactNode, b: any) => {
-    stateB.current = a !== ""
+  const onErrorTo = useCallback((a: DateValidationError, b: Date | null) => {
+    stateB.current = a !== null;
     onError?.(stateA.current || stateB.current)
   }, [onError]);
 
