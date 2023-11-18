@@ -1,10 +1,10 @@
 # new_sort
 
-[日プ](https://produce101.jp/)ソートです。
+ハロプロソート(3)です。
 
-[ハロプロソート(updated)](https://github.com/emolga587/hpsort2)をベースにメンバー絞り込み機能や通信の非同期化を実施し、データベースを日プのものに差し替えたものになります。
+[ハロプロソート(updated)](https://github.com/emolga587/hpsort2)をベースにメンバー絞り込み機能や通信の非同期化を実施したものになります。
 
-[https://np-sort.web.app/](https://np-sort.web.app/) ※番組終了まで公開予定
+[https://hpsort3.192.works/](https://hpsort3.192.works/)
 
 ## 動かし方
 
@@ -32,7 +32,7 @@ npm run build
 
 ## ライセンス
 本家様と同様にMITライセンスとします。
-ただし、public/member_pics/以下の画像、src/NP_DB/以下のデータに関してはこの限りではありません。
+ただし、public/member_pics/以下の画像、src/HP_DB/以下のデータに関してはこの限りではありません。
 
 ## 謝辞
 
