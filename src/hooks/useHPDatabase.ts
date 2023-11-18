@@ -299,71 +299,68 @@ export function useHPDatabase(): HPDatabase {
     // eslint-disable-next-line
   }, [])
 
-  const generateShareURL = useCallback((groups: Group[], include_og: boolean, include_not_debut: boolean, date_from?: Date | null, date_to?: Date | null):string => {
-    const bitList: number[] = [0, 0, 0];
-    for (const group of groups) {
-      bitList[group.form_order / 31 | 0] += 1 << (group.form_order % 31)
+  const generateShareURL = useCallback((groups: Group[], include_og: boolean, include_not_debut: boolean, date_from?: Date | null, date_to?: Date | null):string => {    
+    const params: string[] = [];
+
+    if (allgroups.current.item.length  !== groups.length) {
+      const bitList: number[] = [0, 0, 0];
+      for (const group of groups) {
+        bitList[group.form_order / 31 | 0] += 1 << (group.form_order % 31)
+      }
+      const groups_str = "groups=" + bitList.join(",")
+      params.push(groups_str);
     }
     
-    const include_og_str = include_og ? "&include_og=True" : "";
-    const include_trainee_str = include_not_debut ? "&include_not_debut=True" : "";
-    let date_range_str = "";
+    if (include_og) {
+      params.push("include_og=True");
+    }
+
+    if (include_not_debut) {
+      params.push("include_not_debut=True");
+    }
+
     const can_use_date_from = (initial_daterange.current.item.from !== null && date_from !== null && date_from !== undefined);
     const can_use_date_to = (initial_daterange.current.item.to !== null && date_to !== null && date_to !== undefined);
     if (can_use_date_from && can_use_date_to && (!isEqual(date_from, initial_daterange.current.item.from!) || !isEqual(date_to, initial_daterange.current.item.to!))) {
-      date_range_str = `&date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`;
+      params.push(`date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`);
     }
-    const share_url = PAGE_URL_FOR_SHARE + "?groups=" + bitList.join(",") + date_range_str + include_og_str + include_trainee_str;
+    
+    const share_url = PAGE_URL_FOR_SHARE + (params.length > 0 ? "?" : "") + params.join("&");
     return share_url;
   }, []);
+
+  const updateResult = useCallback(() => {
+    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
+    shareurl.current.item = share_url;
+    shareurl.current.initialized = true;
+
+    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
+    setMembers(result);
+  }, [search, generateShareURL]);
 
   const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
     setGroupsToLocalStorage(val);
-
-    const share_url = generateShareURL(val, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    shareurl.current.item = share_url;
-    shareurl.current.initialized = true;
-
-    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    setMembers(result);
-  }, [search, generateShareURL]);
+    updateResult();
+  }, [updateResult]);
 
   const setIncludeOGInternal = useCallback((val: boolean) => {
     include_og.current.item = val;
     setIncludeOGToLocalStorage(val);
-
-    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    shareurl.current.item = share_url;
-    shareurl.current.initialized = true;
-
-    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    setMembers(result);
-  }, [search, generateShareURL]);
+    updateResult();
+  }, [updateResult]);
 
   const setIncludeTraineeInternal = useCallback((val: boolean) => {
     include_trainee.current.item = val;
     setIncludeTraineeToLocalStorage(val);
-
-    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    shareurl.current.item = share_url;
-    shareurl.current.initialized = true;
-
-    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    setMembers(result);
-  }, [search, generateShareURL]);
+    updateResult();
+  }, [updateResult]);
 
   const setDateRange = useCallback((val: DateRange) => {
     daterange.current.item.from = val.from;
     daterange.current.item.to = val.to;
-
-    const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    shareurl.current.item = share_url;
-    shareurl.current.initialized = true;
-
-    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
-    setMembers(result);
-  }, [search, generateShareURL]);
+    updateResult();
+  }, [updateResult]);
 
   const setExternalSortParam = useCallback((groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from_string: string | null, date_to_string: string | null) => {
     let result: Group[] = [];

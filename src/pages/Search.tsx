@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import "../App.css";
-import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH } from '../modules/Constants';
+import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH, NOW_LOADING } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, ResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +58,7 @@ export default function Search(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect<Group>
-            title={initialState.allgroups.initialized ? "所属グループ" : "所属グループ(読み込み中...)"}
+            title={initialState.allgroups.initialized ? "所属グループ" : `所属グループ(${NOW_LOADING})`}
             id="groups-belong"
             enabled={initialState.allgroups.initialized && initialState.groups_stored.initialized}
             items={initialState.allgroups.item}

@@ -8,6 +8,7 @@ import { DateRange } from "../hooks/useHPDatabase";
 import Grid from "@material-ui/core/Grid";
 import format from "date-fns/format";
 import isEqual from "date-fns/isEqual";
+import { NOW_LOADING } from "../modules/Constants";
 
 interface Props {
   dateFrom: Date | null,
@@ -97,7 +98,7 @@ const DateRangePicker = memo((props: Props) => {
               margin="normal"
               fullWidth
               id="date-picker-dialog-from"
-              label={disabled ? startText + "(読み込み中...)" : startText}
+              label={disabled ? `${startText}(${NOW_LOADING})` : startText}
               format="yyyy/MM/dd"
               mask="____/__/__"
               value={selectedDateFrom}
@@ -120,7 +121,7 @@ const DateRangePicker = memo((props: Props) => {
               margin="normal"
               fullWidth
               id="date-picker-dialog-to"
-              label={disabled ? endText + "(読み込み中...)" : endText}
+              label={disabled ? `${endText}(${NOW_LOADING})` : endText}
               format="yyyy/MM/dd"
               value={selectedDateTo}
               minDate={selectedDateFrom}
