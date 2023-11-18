@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState, memo } from "react";
-import Typography from "@material-ui/core/Typography/Typography";
-import Button from "@material-ui/core/Button/Button";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup/FormGroup";
-import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import styled from '@mui/material/styles/styled';
 import { DEFAULT_SORT_TITLE } from "../modules/Constants";
 
 export const ResultText = React.memo((props: { count: number }) => {

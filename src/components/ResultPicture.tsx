@@ -1,10 +1,9 @@
-import Grid from "@material-ui/core/Grid";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import Box from "@material-ui/core/Box";
-import {GridSize} from "@material-ui/core/Grid";
+import Grid, { GridSize } from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { IMAGE_DIR, PICTURE_FORMAT } from "../modules/Constants";
 
 interface Props {

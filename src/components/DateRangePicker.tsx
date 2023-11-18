@@ -1,14 +1,13 @@
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
-import FormControl from "@material-ui/core/FormControl";
+import FormControl from '@mui/material/FormControl';
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import DateFnsUtils from '@date-io/date-fns';
 import { DateRange } from "../hooks/useHPDatabase";
-import Grid from "@material-ui/core/Grid";
-import format from "date-fns/format";
+import Grid from '@mui/material/Grid';
 import isEqual from "date-fns/isEqual";
 import { NOW_LOADING } from "../modules/Constants";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 interface Props {
   dateFrom: Date | null,
@@ -29,15 +28,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 450,
   }
 }));
-
-class ExtendedUtils extends DateFnsUtils {
-  getCalendarHeaderText(date: any) {
-    return format(date, "yyyy/M", { locale: this.locale });
-  }
-  getDatePickerHeaderText(date: any) {
-    return format(date, "yyyy年M月d日", { locale: this.locale });
-  }
-}
 
 const DateRangePicker = memo((props: Props) => {
   const classes = useStyles();
@@ -91,12 +81,10 @@ const DateRangePicker = memo((props: Props) => {
 
   return (
     <FormControl fullWidth className={classes.formControl}>
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <MuiPickersUtilsProvider utils={ExtendedUtils} locale={ja}>
+      <Grid container item xs={12} justifyContent="center" spacing={3}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
           <Grid container item sm={12} md={6} justifyContent="center" spacing={0}>
-            <KeyboardDatePicker
-              margin="normal"
-              fullWidth
+            <DatePicker
               id="date-picker-dialog-from"
               label={disabled ? `${startText}(${NOW_LOADING})` : startText}
               format="yyyy/MM/dd"
@@ -114,12 +102,11 @@ const DateRangePicker = memo((props: Props) => {
               KeyboardButtonProps={{
                 'aria-label': 'change start date',
               }}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
           <Grid container item sm={12} md={6} justifyContent="center" spacing={0}>
-            <KeyboardDatePicker
-              margin="normal"
-              fullWidth
+            <DatePicker
               id="date-picker-dialog-to"
               label={disabled ? `${endText}(${NOW_LOADING})` : endText}
               format="yyyy/MM/dd"
@@ -136,9 +123,10 @@ const DateRangePicker = memo((props: Props) => {
               KeyboardButtonProps={{
                 'aria-label': 'change finish date',
               }}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
-        </MuiPickersUtilsProvider>
+        </LocalizationProvider>
       </Grid>
     </FormControl>
   )
