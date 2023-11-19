@@ -8,10 +8,18 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import { DEFAULT_SORT_TITLE } from "../modules/Constants";
 
-export const ResultText = React.memo((props: { count: number }) => {
+export const MemberResultText = React.memo((props: { count: number }) => {
   return (
     <Typography variant="h6" component="h2">
       該当者: {props.count}名
+    </Typography>
+  )
+});
+
+export const SongResultText = React.memo((props: { count: number }) => {
+  return (
+    <Typography variant="h6" component="h2">
+      該当曲: {props.count}曲
     </Typography>
   )
 });

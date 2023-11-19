@@ -1,73 +1,11 @@
-import HP_DB_MEMBERS from "../HP_DB/member.csv";
-import HP_DB_JOIN from "../HP_DB/join.csv";
-import HP_DB_GROUP from "../HP_DB/group.csv";
-import { fetchCSVAsync } from "../modules/CSVLoader";
+import { DateRange, Group, Member, StoredItem, fetchGroups, fetchJoins, fetchMembers } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
 import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
-import max from "date-fns/max";
-import min from "date-fns/min";
 import { PAGE_URL_FOR_SHARE } from "../modules/Constants";
 import { isEqual } from "date-fns";
 
-interface StoredItem<T> {
-  /**
-   * データの中身
-   */
-  item: T,
-
-  /**
-   * 初期化済みかどうか
-   */
-  initialized: boolean
-}
-
-interface MemberRaw {
-  memberID: number;
-  memberName: string;
-  HPjoinDate: string;
-  debutDate: string;
-  HPgradDate: string;
-  memberKana: string;
-  birthDate: string;
-}
-
-interface GroupRaw {
-  groupID: number;
-  groupName: string;
-  formDate: string;
-  dissolveDate: string;
-  isUnit: string;
-}
-
-interface JoinRaw {
-  memberID: number;
-  groupID: number;
-  joinDate: string;
-  gradDate: string;
-}
-
-export interface Group {
-  unique_id: number;
-  form_order: number;
-  groupID: number;
-  groupName: string;
-  formDate: Date;
-  dissolveDate?: Date;
-  isUnit: string;
-}
-
-export interface Member {
-  memberName: string;
-  HPjoinDate: Date;
-  debutDate?: Date;
-  HPgradDate?: Date;
-  memberKana: string;
-  birthDate?: Date;
-  groups: {groupID: number, joinDate: Date, gradDate?: Date}[];
-}
-
-interface HPDatabase {
+interface HPMemberDatabase {
   initialState: InitParams,
   setGroups: (v: Group[]) => void;
   members: Map<string, Member>;
@@ -77,11 +15,6 @@ interface HPDatabase {
   setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from: string | null, date_to: string | null) => void;
   setMemberDBInitialized: (initialize: boolean) => void;
   shareURL: string | undefined;
-}
-
-export interface DateRange {
-  from: Date | null,
-  to: Date | null
 }
 
 export interface InitParams {
@@ -94,7 +27,7 @@ export interface InitParams {
   include_trainee: StoredItem<boolean>
 }
 
-export function useHPDatabase(): HPDatabase {
+export function useHPMemberDatabase(): HPMemberDatabase {
   const allgroups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const groups = useRef<StoredItem<Group[]>>({item: [], initialized: false});
   const allmembers = useRef<StoredItem<Map<number, Member>>>({item: new Map<number, Member>(), initialized: false});
@@ -132,42 +65,11 @@ export function useHPDatabase(): HPDatabase {
     include_trainee.current.item = include_trainee_local;
     include_trainee.current.initialized = true;
 
-    const members = await fetchCSVAsync<MemberRaw[]>(HP_DB_MEMBERS);
-    const join = await fetchCSVAsync<JoinRaw[]>(HP_DB_JOIN);
-    const group = await fetchCSVAsync<GroupRaw[]>(HP_DB_GROUP);
-    
-    const groupParsed1: Group[] = group.map((v, idx) => { return { unique_id: idx, form_order: idx, groupID: v.groupID, groupName: v.groupName, formDate: parseDate(v.formDate)!, dissolveDate: parseDate(v.dissolveDate), isUnit: v.isUnit } })
-    groupParsed1.sort((a, b) => (a.groupID - b.groupID));
-    const groupParsed2: Group[] = groupParsed1.map((v, idx) => { return { unique_id: idx, form_order: v.form_order, groupID: v.groupID, groupName: v.groupName, formDate: v.formDate, dissolveDate: v.dissolveDate, isUnit: v.isUnit } })
-
-    allgroups.current.item = groupParsed2;
+    const groups_fetch = await fetchGroups();
+    allgroups.current.item = groups_fetch;
     allgroups.current.initialized = true;
 
-    const result: Map<number, Member> = new Map<number, Member>();
-    let date_max = parseDate("1900/1/1")!;
-    let date_min = new Date();
-
-    for(const member of members) {
-      const val: Member = {
-        memberName: member.memberName,
-        HPjoinDate: parseDate(member.HPjoinDate)!,
-        debutDate: parseDate(member.debutDate),
-        HPgradDate: parseDate(member.HPgradDate),
-        memberKana: member.memberKana,
-        birthDate: parseDate(member.birthDate)!,
-        groups: []
-      }
-
-      const birthDate = parseDate(member.birthDate);
-      if (birthDate !== undefined) {
-        date_max = max([date_max, birthDate]);
-        date_min = min([date_min, birthDate]);
-      }
-  
-      const memberID = member.memberID;
-      result.set(memberID, val);
-    }
-
+    const {members, date_max, date_min} = await fetchMembers();
     initial_daterange.current.initialized = true;
     initial_daterange.current.item = {from: date_min, to: date_max};
 
@@ -175,21 +77,11 @@ export function useHPDatabase(): HPDatabase {
     daterange.current.item.to = date_max;
     daterange.current.initialized = true;
   
-    const joinMap: Map<number, {groupID: number, joinDate: Date, gradDate?: Date}[]> = new Map<number, {groupID: number, joinDate: Date, gradDate?: Date}[]>();
-    for(const joinData of join) {
-      if (!joinMap.has(joinData.memberID)) {
-        joinMap.set(joinData.memberID, []);
-      }
-      joinMap.get(joinData.memberID)!.push({
-        groupID: joinData.groupID,
-        joinDate: parseDate(joinData.joinDate)!,
-        gradDate: parseDate(joinData.gradDate)});
+    const joinMap = await fetchJoins();
+    for(const key of Array.from( members.keys() )) {
+      members.get(key)!.groups = joinMap.get(key)!
     }
-  
-    for(const key of Array.from( result.keys() )) {
-      result.get(key)!.groups = joinMap.get(key)!
-    }
-    allmembers.current.item = result;
+    allmembers.current.item = members;
     allmembers.current.initialized = true;
 
     const groups_stored_local = getGroupsFromLocalStorage(allgroups.current.item, () => {

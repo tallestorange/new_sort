@@ -2,11 +2,12 @@ import Grid from "@mui/material/Grid";
 import "../App.css";
 import { TITLE, DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
-import { LabelCheckBox, ResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
+import { LabelCheckBox, MemberResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DateRange, Group, InitParams } from "../hooks/useHPMemberDatabase";
+import { DateRange, InitParams } from "../hooks/useHPMemberDatabase";
 import DateRangePicker from "../components/DateRangePicker";
+import { Group } from "../modules/CSVLoader";
 
 interface Props {
   initialState: InitParams;
@@ -101,7 +102,7 @@ export default function MemberSearch(props: Props) {
       </Grid>
       
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <ResultText count={error ? 0 : target_members_count} />
+        <MemberResultText count={error ? 0 : target_members_count} />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>

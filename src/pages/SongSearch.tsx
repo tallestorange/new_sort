@@ -2,36 +2,47 @@ import Grid from "@mui/material/Grid";
 import "../App.css";
 import { TITLE, DEFAULT_SORT_TITLE, SORT_PATH, NOW_LOADING } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
-import { ResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
+import { LabelCheckBox, SongResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DateRange, Group, InitParams } from "../hooks/useHPMemberDatabase";
+import { InitParams } from "../hooks/useHPSongsDatabase";
 import DateRangePicker from "../components/DateRangePicker";
+import { Artist, DateRange, Song, Label } from "../modules/CSVLoader";
 
 interface Props {
   initialState: InitParams;
   target_songs_count: number;
-  setGroups: (members: Group[]) => void;
+  setSongs?: (songs: Song[]) => void;
   setDateRangeChanged: (dateRange: DateRange) => void;
+  initializeFunction?: () => void;
 }
 
 export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-  const {initialState, target_songs_count, setGroups, setDateRangeChanged} = props;
+  const {initialState, target_songs_count, setSongs, setDateRangeChanged, initializeFunction} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
     navigate(`/${SORT_PATH}`, { state: sortTitle.current })
   }, [navigate]);
 
-  const renderGroups = useCallback((v: Group[]): string => {
+  const renderGroups = useCallback((v: Artist[]): string => {
     v.sort((a, b) => { return a.unique_id - b.unique_id });
-    return v.map((a) => { return a.groupName }).join(', ');
+    return v.map((a) => { return a.artistName }).join(', ');
   }, []);
 
-  const groupName = useCallback((v: Group):string => {
-    return v.groupName;
+  const groupName = useCallback((v: Artist):string => {
+    return `${v.artistName}(${v.count})`;
+  }, []);
+
+  const renderLabels = useCallback((v: Label[]): string => {
+    v.sort((a, b) => { return a.unique_id - b.unique_id });
+    return v.map((a) => { return a.labelName }).join(', ');
+  }, []);
+
+  const labelName = useCallback((v: Label):string => {
+    return `${v.labelName}(${v.count})`;
   }, []);
 
   const setSortName = useCallback((v: string) => {
@@ -40,6 +51,7 @@ export default function SongSearch(props: Props) {
 
   useEffect(() => {
     document.title = TITLE;
+    initializeFunction?.();
   }, []);
 
   return (
@@ -52,33 +64,62 @@ export default function SongSearch(props: Props) {
           <SortTitleInput onChanged={setSortName} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Group>
-            title={initialState.allgroups.initialized ? "グループ" : `グループ(${NOW_LOADING})`}
+          <SearchSelect<Artist>
+            title={initialState.all_artists.initialized ? "グループ" : `グループ(${NOW_LOADING})`}
             id="groups-belong"
-            enabled={initialState.allgroups.initialized && initialState.groups_stored.initialized}
-            items={initialState.allgroups.item}
-            default_selected={initialState.groups_stored.item}
+            enabled={initialState.all_artists.initialized}
+            items={initialState.all_artists.item}
+            default_selected={[]}
             title_convert_func={groupName}
             on_render_func={renderGroups}
-            onValueChanged={setGroups}
+            />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <SearchSelect<Label>
+            title={initialState.all_labels.initialized ? "レーベル" : `レーベル(${NOW_LOADING})`}
+            id="labels-belong"
+            enabled={initialState.all_labels.initialized}
+            items={initialState.all_labels.item}
+            default_selected={[]}
+            title_convert_func={labelName}
+            on_render_func={renderLabels}
+            // onValueChanged={setSongs}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <DateRangePicker
             dateInitFrom={initialState.init_date_range.item.from}
             dateInitTo={initialState.init_date_range.item.to}
-            dateFrom={initialState.date_range.item.from}
-            dateTo={initialState.date_range.item.to}
-            disabled={!(initialState.date_range.initialized && initialState.init_date_range.initialized)}
+            dateFrom={initialState.init_date_range.item.from}//initialState.date_range.item.from}
+            dateTo={initialState.init_date_range.item.to}//initialState.date_range.item.to}
+            disabled={!(initialState.init_date_range.initialized)}
             startText="発売日(開始日)"
             endText="発売日(終了日)"
             onError={setError}
             onDateRangeChanged={setDateRangeChanged} />
-        </Grid>       
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={initialState.include_single.item}
+            disabled={!initialState.include_single.initialized}
+            // valueChanged={setIncludeOG}
+            form_id="checkbox-form-include-og"
+            checkbox_id="checkbox-include-og"
+            label="シングル曲を含める" />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={initialState.include_album.item}
+            disabled={!initialState.include_album.initialized}
+            // valueChanged={setIncludeOG}
+            form_id="checkbox-form-include-og"
+            checkbox_id="checkbox-include-og"
+            label="アルバム曲を含める" />
+        </Grid>
       </Grid>
       
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <ResultText count={error ? 0 : target_songs_count} />
+        <SongResultText count={error ? 0 : target_songs_count} />
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SortStartButton enabled={target_songs_count > 0 && !error } onClick={onSortButtonClicked}/>
