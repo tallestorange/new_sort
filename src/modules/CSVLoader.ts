@@ -260,7 +260,7 @@ export const fetchJoins = async (): Promise<Map<number, {groupID: number, joinDa
   return joinMap;
 }
 
-export const initializeSongDB = async (): Promise<{artists: Artist[], labels: Label[], songs: Song[], date_min: Date, date_max: Date}> => {
+export const initializeSongDB = async (): Promise<{artists: Artist[], labels: Label[], songs: Map<string, Song>, date_min: Date, date_max: Date}> => {
   const singles = await fetchSingles();
   const albums = await fetchAlbums();
   const songs = await fetchSongs(singles, albums);
@@ -299,5 +299,7 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], labels: La
   }
   const artists = [...artists_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, artistName: a[0], count: a[1]}});
   const labels = [...labels_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, labelName: a[0], count: a[1]}});
-  return {artists: artists, labels: labels, songs: songs_unique, date_min: date_min, date_max: date_max}
+  const songs_map = new Map(songs_unique.map(v => [v.songName, v]))
+
+  return {artists: artists, labels: labels, songs: songs_map, date_min: date_min, date_max: date_max}
 }

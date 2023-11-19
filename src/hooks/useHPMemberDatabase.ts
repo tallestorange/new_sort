@@ -183,13 +183,13 @@ export function useHPMemberDatabase(): HPMemberDatabase {
   // 初期化処理
   useEffect(() => {
     if (initialized) {
-      console.log("initialize started")
+      console.log("HPMemberDB initialize started")
       initializeAsync().then((init_params) => {
         setInitialState(init_params);
         const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
         setMembers(result);
       }).then(() => {
-        console.log("initialize finished");
+        console.log("HPMemberDB initialize finished");
       });
     }
     // eslint-disable-next-line

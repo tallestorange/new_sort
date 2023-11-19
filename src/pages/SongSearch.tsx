@@ -15,12 +15,15 @@ interface Props {
   setSongs?: (songs: Song[]) => void;
   setDateRangeChanged: (dateRange: DateRange) => void;
   initializeFunction?: () => void;
+  setIncludeSingle?: (includeSingle: boolean) => void;
+  setIncludeAlbum?: (includeAlbum: boolean) => void;
+  setLabels?: (labels: Label[]) => void;
 }
 
 export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-  const {initialState, target_songs_count, setSongs, setDateRangeChanged, initializeFunction} = props;
+  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setLabels} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -79,11 +82,11 @@ export default function SongSearch(props: Props) {
             title={initialState.all_labels.initialized ? "レーベル" : `レーベル(${NOW_LOADING})`}
             id="labels-belong"
             enabled={initialState.all_labels.initialized}
-            items={initialState.all_labels.item}
-            default_selected={[]}
+            items={initialState.all_labels_stored.item}
+            default_selected={initialState.all_labels.item}
             title_convert_func={labelName}
             on_render_func={renderLabels}
-            // onValueChanged={setSongs}
+            onValueChanged={setLabels}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -102,7 +105,7 @@ export default function SongSearch(props: Props) {
           <LabelCheckBox
             default_checked={initialState.include_single.item}
             disabled={!initialState.include_single.initialized}
-            // valueChanged={setIncludeOG}
+            valueChanged={setIncludeSingle}
             form_id="checkbox-form-include-og"
             checkbox_id="checkbox-include-og"
             label="シングル曲を含める" />
@@ -111,7 +114,7 @@ export default function SongSearch(props: Props) {
           <LabelCheckBox
             default_checked={initialState.include_album.item}
             disabled={!initialState.include_album.initialized}
-            // valueChanged={setIncludeOG}
+            valueChanged={setIncludeAlbum}
             form_id="checkbox-form-include-og"
             checkbox_id="checkbox-include-og"
             label="アルバム曲を含める" />

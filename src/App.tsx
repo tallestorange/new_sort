@@ -5,16 +5,17 @@ import Layout from "./components/Layout";
 import SortPage from "./pages/SortPage";
 
 import "./App.css";
-import { Member, nameRenderFunction, profileRenderFunction, useHPMemberDatabase } from "./hooks/useHPMemberDatabase";
+import { nameRenderFunction, profileRenderFunction, useHPMemberDatabase } from "./hooks/useHPMemberDatabase";
 import { useCallback, useMemo } from "react";
 import SortPageShared from "./pages/SortPageShared";
 import Home from "./pages/Home";
 import SongSearch from "./pages/SongSearch";
 import { useHPSongsDatabase } from "./hooks/useHPSongsDatabase";
+import { Member } from "./modules/CSVLoader";
 
 export default function App() {
-  const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange, setExternalSortParam, shareURL, setMemberDBInitialized } = useHPMemberDatabase();
-  const { initialState: initialiStateSong, setSongDBInitialized } = useHPSongsDatabase();
+  const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange: setMembersDateRange, setExternalSortParam, shareURL, setMemberDBInitialized } = useHPMemberDatabase();
+  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setLabels } = useHPSongsDatabase();
 
   const initialized = useMemo(() => {
     return initialStateMember.allgroups.initialized && initialStateMember.groups_stored.initialized;
@@ -42,15 +43,18 @@ export default function App() {
               setGroups={setGroups}
               setIncludeOG={setIncludeOG}
               setIncludeTrainee={setIncludeTrainee}
-              setDateRangeChanged={setDateRange}
+              setDateRangeChanged={setMembersDateRange}
               initializeFunction={initializeMemberDB}
           />} />
           <Route path="/search_songs" element={
             <SongSearch
               initialState={initialiStateSong}
-              target_songs_count={initialiStateSong.all_songs.item.length}
-              setDateRangeChanged={setDateRange}
+              target_songs_count={songs.size}
+              setDateRangeChanged={setSongsDateRange}
               initializeFunction={initializeSongDB}
+              setIncludeAlbum={setIncludeAlbum}
+              setIncludeSingle={setIncludeSingle}
+              setLabels={setLabels}
           />} />
           <Route path={`/sort_members`} element={
             <SortPage<Member> 
