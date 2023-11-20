@@ -5,6 +5,7 @@ import HP_DB_ALBUM from "../HP_DB/album.csv";
 import HP_DB_MEMBERS from "../HP_DB/member.csv";
 import HP_DB_JOIN from "../HP_DB/join.csv";
 import HP_DB_GROUP from "../HP_DB/group.csv";
+import EXT_HP_DB_SONGINFO from "../HP_EXTERNAL_DB/songinfo.csv";
 import { parseDate } from "./DateUtils";
 import max from "date-fns/max";
 import min from "date-fns/min";
@@ -75,6 +76,9 @@ export interface Song {
   albumID?: number;
   singleName?: string;
   albumName?: string;
+  songLyricistName?: string;
+  songComposerName?: string;
+  songArrangerName?: string;
   releaseDate: Date;
   labelName: string;
 }
@@ -121,6 +125,14 @@ export interface Member {
   memberKana: string;
   birthDate?: Date;
   groups: {groupID: number, joinDate: Date, gradDate?: Date}[];
+}
+
+interface SongInfo {
+  songID: string;
+  varID: string;
+  lyrics_writer: string;
+  song_writer: string;
+  arranger: string;
 }
 
 export interface Artist extends UniqueItem {
@@ -260,10 +272,26 @@ export const fetchJoins = async (): Promise<Map<number, {groupID: number, joinDa
   return joinMap;
 }
 
+const fetchExternalSongInfo = async (): Promise<Map<string, SongInfo>> => {
+  const res = new Map<string, SongInfo>();
+  const songinfos = await fetchCSVAsync<SongInfo[]>(EXT_HP_DB_SONGINFO);
+  const ids = new Set<string>();
+  for(const songinfo of songinfos) {
+    const id = songinfo.songID+'_'+songinfo.varID;
+    if (!ids.has(id)) {
+      ids.add(id);
+      res.set(id, songinfo);
+    }
+  }
+  return res;
+}
+
 export const initializeSongDB = async (): Promise<{artists: Artist[], labels: Label[], songs: Map<string, Song>, date_min: Date, date_max: Date, albums: Album[]}> => {
   const singles = await fetchSingles();
   const albums = await fetchAlbums();
   const songs = await fetchSongs(singles, albums);
+  const external_song_info = await fetchExternalSongInfo();
+
   let date_max = parseDate("1900/1/1")!;
   let date_min = new Date();
 
@@ -292,6 +320,12 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], labels: La
       }
       else {
         labels_map.set(song.labelName, labels_map.get(song.labelName)!+1);
+      }
+
+      if (external_song_info.has(id)) {
+        song.songLyricistName = external_song_info.get(id)!.lyrics_writer;
+        song.songComposerName = external_song_info.get(id)!.song_writer;
+        song.songArrangerName = external_song_info.get(id)!.arranger;
       }
 
       songs_unique.push(song);
