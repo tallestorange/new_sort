@@ -1,4 +1,4 @@
-import { Album, Artist, DateRange, Label, Song, Staff, StoredItem, initializeSongDB } from "../modules/CSVLoader";
+import { Artist, DateRange, Song, Staff, StoredItem, initializeSongDB } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate } from "../modules/DateUtils";
 
@@ -21,10 +21,13 @@ interface HPSongsDatabase {
   initialState: InitParams,
   songs: Map<string, Song>,
   setSongDBInitialized: (initialized: boolean) => void,
-  setIncludeSingle: (includeSingle: boolean) => void;
-  setIncludeAlbum: (includeAlbum: boolean) => void;
+  setIncludeSingle: (includeSingle: boolean) => void,
+  setIncludeAlbum: (includeAlbum: boolean) => void,
   setDateRange: (val: DateRange) => void,
   setArtists: (val: Artist[]) => void,
+  setLyricists: (val: Staff[]) => void,
+  setComposers: (val: Staff[]) => void,
+  setArrangers: (val: Staff[]) => void,
 }
 
 export function useHPSongsDatabase(): HPSongsDatabase {
@@ -123,12 +126,16 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     // eslint-disable-next-line
   }, [initialized])
 
-  const search = useCallback((date_from: Date | null, date_to: Date | null, include_single: boolean, include_album: boolean, artists: Artist[]): Map<string, Song> => {
+  const search = useCallback((date_from: Date | null, date_to: Date | null, include_single: boolean, include_album: boolean, artists: Artist[], lyricists: Staff[], composers: Staff[], arrangers: Staff[]): Map<string, Song> => {
     const result = new Map<string, Song>();
     if (date_from === null || date_to === null || !all_songs.current.initialized) {
       return result;
     }
     const artist_search = artists.map(v => v.artistName);
+    const lyricists_search = lyricists.map(v => v.staffName);
+    const composers_search = composers.map(v => v.staffName);
+    const arrangers_search = arrangers.map(v => v.staffName);
+
     for (const [key, song] of all_songs.current.item) {
       if (!(date_from <= song.releaseDate && song.releaseDate <= date_to)) {
         continue;
@@ -142,13 +149,22 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       if (artist_search.indexOf(song.songArtistName) === -1) {
         continue;
       }
+      if (song.songLyricistName === undefined || (song.songLyricistName !== undefined && lyricists_search.indexOf(song.songLyricistName)) === -1) {
+        continue;
+      }
+      if (song.songComposerName === undefined || (song.songComposerName !== undefined && composers_search.indexOf(song.songComposerName) === -1)) {
+        continue;
+      }
+      if (song.songArrangerName === undefined || (song.songArrangerName !== undefined && arrangers_search.indexOf(song.songArrangerName) === -1)) {
+        continue;
+      }
       result.set(key, song);
     }
     return result;
   }, []);
 
   const updateResult = useCallback(() => {
-    const result = search(date_range.current.item.from, date_range.current.item.to, include_single.current.item, include_album.current.item, artists.current.item);
+    const result = search(date_range.current.item.from, date_range.current.item.to, include_single.current.item, include_album.current.item, artists.current.item,  lyricists.current.item, composers.current.item, arrangers.current.item);
     setSongs(result);
   }, [search]);
 
@@ -173,6 +189,21 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     updateResult();
   }, [updateResult]);
 
+  const setLyricists = useCallback((val: Staff[]) => {
+    lyricists.current.item = val;
+    updateResult();
+  }, [updateResult]);
+
+  const setComposers = useCallback((val: Staff[]) => {
+    composers.current.item = val;
+    updateResult();
+  }, [updateResult]);
+
+  const setArrangers = useCallback((val: Staff[]) => {
+    arrangers.current.item = val;
+    updateResult();
+  }, [updateResult]);
+  
   return {
     initialState: initialState,
     setSongDBInitialized: setInitialized,
@@ -181,6 +212,9 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     setIncludeAlbum: setIncludeAlbumInternal,
     setIncludeSingle: setIncludeSingleInternal,
     setArtists: setArtists,
+    setLyricists: setLyricists,
+    setComposers: setComposers,
+    setArrangers: setArrangers
   }
 }
 

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { InitParams } from "../hooks/useHPSongsDatabase";
 import DateRangePicker from "../components/DateRangePicker";
-import { Artist, DateRange, Song, Label, Album, Staff } from "../modules/CSVLoader";
+import { Artist, DateRange, Song, Staff } from "../modules/CSVLoader";
 
 interface Props {
   initialState: InitParams;
@@ -17,15 +17,16 @@ interface Props {
   initializeFunction?: () => void;
   setIncludeSingle?: (includeSingle: boolean) => void;
   setIncludeAlbum?: (includeAlbum: boolean) => void;
-  setLabels?: (labels: Label[]) => void;
   setArtists?: (labels: Artist[]) => void;
-  setAlbums?: (labels: Album[]) => void;
+  setLyricists?: (val: Staff[]) => void;
+  setComposers?: (val: Staff[]) => void;
+  setArrangers?: (val: Staff[]) => void;
 }
 
 export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setLabels, setArtists, setAlbums} = props;
+  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setArtists, setArrangers, setComposers, setLyricists} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -47,7 +48,7 @@ export default function SongSearch(props: Props) {
   }, []);
 
   const staffName = useCallback((v: Staff):string => {
-    return `${v.staffName}(${v.count})`;
+    return `${v.staffName}`;
   }, []);
 
   const setSortName = useCallback((v: string) => {
@@ -92,6 +93,7 @@ export default function SongSearch(props: Props) {
             default_selected={initialState.all_lyricists_stored.item}
             title_convert_func={staffName}
             on_render_func={renderStaffs}
+            onValueChanged={setLyricists}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -103,6 +105,7 @@ export default function SongSearch(props: Props) {
             default_selected={initialState.all_composers_stored.item}
             title_convert_func={staffName}
             on_render_func={renderStaffs}
+            onValueChanged={setComposers}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -114,6 +117,7 @@ export default function SongSearch(props: Props) {
             default_selected={initialState.all_arrangers_stored.item}
             title_convert_func={staffName}
             on_render_func={renderStaffs}
+            onValueChanged={setArrangers}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>

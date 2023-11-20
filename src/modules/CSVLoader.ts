@@ -357,17 +357,18 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], songs: Map
       }
 
       if (external_song_info.has(id)) {
-        song.songLyricistName = external_song_info.get(id)!.lyrics_writer;
-        song.songComposerName = external_song_info.get(id)!.song_writer;
-        song.songArrangerName = external_song_info.get(id)!.arranger;
+        const songLyricistName = external_song_info.get(id)!.lyrics_writer;
+        const songComposerName = external_song_info.get(id)!.song_writer;
+        const songArrangerName = external_song_info.get(id)!.arranger;
+        song.songLyricistName = songLyricistName;
+        song.songComposerName = songComposerName;
+        song.songArrangerName = songArrangerName;
       }
 
       songs_unique.push(song);
     }
   }
   const artists = [...artists_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, artistName: a[0], count: a[1]}});
-  const labels = [...labels_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, labelName: a[0], count: a[1]}});
-  const albums_array = [...albums].map((k) => k[1]);
   const songs_map = new Map(songs_unique.map(v => [v.songName, v]))
 
   return {artists: artists, songs: songs_map, date_min: date_min, date_max: date_max, lyricists: lyricists, composers: composers, arrangers: arrangers}
