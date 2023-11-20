@@ -251,7 +251,7 @@ function SortResultPage(props: {
       <p style={{ marginTop: 0, marginBottom: 10 }}>ラウンド{sort.currentRound} - {sort.progress}%</p>
     </Grid>
 
-    {show_result_pictures === true ?? <Grid container item md={6} xs={12} justifyContent="center">
+    {show_result_pictures === true && <Grid container item md={6} xs={12} justifyContent="center">
       <Grid container item xs={12} justifyContent="center">
         {getResultPictures(1, 1)}
       </Grid>
@@ -266,7 +266,7 @@ function SortResultPage(props: {
       </Grid>
     </Grid>}
 
-    <Grid container item md={6} xs={12} justifyContent="center">
+    <Grid container item md={show_result_pictures === true ? 6 : 12} xs={12} justifyContent="center">
       <TableContainer component={Paper}>
         <Table size="small" aria-label="a dense table">
           <TableHead>
