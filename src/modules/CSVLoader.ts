@@ -140,6 +140,11 @@ export interface Artist extends UniqueItem {
   count: number
 }
 
+export interface Staff extends UniqueItem {
+  staffName: string,
+  count: number
+}
+
 export interface Label extends UniqueItem {
   labelName: string,
   count: number
@@ -276,13 +281,45 @@ const fetchExternalSongInfo = async (): Promise<Map<string, SongInfo>> => {
   const res = new Map<string, SongInfo>();
   const songinfos = await fetchCSVAsync<SongInfo[]>(EXT_HP_DB_SONGINFO);
   const ids = new Set<string>();
+
+  const lyricists_map = new Map<string, number>();
+  const composers_map = new Map<string, number>();
+  const arrangers_map = new Map<string, number>();
+
   for(const songinfo of songinfos) {
     const id = songinfo.songID+'_'+songinfo.varID;
     if (!ids.has(id)) {
       ids.add(id);
       res.set(id, songinfo);
+      if (lyricists_map.has(songinfo.lyrics_writer)) {
+        lyricists_map.set(songinfo.lyrics_writer, lyricists_map.get(songinfo.lyrics_writer)!+1)
+      }
+      else {
+        lyricists_map.set(songinfo.lyrics_writer, 1)
+      }
+
+      if (composers_map.has(songinfo.song_writer)) {
+        composers_map.set(songinfo.song_writer, composers_map.get(songinfo.song_writer)!+1)
+      }
+      else {
+        composers_map.set(songinfo.song_writer, 1)
+      }
+
+      if (arrangers_map.has(songinfo.arranger)) {
+        arrangers_map.set(songinfo.arranger, arrangers_map.get(songinfo.arranger)!+1)
+      }
+      else {
+        arrangers_map.set(songinfo.arranger, 1)
+      }
     }
   }
+  const lyricists: Staff[] = [...lyricists_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
+  const composers: Staff[] = [...composers_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
+  const arrangers: Staff[] = [...arrangers_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
+  console.log(lyricists);
+  console.log(composers);
+  console.log(arrangers);
+
   return res;
 }
 
