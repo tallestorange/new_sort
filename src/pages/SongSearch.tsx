@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { InitParams } from "../hooks/useHPSongsDatabase";
 import DateRangePicker from "../components/DateRangePicker";
-import { Artist, DateRange, Song, Label, Album } from "../modules/CSVLoader";
+import { Artist, DateRange, Song, Label, Album, Staff } from "../modules/CSVLoader";
 
 interface Props {
   initialState: InitParams;
@@ -41,6 +41,15 @@ export default function SongSearch(props: Props) {
     return `${v.artistName}(${v.count})`;
   }, []);
 
+  const renderStaffs = useCallback((v: Staff[]): string => {
+    v.sort((a, b) => { return a.unique_id - b.unique_id });
+    return v.map((a) => { return a.staffName }).join(', ');
+  }, []);
+
+  const staffName = useCallback((v: Staff):string => {
+    return `${v.staffName}(${v.count})`;
+  }, []);
+
   const setSortName = useCallback((v: string) => {
     sortTitle.current = v;
   }, []);
@@ -72,6 +81,39 @@ export default function SongSearch(props: Props) {
             title_convert_func={groupName}
             on_render_func={renderGroups}
             onValueChanged={setArtists}
+            />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <SearchSelect<Staff>
+            title={initialState.all_lyricists.initialized ? "作詞家" : `作詞家(${NOW_LOADING})`}
+            id="lyricists-belong"
+            enabled={initialState.all_lyricists.initialized}
+            items={initialState.all_lyricists.item}
+            default_selected={initialState.all_lyricists_stored.item}
+            title_convert_func={staffName}
+            on_render_func={renderStaffs}
+            />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <SearchSelect<Staff>
+            title={initialState.all_composers.initialized ? "作曲家" : `作曲家(${NOW_LOADING})`}
+            id="composers-belong"
+            enabled={initialState.all_composers.initialized}
+            items={initialState.all_composers.item}
+            default_selected={initialState.all_composers_stored.item}
+            title_convert_func={staffName}
+            on_render_func={renderStaffs}
+            />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <SearchSelect<Staff>
+            title={initialState.all_arrangers.initialized ? "編曲家" : `編曲家(${NOW_LOADING})`}
+            id="arrangers-belong"
+            enabled={initialState.all_arrangers.initialized}
+            items={initialState.all_arrangers.item}
+            default_selected={initialState.all_arrangers_stored.item}
+            title_convert_func={staffName}
+            on_render_func={renderStaffs}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>

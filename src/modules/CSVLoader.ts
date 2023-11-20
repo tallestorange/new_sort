@@ -277,7 +277,7 @@ export const fetchJoins = async (): Promise<Map<number, {groupID: number, joinDa
   return joinMap;
 }
 
-const fetchExternalSongInfo = async (): Promise<Map<string, SongInfo>> => {
+const fetchExternalSongInfo = async (): Promise<{external_song_info: Map<string, SongInfo>, lyricists: Staff[], composers: Staff[], arrangers: Staff[]}> => {
   const res = new Map<string, SongInfo>();
   const songinfos = await fetchCSVAsync<SongInfo[]>(EXT_HP_DB_SONGINFO);
   const ids = new Set<string>();
@@ -316,18 +316,15 @@ const fetchExternalSongInfo = async (): Promise<Map<string, SongInfo>> => {
   const lyricists: Staff[] = [...lyricists_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
   const composers: Staff[] = [...composers_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
   const arrangers: Staff[] = [...arrangers_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
-  console.log(lyricists);
-  console.log(composers);
-  console.log(arrangers);
 
-  return res;
+  return {external_song_info: res, lyricists: lyricists, composers: composers, arrangers: arrangers};
 }
 
-export const initializeSongDB = async (): Promise<{artists: Artist[], labels: Label[], songs: Map<string, Song>, date_min: Date, date_max: Date, albums: Album[]}> => {
+export const initializeSongDB = async (): Promise<{artists: Artist[], songs: Map<string, Song>, date_min: Date, date_max: Date, lyricists: Staff[], composers: Staff[], arrangers: Staff[]}> => {
   const singles = await fetchSingles();
   const albums = await fetchAlbums();
   const songs = await fetchSongs(singles, albums);
-  const external_song_info = await fetchExternalSongInfo();
+  const {external_song_info, lyricists, composers, arrangers} = await fetchExternalSongInfo();
 
   let date_max = parseDate("1900/1/1")!;
   let date_min = new Date();
@@ -373,5 +370,5 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], labels: La
   const albums_array = [...albums].map((k) => k[1]);
   const songs_map = new Map(songs_unique.map(v => [v.songName, v]))
 
-  return {artists: artists, labels: labels, songs: songs_map, date_min: date_min, date_max: date_max, albums: albums_array}
+  return {artists: artists, songs: songs_map, date_min: date_min, date_max: date_max, lyricists: lyricists, composers: composers, arrangers: arrangers}
 }
