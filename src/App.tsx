@@ -66,15 +66,16 @@ export default function App() {
               name_render_function={memberNameRenderFunction}
               profile_render_function={memberProfileRenderFunction}
               initialize_function={initializeMemberDB}
+              tweet_button_enabled={true}
           />} />
           <Route path={`/sort_songs`} element={
             <SortPage<Song> 
               members={songs}
-              // share_url={initialStateMember.share_url.item}
               initialized={initialiStateSong.all_artists.initialized}
               name_render_function={songNameRenderFunction}
               profile_render_function={songProfileRenderFunction}
               initialize_function={initializeSongDB}
+              tweet_button_enabled={false}
           />} />
           <Route path={`/sort_members_shared`} element={
             <SortPageShared<Member>

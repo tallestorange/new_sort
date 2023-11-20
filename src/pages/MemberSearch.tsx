@@ -55,7 +55,7 @@ export default function MemberSearch(props: Props) {
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SortTitleInput onChanged={setSortName} />
+          <SortTitleInput defaultValue="ハロプロメンバーソート" onChanged={setSortName} />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect<Group>

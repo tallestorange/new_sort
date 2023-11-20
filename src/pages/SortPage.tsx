@@ -22,6 +22,7 @@ interface Props<T> {
   sort_name?: string;
   share_url?: string;
   initialized: boolean;
+  tweet_button_enabled: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
   initialize_function?: () => void;
@@ -34,7 +35,7 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T extends {}>(props: Props<T>) {
-  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function} = props;
+  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function, tweet_button_enabled} = props;
 
   const location = useLocation();
   let sortName = "";
@@ -81,7 +82,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage share_url={full_url} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage share_url={full_url} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -200,8 +201,9 @@ function SortResultPage(props: {
   sortName: string;
   sort: Sorter;
   share_url?: string;
+  tweet_button_enabled: boolean;
 }) {
-  const {sort, sortName, share_url} = props;
+  const {sort, sortName, share_url, tweet_button_enabled} = props;
 
   const getRankTable = useCallback((): JSX.Element[] => {
     const rankTable: JSX.Element[] = [];
@@ -279,7 +281,7 @@ function SortResultPage(props: {
     <Grid container item xs={12} justifyContent="center">
       <br />
       <p>
-        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
+        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} disabled={!tweet_button_enabled} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
       </p>
     </Grid>
   </Grid>)
