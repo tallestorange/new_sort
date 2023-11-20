@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { InitParams } from "../hooks/useHPSongsDatabase";
 import DateRangePicker from "../components/DateRangePicker";
-import { Artist, DateRange, Song, Label } from "../modules/CSVLoader";
+import { Artist, DateRange, Song, Label, Album } from "../modules/CSVLoader";
 
 interface Props {
   initialState: InitParams;
@@ -19,12 +19,13 @@ interface Props {
   setIncludeAlbum?: (includeAlbum: boolean) => void;
   setLabels?: (labels: Label[]) => void;
   setArtists?: (labels: Artist[]) => void;
+  setAlbums?: (labels: Album[]) => void;
 }
 
 export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setLabels, setArtists} = props;
+  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setLabels, setArtists, setAlbums} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -53,6 +54,15 @@ export default function SongSearch(props: Props) {
     sortTitle.current = v;
   }, []);
 
+  const renderAlbums = useCallback((v: Album[]): string => {
+    v.sort((a, b) => { return a.unique_id - b.unique_id });
+    return v.map((a) => { return a.albumName }).join(', ');
+  }, []);
+
+  const albumName = useCallback((v: Album):string => {
+    return `${v.albumName}`;
+  }, []);
+
   useEffect(() => {
     setSortName("ハロプロ楽曲ソート")
     document.title = "ハロプロ楽曲ソート";
@@ -79,6 +89,18 @@ export default function SongSearch(props: Props) {
             title_convert_func={groupName}
             on_render_func={renderGroups}
             onValueChanged={setArtists}
+            />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <SearchSelect<Album>
+            title={initialState.all_albums.initialized ? "アルバム" : `アルバム(${NOW_LOADING})`}
+            id="albums-belong"
+            enabled={initialState.all_albums.initialized}
+            items={initialState.all_albums.item}
+            default_selected={initialState.all_albums_stored.item}
+            title_convert_func={albumName}
+            on_render_func={renderAlbums}
+            onValueChanged={setAlbums}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>

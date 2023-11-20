@@ -8,6 +8,7 @@ import HP_DB_GROUP from "../HP_DB/group.csv";
 import { parseDate } from "./DateUtils";
 import max from "date-fns/max";
 import min from "date-fns/min";
+import { UniqueItem } from "../components/SearchSelect";
 
 /**
  * CSVから非同期でメンバ情報を拾ってくる
@@ -56,7 +57,7 @@ export interface Single {
   labelName: string;
 }
 
-export interface Album {
+export interface Album extends UniqueItem {
   albumID: number;
   albumName: string;
   releaseDate: Date;
@@ -103,8 +104,7 @@ interface JoinRaw {
   gradDate: string;
 }
 
-export interface Group {
-  unique_id: number;
+export interface Group extends UniqueItem {
   form_order: number;
   groupID: number;
   groupName: string;
@@ -123,14 +123,12 @@ export interface Member {
   groups: {groupID: number, joinDate: Date, gradDate?: Date}[];
 }
 
-export interface Artist {
-  unique_id: number,
+export interface Artist extends UniqueItem {
   artistName: string,
   count: number
 }
 
-export interface Label {
-  unique_id: number,
+export interface Label extends UniqueItem {
   labelName: string,
   count: number
 }
@@ -194,6 +192,7 @@ export const fetchAlbums = async (): Promise<Map<number, Album>> => {
   const albums_raw = await fetchCSVAsync<AlbumRaw[]>(HP_DB_ALBUM);
 
   const result = new Map<number, Album>();
+  let uniqueId = 0;
   for (const album of albums_raw) {
     result.set(Number(album.albumID), {
       albumID: Number(album.albumID),
@@ -201,8 +200,10 @@ export const fetchAlbums = async (): Promise<Map<number, Album>> => {
       releaseDate: parseDate(album.releaseDate, 'yyyy/MM/dd')!,
       albumCategory: album.albumCategory.trim(),
       artistName: album.artistName.trim(),
-      labelName: album.labelName.trim()
+      labelName: album.labelName.trim(),
+      unique_id: uniqueId
     })
+    uniqueId++;
   }
   return result;
 }
@@ -259,7 +260,7 @@ export const fetchJoins = async (): Promise<Map<number, {groupID: number, joinDa
   return joinMap;
 }
 
-export const initializeSongDB = async (): Promise<{artists: Artist[], labels: Label[], songs: Map<string, Song>, date_min: Date, date_max: Date}> => {
+export const initializeSongDB = async (): Promise<{artists: Artist[], labels: Label[], songs: Map<string, Song>, date_min: Date, date_max: Date, albums: Album[]}> => {
   const singles = await fetchSingles();
   const albums = await fetchAlbums();
   const songs = await fetchSongs(singles, albums);
@@ -298,7 +299,8 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], labels: La
   }
   const artists = [...artists_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, artistName: a[0], count: a[1]}});
   const labels = [...labels_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, labelName: a[0], count: a[1]}});
+  const albums_array = [...albums].map((k) => k[1]);
   const songs_map = new Map(songs_unique.map(v => [v.songName, v]))
 
-  return {artists: artists, labels: labels, songs: songs_map, date_min: date_min, date_max: date_max}
+  return {artists: artists, labels: labels, songs: songs_map, date_min: date_min, date_max: date_max, albums: albums_array}
 }

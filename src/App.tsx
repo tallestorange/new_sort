@@ -16,7 +16,7 @@ import React from "react";
 
 export default function App() {
   const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange: setMembersDateRange, setExternalSortParam, shareURL, setMemberDBInitialized } = useHPMemberDatabase();
-  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setLabels, setArtists } = useHPSongsDatabase();
+  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setLabels, setArtists, setAlbums } = useHPSongsDatabase();
 
   const initialized = useMemo(() => {
     return initialStateMember.allgroups.initialized && initialStateMember.groups_stored.initialized;
@@ -57,6 +57,7 @@ export default function App() {
               setIncludeSingle={setIncludeSingle}
               setLabels={setLabels}
               setArtists={setArtists}
+              setAlbums={setAlbums}
           />} />
           <Route path={`/sort_members`} element={
             <SortPage<Member> 
