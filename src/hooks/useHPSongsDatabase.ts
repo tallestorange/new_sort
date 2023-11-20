@@ -135,9 +135,9 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       // if (include_album && song.albumID !== undefined && albums_search.indexOf(song.albumID) === -1) {
       //   continue;
       // }
-      if (label_search.indexOf(song.labelName) === -1) {
-        continue;
-      }
+      // if (label_search.indexOf(song.labelName) === -1) {
+      //   continue;
+      // }
       if (artist_search.indexOf(song.songArtistName) === -1) {
         continue;
       }

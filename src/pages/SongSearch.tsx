@@ -41,27 +41,10 @@ export default function SongSearch(props: Props) {
     return `${v.artistName}(${v.count})`;
   }, []);
 
-  const renderLabels = useCallback((v: Label[]): string => {
-    v.sort((a, b) => { return a.unique_id - b.unique_id });
-    return v.map((a) => { return a.labelName }).join(', ');
-  }, []);
-
-  const labelName = useCallback((v: Label):string => {
-    return `${v.labelName}(${v.count})`;
-  }, []);
-
   const setSortName = useCallback((v: string) => {
     sortTitle.current = v;
   }, []);
 
-  const renderAlbums = useCallback((v: Album[]): string => {
-    v.sort((a, b) => { return a.unique_id - b.unique_id });
-    return v.map((a) => { return a.albumName }).join(', ');
-  }, []);
-
-  const albumName = useCallback((v: Album):string => {
-    return `${v.albumName}`;
-  }, []);
 
   useEffect(() => {
     setSortName("ハロプロ楽曲ソート")
@@ -91,30 +74,6 @@ export default function SongSearch(props: Props) {
             onValueChanged={setArtists}
             />
         </Grid>
-        {/* <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Album>
-            title={initialState.all_albums.initialized ? "アルバム" : `アルバム(${NOW_LOADING})`}
-            id="albums-belong"
-            enabled={initialState.all_albums.initialized}
-            items={initialState.all_albums.item}
-            default_selected={initialState.all_albums_stored.item}
-            title_convert_func={albumName}
-            on_render_func={renderAlbums}
-            onValueChanged={setAlbums}
-            />
-        </Grid> */}
-        {/* <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Label>
-            title={initialState.all_labels.initialized ? "レーベル" : `レーベル(${NOW_LOADING})`}
-            id="labels-belong"
-            enabled={initialState.all_labels.initialized}
-            items={initialState.all_labels.item}
-            default_selected={initialState.all_labels_stored.item}
-            title_convert_func={labelName}
-            on_render_func={renderLabels}
-            onValueChanged={setLabels}
-            />
-        </Grid> */}
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <DateRangePicker
             dateInitFrom={initialState.init_date_range.item.from}

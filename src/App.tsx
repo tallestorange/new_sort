@@ -68,6 +68,7 @@ export default function App() {
               profile_render_function={memberProfileRenderFunction}
               initialize_function={initializeMemberDB}
               tweet_button_enabled={true}
+              show_result_pictures={true}
           />} />
           <Route path={`/sort_songs`} element={
             <SortPage<Song> 
@@ -77,6 +78,7 @@ export default function App() {
               profile_render_function={songProfileRenderFunction}
               initialize_function={initializeSongDB}
               tweet_button_enabled={false}
+              show_result_pictures={false}
           />} />
           <Route path={`/sort_members_shared`} element={
             <SortPageShared<Member>
