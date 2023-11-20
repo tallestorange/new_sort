@@ -1,13 +1,13 @@
 import Grid from "@mui/material/Grid";
 import "../App.css";
-import { TITLE, DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
+import { DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, MemberResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DateRange, InitParams } from "../hooks/useHPMemberDatabase";
+import { InitParams } from "../hooks/useHPMemberDatabase";
 import DateRangePicker from "../components/DateRangePicker";
-import { Group } from "../modules/CSVLoader";
+import { Group, DateRange } from "../modules/CSVLoader";
 
 interface Props {
   initialState: InitParams;
@@ -43,7 +43,8 @@ export default function MemberSearch(props: Props) {
   }, []);
 
   useEffect(() => {
-    document.title = TITLE;
+    document.title = "ハロプロメンバーソート";
+    setSortName("ハロプロメンバーソート")
     initializeFunction?.();
     // eslint-disable-next-line
   }, []);

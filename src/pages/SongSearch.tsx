@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import "../App.css";
-import { TITLE, DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
+import { DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, SongResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
@@ -54,7 +54,8 @@ export default function SongSearch(props: Props) {
   }, []);
 
   useEffect(() => {
-    document.title = TITLE;
+    setSortName("ハロプロ楽曲ソート")
+    document.title = "ハロプロ楽曲ソート";
     initializeFunction?.();
     // eslint-disable-next-line
   }, []);
