@@ -97,8 +97,8 @@ export default function SongSearch(props: Props) {
           <DateRangePicker
             dateInitFrom={initialState.init_date_range.item.from}
             dateInitTo={initialState.init_date_range.item.to}
-            dateFrom={initialState.init_date_range.item.from}//initialState.date_range.item.from}
-            dateTo={initialState.init_date_range.item.to}//initialState.date_range.item.to}
+            dateFrom={initialState.init_date_range.item.from}
+            dateTo={initialState.init_date_range.item.to}
             disabled={!(initialState.init_date_range.initialized)}
             startText="発売日(開始日)"
             endText="発売日(終了日)"
@@ -110,8 +110,8 @@ export default function SongSearch(props: Props) {
             default_checked={initialState.include_single.item}
             disabled={!initialState.include_single.initialized}
             valueChanged={setIncludeSingle}
-            form_id="checkbox-form-include-og"
-            checkbox_id="checkbox-include-og"
+            form_id="checkbox-form-include-single"
+            checkbox_id="checkbox-include-single"
             label="シングル曲を含める" />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -119,8 +119,8 @@ export default function SongSearch(props: Props) {
             default_checked={initialState.include_album.item}
             disabled={!initialState.include_album.initialized}
             valueChanged={setIncludeAlbum}
-            form_id="checkbox-form-include-og"
-            checkbox_id="checkbox-include-og"
+            form_id="checkbox-form-include-album"
+            checkbox_id="checkbox-include-album"
             label="アルバム曲を含める" />
         </Grid>
       </Grid>
@@ -130,10 +130,6 @@ export default function SongSearch(props: Props) {
       </Grid>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SortStartButton enabled={target_songs_count > 0 && !error } onClick={onSortButtonClicked}/>
-      </Grid>
-
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p><a href="https://github.com/emolga587/hpsort2" target="_blank" rel="noopener noreferrer">ハロプロソート(updated)</a>ベースで開発しています</p>
       </Grid>
     </Grid>
   );

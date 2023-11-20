@@ -179,5 +179,11 @@ export const profileRenderFunction = (song: Song):string[] => {
     `アーティスト: ${song.songArtistName}`,
     `発売日: ${formatDate(song.releaseDate)}`,
   ];
+  // if (song.albumName !== undefined) {
+  //   res.push(`アルバム名: ${song.albumName}`)
+  // }
+  // else if (song.singleName !== undefined) {
+  //   res.push(`シングル名: ${song.singleName}`)
+  // }
   return res;
 }

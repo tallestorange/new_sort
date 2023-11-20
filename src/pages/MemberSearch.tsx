@@ -108,10 +108,6 @@ export default function MemberSearch(props: Props) {
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>
       </Grid>
-
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p><a href="https://github.com/emolga587/hpsort2" target="_blank" rel="noopener noreferrer">ハロプロソート(updated)</a>ベースで開発しています</p>
-      </Grid>
     </Grid>
   );
 }

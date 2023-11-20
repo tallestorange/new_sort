@@ -72,6 +72,8 @@ export interface Song {
   songArtistName: string;
   singleID?: number;
   albumID?: number;
+  singleName?: string;
+  albumName?: string;
   releaseDate: Date;
   labelName: string;
 }
@@ -162,6 +164,8 @@ export const fetchSongs = async (singles: Map<number, Single>, albums: Map<numbe
       songArtistName: song.songArtistName.trim(),
       singleID: song.singleID === "" ? undefined : Number(song.singleID),
       albumID: song.albumID === "" ? undefined : Number(song.albumID),
+      singleName: song.singleID === "" ? undefined : singles.get(Number(song.singleID))!.singleName,
+      albumName: song.albumID === "" ? undefined : albums.get(Number(song.albumID))!.albumName,
       releaseDate: song.singleID !== "" ? singles.get(Number(song.singleID))!.releaseDate : albums.get(Number(song.albumID))!.releaseDate,
       labelName: song.singleID !== "" ? singles.get(Number(song.singleID))!.labelName : albums.get(Number(song.albumID))!.labelName
     })
