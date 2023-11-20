@@ -91,7 +91,7 @@ export default function SongSearch(props: Props) {
             onValueChanged={setArtists}
             />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
+        {/* <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect<Album>
             title={initialState.all_albums.initialized ? "アルバム" : `アルバム(${NOW_LOADING})`}
             id="albums-belong"
@@ -102,8 +102,8 @@ export default function SongSearch(props: Props) {
             on_render_func={renderAlbums}
             onValueChanged={setAlbums}
             />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
+        </Grid> */}
+        {/* <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SearchSelect<Label>
             title={initialState.all_labels.initialized ? "レーベル" : `レーベル(${NOW_LOADING})`}
             id="labels-belong"
@@ -114,7 +114,7 @@ export default function SongSearch(props: Props) {
             on_render_func={renderLabels}
             onValueChanged={setLabels}
             />
-        </Grid>
+        </Grid> */}
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <DateRangePicker
             dateInitFrom={initialState.init_date_range.item.from}
