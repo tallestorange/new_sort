@@ -227,6 +227,15 @@ export const profileRenderFunction = (song: Song):string[] => {
     `アーティスト: ${song.songArtistName}`,
     `発売日: ${formatDate(song.releaseDate)}`,
   ];
+  if (song.songLyricistName !== undefined) {
+    res.push(`作詞: ${song.songLyricistName}`)
+  }
+  if (song.songComposerName !== undefined) {
+    res.push(`作曲: ${song.songComposerName}`)
+  }
+  if (song.songArrangerName !== undefined) {
+    res.push(`編曲: ${song.songArrangerName}`)
+  }
   // if (song.albumName !== undefined) {
   //   res.push(`アルバム名: ${song.albumName}`)
   // }
