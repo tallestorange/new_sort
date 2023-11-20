@@ -121,11 +121,6 @@ export interface Member {
   groups: {groupID: number, joinDate: Date, gradDate?: Date}[];
 }
 
-export interface DateRange {
-  from: Date | null,
-  to: Date | null
-}
-
 export interface Artist {
   unique_id: number,
   artistName: string,

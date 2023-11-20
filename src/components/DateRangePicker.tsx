@@ -2,11 +2,12 @@ import { DatePicker, DateValidationError, LocalizationProvider } from '@mui/x-da
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import ja from 'date-fns/locale/ja';
 import FormControl from '@mui/material/FormControl';
-import { DateRange } from "../hooks/useHPMemberDatabase";
+import { DateRange } from '../modules/CSVLoader';
 import Grid from '@mui/material/Grid';
 import isEqual from "date-fns/isEqual";
 import { NOW_LOADING } from "../modules/Constants";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import React from 'react';
 
 interface Props {
   dateFrom: Date | null,
@@ -85,41 +86,41 @@ const DateRangePicker = memo((props: Props) => {
         >
           <Grid container item sm={12} md={6} justifyContent="center" spacing={0}>
             <DatePicker
-              id="date-picker-dialog-from"
+              // id="date-picker-dialog-from"
               label={disabled ? `${startText}(${NOW_LOADING})` : startText}
               format="yyyy/MM/dd"
-              mask="____年__月__日"
+              // mask="____年__月__日"
               value={selectedDateFrom}
               minDate={dateInitFrom !== null ? dateInitFrom : undefined}
               maxDate={selectedDateTo !== null ? selectedDateTo : undefined}
               disabled={disabled}
               onChange={onChangedFrom}
               onError={onErrorFrom}
-              allowKeyboardControl
-              animateYearScrolling={false}
-              KeyboardButtonProps={{
-                'aria-label': 'change start date',
-              }}
+              // allowKeyboardControl
+              // animateYearScrolling={false}
+              // KeyboardButtonProps={{
+              //   'aria-label': 'change start date',
+              // }}
               slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
           <Grid container item sm={12} md={6} justifyContent="center" spacing={0}>
             <DatePicker
-              id="date-picker-dialog-to"
+              // id="date-picker-dialog-to"
               label={disabled ? `${endText}(${NOW_LOADING})` : endText}
               format="yyyy/MM/dd"
-              mask="____年__月__日"
+              // mask="____年__月__日"
               value={selectedDateTo}
               minDate={selectedDateFrom !== null ? selectedDateFrom : undefined}
               maxDate={dateInitTo !== null ? dateInitTo : undefined}
               disabled={disabled}
               onChange={onChangedTo}
               onError={onErrorTo}
-              allowKeyboardControl
-              animateYearScrolling={false}
-              KeyboardButtonProps={{
-                'aria-label': 'change finish date',
-              }}
+              // allowKeyboardControl
+              // animateYearScrolling={false}
+              // KeyboardButtonProps={{
+              //   'aria-label': 'change finish date',
+              // }}
               slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>

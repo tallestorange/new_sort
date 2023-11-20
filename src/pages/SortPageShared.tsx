@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import SortPage from "./SortPage";
 import { useEffect, useState } from "react";
+import React from "react";
 
 interface Props<T> {
   initialized: boolean;

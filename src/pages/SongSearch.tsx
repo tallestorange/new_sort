@@ -18,12 +18,13 @@ interface Props {
   setIncludeSingle?: (includeSingle: boolean) => void;
   setIncludeAlbum?: (includeAlbum: boolean) => void;
   setLabels?: (labels: Label[]) => void;
+  setArtists?: (labels: Artist[]) => void;
 }
 
 export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setLabels} = props;
+  const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setLabels, setArtists} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
@@ -55,6 +56,7 @@ export default function SongSearch(props: Props) {
   useEffect(() => {
     document.title = TITLE;
     initializeFunction?.();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -72,9 +74,10 @@ export default function SongSearch(props: Props) {
             id="groups-belong"
             enabled={initialState.all_artists.initialized}
             items={initialState.all_artists.item}
-            default_selected={[]}
+            default_selected={initialState.all_artists_stored.item}
             title_convert_func={groupName}
             on_render_func={renderGroups}
+            onValueChanged={setArtists}
             />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
@@ -82,8 +85,8 @@ export default function SongSearch(props: Props) {
             title={initialState.all_labels.initialized ? "レーベル" : `レーベル(${NOW_LOADING})`}
             id="labels-belong"
             enabled={initialState.all_labels.initialized}
-            items={initialState.all_labels_stored.item}
-            default_selected={initialState.all_labels.item}
+            items={initialState.all_labels.item}
+            default_selected={initialState.all_labels_stored.item}
             title_convert_func={labelName}
             on_render_func={renderLabels}
             onValueChanged={setLabels}

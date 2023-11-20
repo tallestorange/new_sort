@@ -12,10 +12,11 @@ import Home from "./pages/Home";
 import SongSearch from "./pages/SongSearch";
 import { useHPSongsDatabase } from "./hooks/useHPSongsDatabase";
 import { Member } from "./modules/CSVLoader";
+import React from "react";
 
 export default function App() {
   const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange: setMembersDateRange, setExternalSortParam, shareURL, setMemberDBInitialized } = useHPMemberDatabase();
-  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setLabels } = useHPSongsDatabase();
+  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setLabels, setArtists } = useHPSongsDatabase();
 
   const initialized = useMemo(() => {
     return initialStateMember.allgroups.initialized && initialStateMember.groups_stored.initialized;
@@ -55,6 +56,7 @@ export default function App() {
               setIncludeAlbum={setIncludeAlbum}
               setIncludeSingle={setIncludeSingle}
               setLabels={setLabels}
+              setArtists={setArtists}
           />} />
           <Route path={`/sort_members`} element={
             <SortPage<Member> 
