@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import "../App.css";
-import { TITLE, DEFAULT_SORT_TITLE, SORT_PATH, NOW_LOADING } from '../modules/Constants';
+import { TITLE, DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
 import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, SongResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +28,7 @@ export default function SongSearch(props: Props) {
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
-    navigate(`/${SORT_PATH}`, { state: sortTitle.current })
+    navigate(`/sort_songs`, { state: sortTitle.current })
   }, [navigate]);
 
   const renderGroups = useCallback((v: Artist[]): string => {

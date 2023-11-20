@@ -5,13 +5,13 @@ import Layout from "./components/Layout";
 import SortPage from "./pages/SortPage";
 
 import "./App.css";
-import { nameRenderFunction, profileRenderFunction, useHPMemberDatabase } from "./hooks/useHPMemberDatabase";
+import { nameRenderFunction as memberNameRenderFunction, profileRenderFunction as memberProfileRenderFunction, useHPMemberDatabase } from "./hooks/useHPMemberDatabase";
 import { useCallback, useMemo } from "react";
 import SortPageShared from "./pages/SortPageShared";
 import Home from "./pages/Home";
 import SongSearch from "./pages/SongSearch";
-import { useHPSongsDatabase } from "./hooks/useHPSongsDatabase";
-import { Member } from "./modules/CSVLoader";
+import { nameRenderFunction as songNameRenderFunction, profileRenderFunction as songProfileRenderFunction,  useHPSongsDatabase } from "./hooks/useHPSongsDatabase";
+import { Member, Song } from "./modules/CSVLoader";
 import React from "react";
 
 export default function App() {
@@ -63,17 +63,26 @@ export default function App() {
               members={members}
               share_url={initialStateMember.share_url.item}
               initialized={initialized}
-              name_render_function={nameRenderFunction}
-              profile_render_function={profileRenderFunction}
+              name_render_function={memberNameRenderFunction}
+              profile_render_function={memberProfileRenderFunction}
               initialize_function={initializeMemberDB}
+          />} />
+          <Route path={`/sort_songs`} element={
+            <SortPage<Song> 
+              members={songs}
+              // share_url={initialStateMember.share_url.item}
+              initialized={initialiStateSong.all_artists.initialized}
+              name_render_function={songNameRenderFunction}
+              profile_render_function={songProfileRenderFunction}
+              initialize_function={initializeSongDB}
           />} />
           <Route path={`/sort_members_shared`} element={
             <SortPageShared<Member>
               members={members}
               share_url={shareURL}
               initialized={initialized}
-              name_render_function={nameRenderFunction}
-              profile_render_function={profileRenderFunction}
+              name_render_function={memberNameRenderFunction}
+              profile_render_function={memberProfileRenderFunction}
               set_custom_params={setExternalSortParam}
               initialize_function={initializeMemberDB}
           />} />

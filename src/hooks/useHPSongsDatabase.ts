@@ -1,5 +1,6 @@
 import { Artist, DateRange, Label, Song, StoredItem, initializeSongDB } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { formatDate } from "../modules/DateUtils";
 
 export interface InitParams {
   all_songs: StoredItem<Map<string, Song>>,
@@ -167,4 +168,16 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     setLabels: setLabels,
     setArtists: setArtists
   }
+}
+
+export const nameRenderFunction = (song: Song):string => {
+  return song.songName;
+}
+
+export const profileRenderFunction = (song: Song):string[] => {
+  const res:string[] = [
+    `アーティスト: ${song.songArtistName}`,
+    `発売日: ${formatDate(song.releaseDate)}`,
+  ];
+  return res;
 }
