@@ -82,7 +82,7 @@ export function useHPSongsDatabase(): HPSongsDatabase {
         date_range.current.item = {from: init_params.date_min,  to: init_params.date_max};
         date_range.current.initialized = true;
 
-        artists.current.item = init_params.artists;
+        artists.current.item = [];
         artists.current.initialized = true;
         
         include_single.current.initialized = true;
@@ -95,9 +95,9 @@ export function useHPSongsDatabase(): HPSongsDatabase {
         all_composers.current.initialized = true;
         all_arrangers.current.initialized = true;
 
-        lyricists.current.item = init_params.lyricists;
-        composers.current.item = init_params.composers;
-        arrangers.current.item = init_params.arrangers;
+        lyricists.current.item = [];
+        composers.current.item = [];
+        arrangers.current.item = [];
         lyricists.current.initialized = true;
         composers.current.initialized = true;
         arrangers.current.initialized = true;
@@ -131,10 +131,10 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     if (date_from === null || date_to === null || !all_songs.current.initialized) {
       return result;
     }
-    const artist_search = artists.map(v => v.artistName);
-    const lyricists_search = lyricists.map(v => v.staffName);
-    const composers_search = composers.map(v => v.staffName);
-    const arrangers_search = arrangers.map(v => v.staffName);
+    const artist_search = new Set(artists.map(v => v.artistName));
+    const lyricists_search = new Set(lyricists.map(v => v.staffName));
+    const composers_search = new Set(composers.map(v => v.staffName));
+    const arrangers_search = new Set(arrangers.map(v => v.staffName));
 
     for (const [key, song] of all_songs.current.item) {
       if (!(date_from <= song.releaseDate && song.releaseDate <= date_to)) {
@@ -146,16 +146,16 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       if (!include_album && song.albumID !== undefined) {
         continue;
       }
-      if (artist_search.indexOf(song.songArtistName) === -1) {
+      if (!artist_search.has(song.songArtistName)) {
         continue;
       }
-      if (song.songLyricistName === undefined || (song.songLyricistName !== undefined && lyricists_search.indexOf(song.songLyricistName)) === -1) {
+      if (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName))) {
         continue;
       }
-      if (song.songComposerName === undefined || (song.songComposerName !== undefined && composers_search.indexOf(song.songComposerName) === -1)) {
+      if (song.songComposerName === undefined || (song.songComposerName !== undefined && !composers_search.has(song.songComposerName))) {
         continue;
       }
-      if (song.songArrangerName === undefined || (song.songArrangerName !== undefined && arrangers_search.indexOf(song.songArrangerName) === -1)) {
+      if (song.songArrangerName === undefined || (song.songArrangerName !== undefined && !arrangers_search.has(song.songArrangerName))) {
         continue;
       }
       result.set(key, song);
