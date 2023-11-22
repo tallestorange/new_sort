@@ -101,14 +101,13 @@ export default function MemberSearch(props: Props) {
             form_id="checkbox-form-promote"
             checkbox_id="checkbox-promote"
             label="未昇格メンバーを含む" />
-        </Grid> 
-      </Grid>
-      
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <MemberResultText count={error ? 0 : target_members_count} />
-      </Grid>
-      <Grid container item xs={12} sx={{p: 4}} justifyContent="center" spacing={0}>
-        <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>
+        </Grid>
+        <Grid container item xs={12} sx={{ mt: 1 }} justifyContent="center" spacing={0}>
+          <MemberResultText count={error ? 0 : target_members_count} />
+        </Grid>
+        <Grid container item xs={12} sx={{ mb: 3, mt: 1 }} justifyContent="center" spacing={0}>
+          <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>
+        </Grid>
       </Grid>
     </Grid>
   );

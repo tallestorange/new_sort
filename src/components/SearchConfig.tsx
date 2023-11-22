@@ -9,7 +9,7 @@ import FormControl from '@mui/material/FormControl';
 
 export const MemberResultText = React.memo((props: { count: number }) => {
   return (
-    <Typography variant="h6" component="h2">
+    <Typography align="center" variant="h6" component="h2">
       該当者: {props.count}名
     </Typography>
   )
@@ -17,7 +17,7 @@ export const MemberResultText = React.memo((props: { count: number }) => {
 
 export const SongResultText = React.memo((props: { count: number }) => {
   return (
-    <Typography variant="h6" component="h2">
+    <Typography align="center" variant="h6" component="h2">
       該当曲: {props.count}曲
     </Typography>
   )
@@ -26,6 +26,8 @@ export const SongResultText = React.memo((props: { count: number }) => {
 export const SortStartButton = React.memo((props: { enabled: boolean, onClick?: () => void }) => {
   return (
     <Button
+      fullWidth
+      sx={{ m: 1, minWidth: 120, maxWidth: 450 }}
       disabled={!props.enabled}
       onClick={props.onClick}
       variant="outlined"
