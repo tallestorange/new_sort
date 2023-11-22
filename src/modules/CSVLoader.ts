@@ -179,10 +179,10 @@ export const fetchSongs = async (singles: Map<number, Single>, albums: Map<numbe
       songArtistName: song.songArtistName.trim(),
       singleID: song.singleID === "" ? undefined : Number(song.singleID),
       albumID: song.albumID === "" ? undefined : Number(song.albumID),
-      singleName: song.singleID === "" ? undefined : singles.get(Number(song.singleID))!.singleName,
-      albumName: song.albumID === "" ? undefined : albums.get(Number(song.albumID))!.albumName,
+      singleName: song.singleID === "" ? undefined : singles.get(Number(song.singleID))!.singleName.trim(),
+      albumName: song.albumID === "" ? undefined : albums.get(Number(song.albumID))!.albumName.trim(),
       releaseDate: song.singleID !== "" ? singles.get(Number(song.singleID))!.releaseDate : albums.get(Number(song.albumID))!.releaseDate,
-      labelName: song.singleID !== "" ? singles.get(Number(song.singleID))!.labelName : albums.get(Number(song.albumID))!.labelName
+      labelName: song.singleID !== "" ? singles.get(Number(song.singleID))!.labelName : albums.get(Number(song.albumID))!.labelName.trim()
     })
   }
   return result;
@@ -291,6 +291,10 @@ const fetchExternalSongInfo = async (): Promise<{external_song_info: Map<string,
     if (!ids.has(id)) {
       ids.add(id);
       res.set(id, songinfo);
+      if (songinfo.lyrics_writer === "" || songinfo.song_writer === "" || songinfo.arranger === "") {
+        continue;
+      }
+      
       if (lyricists_map.has(songinfo.lyrics_writer)) {
         lyricists_map.set(songinfo.lyrics_writer, lyricists_map.get(songinfo.lyrics_writer)!+1)
       }
@@ -360,6 +364,9 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], songs: Map
         const songLyricistName = external_song_info.get(id)!.lyrics_writer;
         const songComposerName = external_song_info.get(id)!.song_writer;
         const songArrangerName = external_song_info.get(id)!.arranger;
+        if (songLyricistName === "" || songComposerName === "" || songArrangerName === "") {
+          continue;
+        }
         song.songLyricistName = songLyricistName;
         song.songComposerName = songComposerName;
         song.songArrangerName = songArrangerName;
