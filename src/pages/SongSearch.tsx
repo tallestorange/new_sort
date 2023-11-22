@@ -174,7 +174,7 @@ export default function SongSearch(props: Props) {
       <Grid container item xs={12} justifyContent="center" spacing={0}>
         <SongResultText count={error ? 0 : target_songs_count} />
       </Grid>
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
+      <Grid container item xs={12} sx={{p: 4}} justifyContent="center" spacing={0}>
         <SortStartButton enabled={target_songs_count > 0 && !error } onClick={onSortButtonClicked}/>
       </Grid>
     </Grid>
