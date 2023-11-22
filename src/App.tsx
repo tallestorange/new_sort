@@ -11,7 +11,6 @@ import SortPageShared from "./pages/SortPageShared";
 import Home from "./pages/Home";
 import SongSearch from "./pages/SongSearch";
 import { nameRenderFunction as songNameRenderFunction, profileRenderFunction as songProfileRenderFunction,  useHPSongsDatabase } from "./hooks/useHPSongsDatabase";
-import { Member, Song } from "./modules/CSVLoader";
 import React from "react";
 
 export default function App() {

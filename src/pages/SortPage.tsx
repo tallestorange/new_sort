@@ -287,7 +287,7 @@ function SortResultPage(props: {
         </Table>
       </TableContainer>
     </Grid>
-    <Grid container item xs={12} justifyContent="center">
+    <Grid container item xs={12} sx={{ mb: 2, mt: 2 }} justifyContent="center">
       <br />
       <p>
         <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} disabled={tweet_button_enabled === false} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
