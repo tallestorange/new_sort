@@ -71,6 +71,7 @@ export default function SongSearch(props: Props) {
           <MultiSelectBox
             options={initialState.all_artists.item}
             default_value={initialState.all_artists_stored.item}
+            id="autocomplete-artist-select"
             option_render_func={groupName}
             onValueChanged={setArtists}
             label={initialState.all_artists.initialized ? "アーティスト" : `アーティスト(${NOW_LOADING})`}
@@ -80,6 +81,7 @@ export default function SongSearch(props: Props) {
           <MultiSelectBox
             options={initialState.all_lyricists.item}
             default_value={initialState.all_lyricists_stored.item}
+            id="autocomplete-lyricists-select"
             option_render_func={staffName}
             onValueChanged={setLyricists}
             label={initialState.all_lyricists.initialized ? "作詞家" : `作詞家(${NOW_LOADING})`}
@@ -89,6 +91,7 @@ export default function SongSearch(props: Props) {
           <MultiSelectBox
             options={initialState.all_composers.item}
             default_value={initialState.all_composers_stored.item}
+            id="autocomplete-composers-select"
             option_render_func={staffName}
             onValueChanged={setComposers}
             label={initialState.all_lyricists.initialized ? "作曲家" : `作曲家(${NOW_LOADING})`}
@@ -98,6 +101,7 @@ export default function SongSearch(props: Props) {
           <MultiSelectBox
             options={initialState.all_arrangers.item}
             default_value={initialState.all_arrangers_stored.item}
+            id="autocomplete-arrangers-select"
             option_render_func={staffName}
             onValueChanged={setArrangers}
             label={initialState.all_lyricists.initialized ? "編曲家" : `編曲家(${NOW_LOADING})`}

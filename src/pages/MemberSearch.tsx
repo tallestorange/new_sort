@@ -58,6 +58,7 @@ export default function MemberSearch(props: Props) {
           <MultiSelectBox
             options={initialState.allgroups.item}
             default_value={initialState.groups_stored.item}
+            id="autocomplete-artists-select"
             option_render_func={groupName}
             onValueChanged={setGroups}
             label={initialState.allgroups.initialized ? "所属グループ" : `所属グループ(${NOW_LOADING})`}

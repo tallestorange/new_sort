@@ -4,6 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 interface Props<T> {
     label: string,
+    id?: string,
     options: T[],
     default_value: T[],
     option_render_func?: (val: T) => string,
@@ -16,7 +17,7 @@ const MultiSelectBox = memo(<T extends {}>(props: Props<T>) => {
       fullWidth
       multiple
       disablePortal
-      id="combo-box-demo"
+      id={props.id}
       options={props.options}
       value={props.default_value}
       getOptionLabel={props.option_render_func}
