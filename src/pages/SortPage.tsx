@@ -52,7 +52,13 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   const [result, setResult] = useState<boolean>();
 
   const full_url = useMemo(() => {
-    const url = sortName === DEFAULT_SORT_TITLE ? share_url : share_url + encodeURI(sortName);
+    let url = "";
+    if (share_url === undefined) {
+      url = PAGE_URL;
+    }
+    else {
+      url = sortName === DEFAULT_SORT_TITLE ? share_url : share_url + encodeURI(sortName);
+    }
     if (initialized) {
       console.log(url);
     }

@@ -66,7 +66,7 @@ export default function App() {
               setEnableArtistsSearch={setEnableArtistsSearch}
           />} />
           <Route path={`/sort_members`} element={
-            <SortPage<Member> 
+            <SortPage
               members={members}
               share_url={initialStateMember.share_url.item}
               initialized={initialized}
@@ -77,17 +77,17 @@ export default function App() {
               show_result_pictures={true}
           />} />
           <Route path={`/sort_songs`} element={
-            <SortPage<Song> 
+            <SortPage
               members={songs}
               initialized={initialiStateSong.all_artists.initialized}
               name_render_function={songNameRenderFunction}
               profile_render_function={songProfileRenderFunction}
               initialize_function={initializeSongDB}
-              tweet_button_enabled={false}
+              tweet_button_enabled={true}
               show_result_pictures={false}
           />} />
           <Route path={`/sort_members_shared`} element={
-            <SortPageShared<Member>
+            <SortPageShared
               members={members}
               share_url={shareURL}
               initialized={initialized}
