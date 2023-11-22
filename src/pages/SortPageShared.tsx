@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import SortPage from "./SortPage";
 import { useEffect, useState } from "react";
+import React from "react";
 
 interface Props<T> {
   initialized: boolean;
@@ -9,6 +10,7 @@ interface Props<T> {
   profile_render_function?: (membeer: T) => string[];
   set_custom_params?: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from: string | null, date_to: string | null) => void;
   share_url?: string;
+  initialize_function?: () => void;
 }
 
 /**
@@ -20,7 +22,7 @@ interface Props<T> {
 export default function SortPageShared<T extends {}>(props: Props<T>) {
   const [searchParams] = useSearchParams();
   const [initializedInternal, setInitializedInternal] = useState<boolean>(false);
-  const {initialized, members, set_custom_params, share_url} = props;
+  const {initialized, members, set_custom_params, share_url, initialize_function} = props;
   const sortTitle = searchParams.get("sort_title") === null ? undefined : searchParams.get("sort_title")!;
 
   useEffect(() => {
@@ -40,5 +42,5 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
     }
   }, [members, initialized]);
 
-  return <SortPage share_url={share_url} sort_name={sortTitle} members={members} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
+  return <SortPage tweet_button_enabled={true} show_result_pictures={true} share_url={share_url} sort_name={sortTitle} members={members} initialize_function={initialize_function} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
 }

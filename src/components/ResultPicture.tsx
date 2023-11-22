@@ -5,6 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { IMAGE_DIR, PICTURE_FORMAT } from "../modules/Constants";
+import React from 'react';
 
 interface Props {
   name: string;

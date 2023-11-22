@@ -5,6 +5,7 @@ import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import React from "react";
 
 interface Props<T> {
   title: string;
@@ -17,7 +18,11 @@ interface Props<T> {
   onValueChanged?: (items: T[]) => void;
 }
 
-const SearchSelectBase = <T extends {unique_id: number}>(props: Props<T>) => {
+export interface UniqueItem {
+  unique_id: number
+}
+
+const SearchSelectBase = <T extends UniqueItem>(props: Props<T>) => {
   const { default_selected, onValueChanged, items, title, id, enabled, on_render_func } = props;
   const [currentItems, setCurrentItems] = useState<T[]>(default_selected);
   const isAllSelected = useMemo(() => { return currentItems.length === items.length }, [currentItems, items] );

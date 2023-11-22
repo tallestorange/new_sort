@@ -1,12 +1,13 @@
 import Grid from "@mui/material/Grid";
 import "../App.css";
-import { TITLE, DEFAULT_SORT_TITLE, LATEST_CHANGE_LOG, SORT_PATH, NOW_LOADING } from '../modules/Constants';
-import SearchSelect from "../components/SearchSelect";
-import { LabelCheckBox, ResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
+import { DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
+import { LabelCheckBox, MemberResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DateRange, Group, InitParams } from "../hooks/useHPDatabase";
+import { InitParams } from "../hooks/useHPMemberDatabase";
 import DateRangePicker from "../components/DateRangePicker";
+import { Group, DateRange } from "../modules/CSVLoader";
+import MultiSelectBox from "../components/AutoCompleteSample";
 
 interface Props {
   initialState: InitParams;
@@ -15,22 +16,19 @@ interface Props {
   setIncludeOG: (includeOG: boolean) => void;
   setIncludeTrainee: (includeTrainee: boolean) => void;
   setDateRangeChanged: (dateRange: DateRange) => void;
+  setEnableArtistsSearch: (enabled: boolean) => void;
+  initializeFunction?: () => void;
 }
 
-export default function Search(props: Props) {
+export default function MemberSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
-  const {initialState, target_members_count, setGroups, setIncludeOG, setIncludeTrainee, setDateRangeChanged} = props;
+  const {initialState, target_members_count, setGroups, setIncludeOG, setIncludeTrainee, setDateRangeChanged, initializeFunction, setEnableArtistsSearch} = props;
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {
-    navigate(`/${SORT_PATH}`, { state: sortTitle.current })
+    navigate(`/sort_members`, { state: sortTitle.current })
   }, [navigate]);
-
-  const renderGroups = useCallback((v: Group[]): string => {
-    v.sort((a, b) => { return a.unique_id - b.unique_id });
-    return v.map((a) => { return a.groupName }).join(', ');
-  }, []);
 
   const groupName = useCallback((v: Group):string => {
     return v.groupName;
@@ -41,33 +39,31 @@ export default function Search(props: Props) {
   }, []);
 
   useEffect(() => {
-    document.title = TITLE;
+    document.title = "ハロプロメンバーソート";
+    setSortName("ハロプロメンバーソート")
+    initializeFunction?.();
+    // eslint-disable-next-line
   }, []);
 
   return (
     <Grid container item xs={12} justifyContent="center" style={{ textAlign: "center" }} spacing={2}>
       <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <h1>{TITLE}</h1>
+        <h1>ハロプロメンバーソート</h1>
       </Grid>
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p>{LATEST_CHANGE_LOG}</p>
-      </Grid>      
       <Grid container item xs={12} justifyContent="center" spacing={1}>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SortTitleInput onChanged={setSortName} />
+          <SortTitleInput defaultValue="ハロプロメンバーソート" onChanged={setSortName} />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Group>
-            title={initialState.allgroups.initialized ? "所属グループ" : `所属グループ(${NOW_LOADING})`}
-            id="groups-belong"
-            enabled={initialState.allgroups.initialized && initialState.groups_stored.initialized}
-            items={initialState.allgroups.item}
-            default_selected={initialState.groups_stored.item}
-            title_convert_func={groupName}
-            on_render_func={renderGroups}
+        {initialState.use_artists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <MultiSelectBox
+            options={initialState.allgroups.item}
+            default_value={initialState.groups_stored.item}
+            id="autocomplete-artists-select"
+            option_render_func={groupName}
             onValueChanged={setGroups}
-            />
-        </Grid>
+            label={initialState.allgroups.initialized ? "所属グループ" : `所属グループ(${NOW_LOADING})`}
+          />
+        </Grid>}
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <DateRangePicker
             dateInitFrom={initialState.init_date_range.item.from}
@@ -79,7 +75,16 @@ export default function Search(props: Props) {
             endText="生年月日(終了日)"
             onError={setError}
             onDateRangeChanged={setDateRangeChanged} />
-        </Grid>       
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={initialState.use_artists_search.item}
+            disabled={!initialState.use_artists_search.initialized}
+            valueChanged={setEnableArtistsSearch}
+            form_id="checkbox-form-include-group"
+            checkbox_id="checkbox-include-group"
+            label="所属グループで絞り込む" />
+        </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox
             default_checked={initialState.include_og.item}
@@ -97,18 +102,13 @@ export default function Search(props: Props) {
             form_id="checkbox-form-promote"
             checkbox_id="checkbox-promote"
             label="未昇格メンバーを含む" />
-        </Grid> 
-      </Grid>
-      
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <ResultText count={error ? 0 : target_members_count} />
-      </Grid>
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>
-      </Grid>
-
-      <Grid container item xs={12} justifyContent="center" spacing={0}>
-        <p><a href="https://github.com/emolga587/hpsort2" target="_blank" rel="noopener noreferrer">ハロプロソート(updated)</a>ベースで開発しています</p>
+        </Grid>
+        <Grid container item xs={12} sx={{ mt: 1 }} justifyContent="center" spacing={0}>
+          <MemberResultText count={error ? 0 : target_members_count} />
+        </Grid>
+        <Grid container item xs={12} sx={{ mb: 3, mt: 1 }} justifyContent="center" spacing={0}>
+          <SortStartButton enabled={target_members_count > 0 && !error } onClick={onSortButtonClicked}/>
+        </Grid>
       </Grid>
     </Grid>
   );

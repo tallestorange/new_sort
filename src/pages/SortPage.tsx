@@ -15,14 +15,18 @@ import Paper from '@mui/material/Paper';
 import { DEFAULT_SORT_TITLE, HASHTAGS, MAXIMUM_TWEET_MEMBERS_COUNT, PAGE_URL } from "../modules/Constants";
 import { useCallback } from "react";
 import { useLocation } from 'react-router-dom';
+import React from "react";
 
 interface Props<T> {
   members: Map<string, T>;
   sort_name?: string;
   share_url?: string;
   initialized: boolean;
+  tweet_button_enabled?: boolean;
+  show_result_pictures?: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
+  initialize_function?: () => void;
 }
 
 /**
@@ -32,7 +36,7 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T extends {}>(props: Props<T>) {
-  const {members, initialized, name_render_function, profile_render_function, share_url} = props;
+  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function, tweet_button_enabled, show_result_pictures} = props;
 
   const location = useLocation();
   let sortName = "";
@@ -48,7 +52,13 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   const [result, setResult] = useState<boolean>();
 
   const full_url = useMemo(() => {
-    const url = sortName === DEFAULT_SORT_TITLE ? share_url : share_url + encodeURI(sortName);
+    let url = "";
+    if (share_url === undefined) {
+      url = PAGE_URL;
+    }
+    else {
+      url = sortName === DEFAULT_SORT_TITLE ? share_url : share_url + encodeURI(sortName);
+    }
     if (initialized) {
       console.log(url);
     }
@@ -60,6 +70,11 @@ export default function SortPage<T extends {}>(props: Props<T>) {
     sort.current = new Sorter(Array.from(members.keys()));
     setResult(sort.current.sort());
   }
+
+  useEffect(() => {
+    initialize_function?.();
+    // eslint-disable-next-line
+  }, [])
 
   useEffect(() => {
     document.title = sortName;
@@ -74,7 +89,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage share_url={full_url} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -193,8 +208,10 @@ function SortResultPage(props: {
   sortName: string;
   sort: Sorter;
   share_url?: string;
+  tweet_button_enabled?: boolean;
+  show_result_pictures?: boolean;
 }) {
-  const {sort, sortName, share_url} = props;
+  const {sort, sortName, share_url, tweet_button_enabled, show_result_pictures} = props;
 
   const getRankTable = useCallback((): JSX.Element[] => {
     const rankTable: JSX.Element[] = [];
@@ -239,7 +256,8 @@ function SortResultPage(props: {
     <Grid container item xs={12} justifyContent="center">
       <p style={{ marginTop: 0, marginBottom: 10 }}>ラウンド{sort.currentRound} - {sort.progress}%</p>
     </Grid>
-    <Grid container item md={6} xs={12} justifyContent="center">
+
+    {show_result_pictures === true && <Grid container item md={6} xs={12} justifyContent="center">
       <Grid container item xs={12} justifyContent="center">
         {getResultPictures(1, 1)}
       </Grid>
@@ -252,9 +270,9 @@ function SortResultPage(props: {
       <Grid container item xs={12} justifyContent="center">
         {getResultPictures(7, 10)}
       </Grid>
-    </Grid>
+    </Grid>}
 
-    <Grid container item md={6} xs={12} justifyContent="center">
+    <Grid container item md={show_result_pictures === true ? 6 : 12} xs={12} justifyContent="center">
       <TableContainer component={Paper}>
         <Table size="small" aria-label="a dense table">
           <TableHead>
@@ -269,10 +287,10 @@ function SortResultPage(props: {
         </Table>
       </TableContainer>
     </Grid>
-    <Grid container item xs={12} justifyContent="center">
+    <Grid container item xs={12} sx={{ mb: 2, mt: 2 }} justifyContent="center">
       <br />
       <p>
-        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
+        <Button href={getTwitterIntentURL(MAXIMUM_TWEET_MEMBERS_COUNT)} disabled={tweet_button_enabled === false} target="_blank" variant="contained" size="large" style={{ backgroundColor: "#00ACEE", color: "#ffffff" }}>結果をツイート</Button>
       </p>
     </Grid>
   </Grid>)
