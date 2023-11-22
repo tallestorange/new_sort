@@ -24,6 +24,7 @@ interface Props {
   setEnableLyricistsSearch?: (val: boolean) => void;
   setEnableComposersSearch?: (val: boolean) => void;
   setEnableArrangersSearch?: (val: boolean) => void;
+  setEnableArtistsSearch?: (val: boolean) => void;
 }
 
 export default function SongSearch(props: Props) {
@@ -66,15 +67,15 @@ export default function SongSearch(props: Props) {
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SortTitleInput defaultValue="ハロプロ楽曲ソート" onChanged={setSortName} />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}> 
+        {initialState.use_artists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}> 
           <ComboBox
             options={initialState.all_artists.item}
             default_value={initialState.all_artists_stored.item}
             option_render_func={groupName}
             onValueChanged={setArtists}
-            label={initialState.all_artists.initialized ? "グループ" : `グループ(${NOW_LOADING})`}
+            label={initialState.all_artists.initialized ? "アーティスト" : `アーティスト(${NOW_LOADING})`}
           />
-        </Grid>
+        </Grid>}
         {initialState.use_lyricists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
           <ComboBox
             options={initialState.all_lyricists.item}
@@ -113,6 +114,15 @@ export default function SongSearch(props: Props) {
             endText="発売日(終了日)"
             onError={setError}
             onDateRangeChanged={setDateRangeChanged} />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={initialState.use_artists_search.item}
+            disabled={!initialState.include_single.initialized}
+            valueChanged={props.setEnableArtistsSearch}
+            form_id="checkbox-form-include-search-0"
+            checkbox_id="checkbox-include-search-0"
+            label="アーティストで絞り込む" />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox

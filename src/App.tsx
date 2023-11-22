@@ -16,7 +16,7 @@ import React from "react";
 
 export default function App() {
   const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange: setMembersDateRange, setExternalSortParam, shareURL, setMemberDBInitialized } = useHPMemberDatabase();
-  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setArtists, setArrangers, setComposers, setLyricists, setEnableArrangersSearch, setEnableComposersSearch, setEnableLyricistsSearch } = useHPSongsDatabase();
+  const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setArtists, setArrangers, setComposers, setLyricists, setEnableArrangersSearch, setEnableComposersSearch, setEnableLyricistsSearch, setEnableArtistsSearch } = useHPSongsDatabase();
 
   const initialized = useMemo(() => {
     return initialStateMember.allgroups.initialized && initialStateMember.groups_stored.initialized;
@@ -62,6 +62,7 @@ export default function App() {
               setEnableArrangersSearch={setEnableArrangersSearch}
               setEnableComposersSearch={setEnableComposersSearch}
               setEnableLyricistsSearch={setEnableLyricistsSearch}
+              setEnableArtistsSearch={setEnableArtistsSearch}
           />} />
           <Route path={`/sort_members`} element={
             <SortPage<Member> 

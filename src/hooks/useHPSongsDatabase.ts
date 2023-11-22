@@ -18,6 +18,7 @@ export interface InitParams {
   use_lyricists_search: StoredItem<boolean>,
   use_composers_search: StoredItem<boolean>,
   use_arrangers_search: StoredItem<boolean>,
+  use_artists_search: StoredItem<boolean>
 }
 
 interface HPSongsDatabase {
@@ -29,6 +30,7 @@ interface HPSongsDatabase {
   setEnableLyricistsSearch: (enabled: boolean) => void,
   setEnableComposersSearch: (enabled: boolean) => void,
   setEnableArrangersSearch: (enabled: boolean) => void,
+  setEnableArtistsSearch: (enabled: boolean) => void,
   setDateRange: (val: DateRange) => void,
   setArtists: (val: Artist[]) => void,
   setLyricists: (val: Staff[]) => void,
@@ -56,6 +58,7 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     use_lyricists_search: { item: false, initialized: false },
     use_composers_search: { item: false, initialized: false },
     use_arrangers_search: { item: false, initialized: false },
+    use_artists_search: { item: false, initialized: false },
   });
 
   const all_songs = useRef<StoredItem<Map<string,Song>>>({item: new Map<string, Song>(), initialized: false});
@@ -77,6 +80,7 @@ export function useHPSongsDatabase(): HPSongsDatabase {
   const use_lyricists_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
   const use_composers_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
   const use_arrangers_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
+  const use_artists_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
 
   // 初期化処理
   useEffect(() => {
@@ -135,7 +139,8 @@ export function useHPSongsDatabase(): HPSongsDatabase {
             include_album: include_album.current,
             use_composers_search: use_composers_search.current,
             use_arrangers_search: use_arrangers_search.current,
-            use_lyricists_search: use_lyricists_search.current
+            use_lyricists_search: use_lyricists_search.current,
+            use_artists_search: use_artists_search.current
           }
         );
         updateResult();
@@ -166,7 +171,7 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       if (!include_album && song.albumID !== undefined) {
         continue;
       }
-      if (!artist_search.has(song.songArtistName)) {
+      if (use_artists_search.current.item && !artist_search.has(song.songArtistName)) {
         continue;
       }
       if (use_lyricists_search.current.item && (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName)))) {
@@ -238,6 +243,11 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     use_arrangers_search.current.item = val;
     updateResult();
   }, [updateResult]);
+
+  const setEnableArtistsSearch = useCallback((val: boolean) => {
+    use_artists_search.current.item = val;
+    updateResult();
+  }, [updateResult]);
   
   return {
     initialState: initialState,
@@ -252,7 +262,8 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     setArrangers: setArrangers,
     setEnableLyricistsSearch: setEnableLyricistsSearch,
     setEnableComposersSearch: setEnableComposersSearch,
-    setEnableArrangersSearch: setEnableArrangersSearch
+    setEnableArrangersSearch: setEnableArrangersSearch,
+    setEnableArtistsSearch: setEnableArtistsSearch
   }
 }
 
