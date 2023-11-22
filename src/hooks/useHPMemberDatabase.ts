@@ -1,7 +1,7 @@
 import { DateRange, Group, Member, StoredItem, fetchGroups, fetchJoins, fetchMembers } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
-import { getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
+import { getEnableArtistsSearchFromLocalStorage, getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setEnableArtistsSearchToLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
 import { PAGE_URL_FOR_SHARE } from "../modules/Constants";
 import { isEqual } from "date-fns";
 
@@ -69,6 +69,12 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     include_trainee.current.item = include_trainee_local;
     include_trainee.current.initialized = true;
 
+    const use_artists_search_local = getEnableArtistsSearchFromLocalStorage(() => {
+      setEnableArtistsSearchToLocalStorage(false);
+    });
+    use_artists_search.current.item = use_artists_search_local;
+    use_artists_search.current.initialized = true;
+
     const groups_fetch = await fetchGroups();
     allgroups.current.item = groups_fetch;
     allgroups.current.initialized = true;
@@ -80,8 +86,6 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     daterange.current.item.from = date_min;
     daterange.current.item.to = date_max;
     daterange.current.initialized = true;
-
-    use_artists_search.current.initialized = true;
   
     const joinMap = await fetchJoins();
     for(const key of Array.from( members.keys() )) {
@@ -90,10 +94,10 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     allmembers.current.item = members;
     allmembers.current.initialized = true;
 
-    // const groups_stored_local = getGroupsFromLocalStorage(allgroups.current.item, () => {
-    //   setGroupsToLocalStorage([]);
-    // });
-    groups.current.item = []//groups_stored_local;
+    const groups_stored_local = getGroupsFromLocalStorage(allgroups.current.item, () => {
+      setGroupsToLocalStorage([]);
+    });
+    groups.current.item = groups_stored_local;
     groups.current.initialized = true;
 
     const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
@@ -256,7 +260,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
 
   const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
-    // setGroupsToLocalStorage(val);
+    setGroupsToLocalStorage(val);
     updateResult();
   }, [updateResult]);
 
@@ -280,6 +284,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
 
   const setEnableArtistsSearch = useCallback((val: boolean) => {
     use_artists_search.current.item = val;
+    setEnableArtistsSearchToLocalStorage(val);
     updateResult();
   }, [updateResult]);
 

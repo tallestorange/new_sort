@@ -3,6 +3,7 @@ import { Group } from "../hooks/useHPMemberDatabase";
 const LOCALSTORAGE_KEY_GROUPS : string = "groups";
 const LOCALSTORAGE_KEY_INCLUDE_OG : string = "include_og";
 const LOCALSTORAGE_KEY_INCLUDE_TRAINEE : string = "include_trainee";
+const LOCALSTORAGE_KEY_SEARCH_ARTISTS : string = "search_artists";
 
 export const getGroupsFromLocalStorage = (all_groups: Group[], onError?: () => void): Group[] => {
   let keys: number[] = []
@@ -30,6 +31,20 @@ export const getIncludeOGFromLocalStorage = (onError?: () => void): boolean => {
 
 export const setIncludeOGToLocalStorage = (include_og: boolean): void => {
   localStorage.setItem(LOCALSTORAGE_KEY_INCLUDE_OG, JSON.stringify(include_og))
+}
+
+export const getEnableArtistsSearchFromLocalStorage = (onError?: () => void): boolean => {
+  let result = false
+  try {
+    result = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY_SEARCH_ARTISTS) || "false");
+  } catch (error) {
+    onError?.();
+  }
+  return result;
+}
+
+export const setEnableArtistsSearchToLocalStorage = (val: boolean): void => {
+  localStorage.setItem(LOCALSTORAGE_KEY_SEARCH_ARTISTS, JSON.stringify(val))
 }
 
 export const getIncludeTraineeFromLocalStorage = (onError?: () => void): boolean => {
