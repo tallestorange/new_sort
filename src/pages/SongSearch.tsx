@@ -30,10 +30,6 @@ export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   
   const [error, setError] = useState<boolean>(false);
-  const [useLyricists, setUseLyricists] = useState<boolean>(false);
-  const [useComposers, setUseComposers] = useState<boolean>(false);
-  const [useArrangers, setUseArrangers] = useState<boolean>(false);
-
   const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setArtists, setArrangers, setComposers, setLyricists} = props;
 
   const navigate = useNavigate();
@@ -79,7 +75,7 @@ export default function SongSearch(props: Props) {
             label={initialState.all_artists.initialized ? "グループ" : `グループ(${NOW_LOADING})`}
           />
         </Grid>
-        {useLyricists && <Grid container item xs={12} justifyContent="center" spacing={0}>
+        {initialState.use_lyricists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
           <ComboBox
             options={initialState.all_lyricists.item}
             default_value={initialState.all_lyricists_stored.item}
@@ -88,7 +84,7 @@ export default function SongSearch(props: Props) {
             label={initialState.all_lyricists.initialized ? "作詞家" : `作詞家(${NOW_LOADING})`}
           />
         </Grid>}
-       {useComposers && <Grid container item xs={12} justifyContent="center" spacing={0}>
+       {initialState.use_composers_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
           <ComboBox
             options={initialState.all_composers.item}
             default_value={initialState.all_composers_stored.item}
@@ -97,7 +93,7 @@ export default function SongSearch(props: Props) {
             label={initialState.all_lyricists.initialized ? "作曲家" : `作曲家(${NOW_LOADING})`}
           />
         </Grid>}
-        {useArrangers && <Grid container item xs={12} justifyContent="center" spacing={0}>
+        {initialState.use_arrangers_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
           <ComboBox
             options={initialState.all_arrangers.item}
             default_value={initialState.all_arrangers_stored.item}
@@ -120,10 +116,9 @@ export default function SongSearch(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox
-            default_checked={false}
+            default_checked={initialState.use_lyricists_search.item}
             disabled={!initialState.include_single.initialized}
             valueChanged={(val) => {
-              setUseLyricists(val);
               props.setEnableLyricistsSearch?.(val);
             }}
             form_id="checkbox-form-include-search-1"
@@ -132,10 +127,9 @@ export default function SongSearch(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox
-            default_checked={false}
+            default_checked={initialState.use_composers_search.item}
             disabled={!initialState.include_single.initialized}
             valueChanged={(val) => {
-              setUseComposers(val);
               props.setEnableComposersSearch?.(val);
             }}
             form_id="checkbox-form-include-search-2"
@@ -144,10 +138,9 @@ export default function SongSearch(props: Props) {
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox
-            default_checked={false}
+            default_checked={initialState.use_arrangers_search.item}
             disabled={!initialState.include_single.initialized}
             valueChanged={(val) => {
-              setUseArrangers(val);
               props.setEnableArrangersSearch?.(val);
             }}
             form_id="checkbox-form-include-search-3"

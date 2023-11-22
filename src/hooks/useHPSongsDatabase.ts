@@ -14,7 +14,10 @@ export interface InitParams {
   all_arrangers_stored: StoredItem<Staff[]>,
   init_date_range: StoredItem<DateRange>,
   include_single: StoredItem<boolean>,
-  include_album: StoredItem<boolean>
+  include_album: StoredItem<boolean>,
+  use_lyricists_search: StoredItem<boolean>,
+  use_composers_search: StoredItem<boolean>,
+  use_arrangers_search: StoredItem<boolean>,
 }
 
 interface HPSongsDatabase {
@@ -50,6 +53,9 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     all_arrangers_stored: { item: [], initialized: false },
     include_single: { item: false, initialized: false },
     include_album: { item: false, initialized: false },
+    use_lyricists_search: { item: false, initialized: false },
+    use_composers_search: { item: false, initialized: false },
+    use_arrangers_search: { item: false, initialized: false },
   });
 
   const all_songs = useRef<StoredItem<Map<string,Song>>>({item: new Map<string, Song>(), initialized: false});
@@ -68,9 +74,9 @@ export function useHPSongsDatabase(): HPSongsDatabase {
   const include_album = useRef<StoredItem<boolean>>({item: true, initialized: false});
   const artists = useRef<StoredItem<Artist[]>>({item: [], initialized: false});
 
-  const enable_lyricists_search = useRef<boolean>(false);
-  const enable_composers_search = useRef<boolean>(false);
-  const enable_arrangers_search = useRef<boolean>(false);
+  const use_lyricists_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
+  const use_composers_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
+  const use_arrangers_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
 
   // 初期化処理
   useEffect(() => {
@@ -102,6 +108,10 @@ export function useHPSongsDatabase(): HPSongsDatabase {
         all_composers.current.initialized = true;
         all_arrangers.current.initialized = true;
 
+        use_composers_search.current.initialized = true;
+        use_arrangers_search.current.initialized = true;
+        use_lyricists_search.current.initialized = true;
+
         lyricists.current.item = [];
         composers.current.item = [];
         arrangers.current.item = [];
@@ -122,7 +132,10 @@ export function useHPSongsDatabase(): HPSongsDatabase {
             all_arrangers: all_arrangers.current,
             all_arrangers_stored: arrangers.current,
             include_single: include_single.current,
-            include_album: include_album.current
+            include_album: include_album.current,
+            use_composers_search: use_composers_search.current,
+            use_arrangers_search: use_arrangers_search.current,
+            use_lyricists_search: use_lyricists_search.current
           }
         );
         updateResult();
@@ -156,13 +169,13 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       if (!artist_search.has(song.songArtistName)) {
         continue;
       }
-      if (enable_lyricists_search.current && (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName)))) {
+      if (use_lyricists_search.current.item && (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName)))) {
         continue;
       }
-      if (enable_composers_search.current && (song.songComposerName === undefined || (song.songComposerName !== undefined && !composers_search.has(song.songComposerName)))) {
+      if (use_composers_search.current.item && (song.songComposerName === undefined || (song.songComposerName !== undefined && !composers_search.has(song.songComposerName)))) {
         continue;
       }
-      if (enable_arrangers_search.current && (song.songArrangerName === undefined || (song.songArrangerName !== undefined && !arrangers_search.has(song.songArrangerName)))) {
+      if (use_arrangers_search.current.item && (song.songArrangerName === undefined || (song.songArrangerName !== undefined && !arrangers_search.has(song.songArrangerName)))) {
         continue;
       }
       result.set(key, song);
@@ -212,17 +225,17 @@ export function useHPSongsDatabase(): HPSongsDatabase {
   }, [updateResult]);
 
   const setEnableLyricistsSearch = useCallback((val: boolean) => {
-    enable_lyricists_search.current = val;
+    use_lyricists_search.current.item = val;
     updateResult();
   }, [updateResult]);
 
   const setEnableComposersSearch = useCallback((val: boolean) => {
-    enable_composers_search.current = val;
+    use_composers_search.current.item = val;
     updateResult();
   }, [updateResult]);
 
   const setEnableArrangersSearch = useCallback((val: boolean) => {
-    enable_arrangers_search.current = val;
+    use_arrangers_search.current.item = val;
     updateResult();
   }, [updateResult]);
   
