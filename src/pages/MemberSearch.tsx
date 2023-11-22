@@ -81,7 +81,7 @@ export default function MemberSearch(props: Props) {
             default_checked={initialState.use_artists_search.item}
             disabled={!initialState.use_artists_search.initialized}
             valueChanged={setEnableArtistsSearch}
-            form_id="checkbox-form-include-og"
+            form_id="checkbox-form-include-group"
             checkbox_id="checkbox-include-og"
             label="所属グループで絞り込む" />
         </Grid>
