@@ -1,7 +1,7 @@
 import { DateRange, Group, Member, StoredItem, fetchGroups, fetchJoins, fetchMembers } from "../modules/CSVLoader";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, parseDate } from "../modules/DateUtils";
-import { getGroupsFromLocalStorage, getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setGroupsToLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
+import { getIncludeOGFromLocalStorage, getIncludeTraineeFromLocalStorage, setIncludeOGToLocalStorage, setIncludeTraineeToLocalStorage } from "../modules/LocalStorage";
 import { PAGE_URL_FOR_SHARE } from "../modules/Constants";
 import { isEqual } from "date-fns";
 
@@ -90,10 +90,10 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     allmembers.current.item = members;
     allmembers.current.initialized = true;
 
-    const groups_stored_local = getGroupsFromLocalStorage(allgroups.current.item, () => {
-      setGroupsToLocalStorage([]);
-    });
-    groups.current.item = groups_stored_local;
+    // const groups_stored_local = getGroupsFromLocalStorage(allgroups.current.item, () => {
+    //   setGroupsToLocalStorage([]);
+    // });
+    groups.current.item = []//groups_stored_local;
     groups.current.initialized = true;
 
     const share_url = generateShareURL(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
@@ -256,7 +256,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
 
   const setGroups = useCallback((val: Group[]) => {
     groups.current.item = val;
-    setGroupsToLocalStorage(val);
+    // setGroupsToLocalStorage(val);
     updateResult();
   }, [updateResult]);
 
