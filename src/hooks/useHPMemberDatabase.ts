@@ -15,6 +15,7 @@ interface HPMemberDatabase {
   setExternalSortParam: (groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from: string | null, date_to: string | null) => void;
   setMemberDBInitialized: (initialize: boolean) => void;
   shareURL: string | undefined;
+  setEnableArtistsSearch: (enabled: boolean) => void;
 }
 
 export interface InitParams {
@@ -24,7 +25,8 @@ export interface InitParams {
   init_date_range: StoredItem<DateRange>,
   share_url: StoredItem<string>,
   include_og: StoredItem<boolean>,
-  include_trainee: StoredItem<boolean>
+  include_trainee: StoredItem<boolean>,
+  use_artists_search: StoredItem<boolean>
 }
 
 export function useHPMemberDatabase(): HPMemberDatabase {
@@ -37,6 +39,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
 
   const include_og = useRef<StoredItem<boolean>>({ item: false, initialized: false });
   const include_trainee = useRef<StoredItem<boolean>>({ item: false, initialized: false });
+  const use_artists_search = useRef<StoredItem<boolean>>({item: false, initialized: false});
 
   const [shareURL, setShareURL] = useState<string>();
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -49,7 +52,8 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     init_date_range: { item: {from: null, to: null}, initialized: false },
     share_url: { item: "", initialized: false },
     include_og: { item: false, initialized: false },
-    include_trainee: { item: false, initialized: false }
+    include_trainee: { item: false, initialized: false },
+    use_artists_search: { item: false, initialized: false }
   });
 
   const initializeAsync = async (): Promise<InitParams> => {
@@ -76,6 +80,8 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     daterange.current.item.from = date_min;
     daterange.current.item.to = date_max;
     daterange.current.initialized = true;
+
+    use_artists_search.current.initialized = true;
   
     const joinMap = await fetchJoins();
     for(const key of Array.from( members.keys() )) {
@@ -94,7 +100,16 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
   
-    return {allgroups: allgroups.current, groups_stored: groups.current, date_range: daterange.current, init_date_range: {item: {from: date_min, to: date_max}, initialized: true}, share_url: shareurl.current, include_og: include_og.current, include_trainee: include_trainee.current};
+    return {
+      allgroups: allgroups.current,
+      groups_stored: groups.current,
+      date_range: daterange.current,
+      init_date_range: {item: {from: date_min, to: date_max}, initialized: true},
+      share_url: shareurl.current,
+      include_og: include_og.current,
+      include_trainee: include_trainee.current,
+      use_artists_search: use_artists_search.current
+    };
   }
 
   const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom?: Date | null, birthDateTo?: Date | null): Map<string, Member> => {
@@ -130,47 +145,52 @@ export function useHPMemberDatabase(): HPMemberDatabase {
         }
       }
 
-      for (const group of value.groups) {
-        if (result.has(key)) {
-          break
-        }
-        for (const i of v) {
-          if (i.groupID !== group.groupID) {
-            continue;
+      if (use_artists_search.current.item) {
+        for (const group of value.groups) {
+          if (result.has(key)) {
+            break
           }
-
-          let from = i.formDate;
-          let to = i.dissolveDate;
-          let join = group.joinDate;
-          let grad = group.gradDate;
-
-          if (to !== undefined) {
-            if (grad !== undefined) {
-              if ((from <= grad! && grad! <= to!) || (from <= join && join <= to!) || (join <= from && to! <= grad!)) {
-                result.add(key);
-                break;
+          for (const i of v) {
+            if (i.groupID !== group.groupID) {
+              continue;
+            }
+  
+            let from = i.formDate;
+            let to = i.dissolveDate;
+            let join = group.joinDate;
+            let grad = group.gradDate;
+  
+            if (to !== undefined) {
+              if (grad !== undefined) {
+                if ((from <= grad! && grad! <= to!) || (from <= join && join <= to!) || (join <= from && to! <= grad!)) {
+                  result.add(key);
+                  break;
+                }
+              }
+              else {
+                if (join <= to!) {
+                  result.add(key);
+                  break;
+                }
               }
             }
             else {
-              if (join <= to!) {
+              if (grad !== undefined) {
+                if (from <= grad!) {
+                  result.add(key);
+                  break;
+                }
+              }
+              else {
                 result.add(key);
                 break;
               }
-            }
-          }
-          else {
-            if (grad !== undefined) {
-              if (from <= grad!) {
-                result.add(key);
-                break;
-              }
-            }
-            else {
-              result.add(key);
-              break;
             }
           }
         }
+      }
+      else {
+        result.add(key);
       }
     }
     const ret: Map<string, Member> = new Map(Array.from(result).map(i => {
@@ -258,6 +278,11 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     updateResult();
   }, [updateResult]);
 
+  const setEnableArtistsSearch = useCallback((val: boolean) => {
+    use_artists_search.current.item = val;
+    updateResult();
+  }, [updateResult]);
+
   const setExternalSortParam = useCallback((groups_bitset: string | null, include_og: boolean, include_not_debut: boolean, date_from_string: string | null, date_to_string: string | null) => {
     let result: Group[] = [];
     if (groups_bitset === null) {
@@ -304,7 +329,8 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     setDateRange: setDateRange,
     setExternalSortParam: setExternalSortParam,
     setMemberDBInitialized: setInitialized,
-    shareURL: shareURL
+    shareURL: shareURL,
+    setEnableArtistsSearch: setEnableArtistsSearch
   }
 }
 

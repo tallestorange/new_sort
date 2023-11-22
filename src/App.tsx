@@ -15,7 +15,7 @@ import { Member, Song } from "./modules/CSVLoader";
 import React from "react";
 
 export default function App() {
-  const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange: setMembersDateRange, setExternalSortParam, shareURL, setMemberDBInitialized } = useHPMemberDatabase();
+  const { initialState: initialStateMember, setGroups, members, setIncludeOG, setIncludeTrainee, setDateRange: setMembersDateRange, setExternalSortParam, shareURL, setMemberDBInitialized, setEnableArtistsSearch: setUseArtistSearch } = useHPMemberDatabase();
   const { initialState: initialiStateSong, setSongDBInitialized, songs, setDateRange: setSongsDateRange, setIncludeSingle, setIncludeAlbum, setArtists, setArrangers, setComposers, setLyricists, setEnableArrangersSearch, setEnableComposersSearch, setEnableLyricistsSearch, setEnableArtistsSearch } = useHPSongsDatabase();
 
   const initialized = useMemo(() => {
@@ -46,6 +46,7 @@ export default function App() {
               setIncludeTrainee={setIncludeTrainee}
               setDateRangeChanged={setMembersDateRange}
               initializeFunction={initializeMemberDB}
+              setEnableArtistsSearch={setUseArtistSearch}
           />} />
           <Route path="/search_songs" element={
             <SongSearch
