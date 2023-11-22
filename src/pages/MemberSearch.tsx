@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { InitParams } from "../hooks/useHPMemberDatabase";
 import DateRangePicker from "../components/DateRangePicker";
 import { Group, DateRange } from "../modules/CSVLoader";
-import ComboBox from "../components/AutoCompleteSample";
+import MultiSelectBox from "../components/AutoCompleteSample";
 
 interface Props {
   initialState: InitParams;
@@ -55,7 +55,7 @@ export default function MemberSearch(props: Props) {
           <SortTitleInput defaultValue="ハロプロメンバーソート" onChanged={setSortName} />
         </Grid>
         {initialState.use_artists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <ComboBox
+          <MultiSelectBox
             options={initialState.allgroups.item}
             default_value={initialState.groups_stored.item}
             option_render_func={groupName}

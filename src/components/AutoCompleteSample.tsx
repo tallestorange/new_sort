@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { memo } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -10,7 +10,7 @@ interface Props<T> {
     onValueChanged?: (items: T[]) => void,
 }
 
-export default function ComboBox<T>(props: Props<T>) {
+const MultiSelectBox = memo(<T extends {}>(props: Props<T>) => {
   return (
     <Autocomplete
       fullWidth
@@ -25,4 +25,10 @@ export default function ComboBox<T>(props: Props<T>) {
       renderInput={(params) => <TextField {...params} label={props.label} InputLabelProps={{ shrink: true }} />}
     />
   );
+},
+(a, b) => {
+  return a.default_value === b.default_value && a.options === b.options;
 }
+);
+
+export default MultiSelectBox;

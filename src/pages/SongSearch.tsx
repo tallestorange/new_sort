@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { InitParams } from "../hooks/useHPSongsDatabase";
 import DateRangePicker from "../components/DateRangePicker";
 import { Artist, DateRange, Song, Staff } from "../modules/CSVLoader";
-import ComboBox from "../components/AutoCompleteSample";
+import MultiSelectBox from "../components/AutoCompleteSample";
 
 interface Props {
   initialState: InitParams;
@@ -68,7 +68,7 @@ export default function SongSearch(props: Props) {
           <SortTitleInput defaultValue="ハロプロ楽曲ソート" onChanged={setSortName} />
         </Grid>
         {initialState.use_artists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}> 
-          <ComboBox
+          <MultiSelectBox
             options={initialState.all_artists.item}
             default_value={initialState.all_artists_stored.item}
             option_render_func={groupName}
@@ -77,7 +77,7 @@ export default function SongSearch(props: Props) {
           />
         </Grid>}
         {initialState.use_lyricists_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <ComboBox
+          <MultiSelectBox
             options={initialState.all_lyricists.item}
             default_value={initialState.all_lyricists_stored.item}
             option_render_func={staffName}
@@ -86,7 +86,7 @@ export default function SongSearch(props: Props) {
           />
         </Grid>}
        {initialState.use_composers_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <ComboBox
+          <MultiSelectBox
             options={initialState.all_composers.item}
             default_value={initialState.all_composers_stored.item}
             option_render_func={staffName}
@@ -95,7 +95,7 @@ export default function SongSearch(props: Props) {
           />
         </Grid>}
         {initialState.use_arrangers_search.item && <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <ComboBox
+          <MultiSelectBox
             options={initialState.all_arrangers.item}
             default_value={initialState.all_arrangers_stored.item}
             option_render_func={staffName}
@@ -177,8 +177,6 @@ export default function SongSearch(props: Props) {
           <SortStartButton enabled={target_songs_count > 0 && !error } onClick={onSortButtonClicked}/>
         </Grid>
       </Grid>
-      
-      
     </Grid>
   );
 }
