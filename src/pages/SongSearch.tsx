@@ -38,7 +38,7 @@ export default function SongSearch(props: Props) {
   }, [navigate]);
 
   const groupName = useCallback((v: Artist):string => {
-    return `${v.artistName}(${v.count})`;
+    return `${v.artistName}`;
   }, []);
 
   const staffName = useCallback((v: Staff):string => {
@@ -118,9 +118,7 @@ export default function SongSearch(props: Props) {
           <LabelCheckBox
             default_checked={initialState.use_lyricists_search.item}
             disabled={!initialState.include_single.initialized}
-            valueChanged={(val) => {
-              props.setEnableLyricistsSearch?.(val);
-            }}
+            valueChanged={props.setEnableLyricistsSearch}
             form_id="checkbox-form-include-search-1"
             checkbox_id="checkbox-include-search-1"
             label="作詞家で絞り込む" />
@@ -129,9 +127,7 @@ export default function SongSearch(props: Props) {
           <LabelCheckBox
             default_checked={initialState.use_composers_search.item}
             disabled={!initialState.include_single.initialized}
-            valueChanged={(val) => {
-              props.setEnableComposersSearch?.(val);
-            }}
+            valueChanged={props.setEnableComposersSearch}
             form_id="checkbox-form-include-search-2"
             checkbox_id="checkbox-include-search-2"
             label="作曲家で絞り込む" />
@@ -140,9 +136,7 @@ export default function SongSearch(props: Props) {
           <LabelCheckBox
             default_checked={initialState.use_arrangers_search.item}
             disabled={!initialState.include_single.initialized}
-            valueChanged={(val) => {
-              props.setEnableArrangersSearch?.(val);
-            }}
+            valueChanged={props.setEnableArrangersSearch}
             form_id="checkbox-form-include-search-3"
             checkbox_id="checkbox-include-search-3"
             label="編曲家で絞り込む" />

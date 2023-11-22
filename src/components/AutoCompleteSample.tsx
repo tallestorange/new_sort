@@ -22,7 +22,7 @@ export default function ComboBox<T>(props: Props<T>) {
       getOptionLabel={props.option_render_func}
       onChange={(e, v) => props.onValueChanged?.(v)}
       sx={{ m: 1, minWidth: 120, maxWidth: 450 }}
-      renderInput={(params) => <TextField {...params} label={props.label} />}
+      renderInput={(params) => <TextField {...params} label={props.label} InputLabelProps={{ shrink: true }} />}
     />
   );
 }
