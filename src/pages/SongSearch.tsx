@@ -1,13 +1,13 @@
 import Grid from "@mui/material/Grid";
 import "../App.css";
 import { DEFAULT_SORT_TITLE, NOW_LOADING } from '../modules/Constants';
-import SearchSelect from "../components/SearchSelect";
 import { LabelCheckBox, SongResultText, SortStartButton, SortTitleInput } from "../components/SearchConfig";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { InitParams } from "../hooks/useHPSongsDatabase";
 import DateRangePicker from "../components/DateRangePicker";
 import { Artist, DateRange, Song, Staff } from "../modules/CSVLoader";
+import ComboBox from "../components/AutoCompleteSample";
 
 interface Props {
   initialState: InitParams;
@@ -21,11 +21,19 @@ interface Props {
   setLyricists?: (val: Staff[]) => void;
   setComposers?: (val: Staff[]) => void;
   setArrangers?: (val: Staff[]) => void;
+  setEnableLyricistsSearch?: (val: boolean) => void;
+  setEnableComposersSearch?: (val: boolean) => void;
+  setEnableArrangersSearch?: (val: boolean) => void;
 }
 
 export default function SongSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
+  
   const [error, setError] = useState<boolean>(false);
+  const [useLyricists, setUseLyricists] = useState<boolean>(false);
+  const [useComposers, setUseComposers] = useState<boolean>(false);
+  const [useArrangers, setUseArrangers] = useState<boolean>(false);
+
   const {initialState, target_songs_count, setDateRangeChanged, initializeFunction, setIncludeAlbum, setIncludeSingle, setArtists, setArrangers, setComposers, setLyricists} = props;
 
   const navigate = useNavigate();
@@ -33,18 +41,8 @@ export default function SongSearch(props: Props) {
     navigate(`/sort_songs`, { state: sortTitle.current })
   }, [navigate]);
 
-  const renderGroups = useCallback((v: Artist[]): string => {
-    v.sort((a, b) => { return a.unique_id - b.unique_id });
-    return v.map((a) => { return a.artistName }).join(', ');
-  }, []);
-
   const groupName = useCallback((v: Artist):string => {
     return `${v.artistName}(${v.count})`;
-  }, []);
-
-  const renderStaffs = useCallback((v: Staff[]): string => {
-    v.sort((a, b) => { return a.unique_id - b.unique_id });
-    return v.map((a) => { return a.staffName }).join(', ');
   }, []);
 
   const staffName = useCallback((v: Staff):string => {
@@ -72,54 +70,42 @@ export default function SongSearch(props: Props) {
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <SortTitleInput defaultValue="ハロプロ楽曲ソート" onChanged={setSortName} />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Artist>
-            title={initialState.all_artists.initialized ? "グループ" : `グループ(${NOW_LOADING})`}
-            id="groups-belong"
-            enabled={initialState.all_artists.initialized}
-            items={initialState.all_artists.item}
-            default_selected={initialState.all_artists_stored.item}
-            title_convert_func={groupName}
-            on_render_func={renderGroups}
+        <Grid container item xs={12} justifyContent="center" spacing={0}> 
+          <ComboBox
+            options={initialState.all_artists.item}
+            default_value={initialState.all_artists_stored.item}
+            option_render_func={groupName}
             onValueChanged={setArtists}
-            />
+            label={initialState.all_artists.initialized ? "グループ" : `グループ(${NOW_LOADING})`}
+          />
         </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Staff>
-            title={initialState.all_lyricists.initialized ? "作詞家" : `作詞家(${NOW_LOADING})`}
-            id="lyricists-belong"
-            enabled={initialState.all_lyricists.initialized}
-            items={initialState.all_lyricists.item}
-            default_selected={initialState.all_lyricists_stored.item}
-            title_convert_func={staffName}
-            on_render_func={renderStaffs}
+        {useLyricists && <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <ComboBox
+            options={initialState.all_lyricists.item}
+            default_value={initialState.all_lyricists_stored.item}
+            option_render_func={staffName}
             onValueChanged={setLyricists}
-            />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Staff>
-            title={initialState.all_composers.initialized ? "作曲家" : `作曲家(${NOW_LOADING})`}
-            id="composers-belong"
-            enabled={initialState.all_composers.initialized}
-            items={initialState.all_composers.item}
-            default_selected={initialState.all_composers_stored.item}
-            title_convert_func={staffName}
-            on_render_func={renderStaffs}
+            label={initialState.all_lyricists.initialized ? "作詞家" : `作詞家(${NOW_LOADING})`}
+          />
+        </Grid>}
+       {useComposers && <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <ComboBox
+            options={initialState.all_composers.item}
+            default_value={initialState.all_composers_stored.item}
+            option_render_func={staffName}
             onValueChanged={setComposers}
-            />
-        </Grid>
-        <Grid container item xs={12} justifyContent="center" spacing={0}>
-          <SearchSelect<Staff>
-            title={initialState.all_arrangers.initialized ? "編曲家" : `編曲家(${NOW_LOADING})`}
-            id="arrangers-belong"
-            enabled={initialState.all_arrangers.initialized}
-            items={initialState.all_arrangers.item}
-            default_selected={initialState.all_arrangers_stored.item}
-            title_convert_func={staffName}
-            on_render_func={renderStaffs}
+            label={initialState.all_lyricists.initialized ? "作曲家" : `作曲家(${NOW_LOADING})`}
+          />
+        </Grid>}
+        {useArrangers && <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <ComboBox
+            options={initialState.all_arrangers.item}
+            default_value={initialState.all_arrangers_stored.item}
+            option_render_func={staffName}
             onValueChanged={setArrangers}
-            />
-        </Grid>
+            label={initialState.all_lyricists.initialized ? "編曲家" : `編曲家(${NOW_LOADING})`}
+          />
+        </Grid>}
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <DateRangePicker
             dateInitFrom={initialState.init_date_range.item.from}
@@ -131,6 +117,42 @@ export default function SongSearch(props: Props) {
             endText="発売日(終了日)"
             onError={setError}
             onDateRangeChanged={setDateRangeChanged} />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={false}
+            disabled={!initialState.include_single.initialized}
+            valueChanged={(val) => {
+              setUseLyricists(val);
+              props.setEnableLyricistsSearch?.(val);
+            }}
+            form_id="checkbox-form-include-search-1"
+            checkbox_id="checkbox-include-search-1"
+            label="作詞家で絞り込む" />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={false}
+            disabled={!initialState.include_single.initialized}
+            valueChanged={(val) => {
+              setUseComposers(val);
+              props.setEnableComposersSearch?.(val);
+            }}
+            form_id="checkbox-form-include-search-2"
+            checkbox_id="checkbox-include-search-2"
+            label="作曲家で絞り込む" />
+        </Grid>
+        <Grid container item xs={12} justifyContent="center" spacing={0}>
+          <LabelCheckBox
+            default_checked={false}
+            disabled={!initialState.include_single.initialized}
+            valueChanged={(val) => {
+              setUseArrangers(val);
+              props.setEnableArrangersSearch?.(val);
+            }}
+            form_id="checkbox-form-include-search-3"
+            checkbox_id="checkbox-include-search-3"
+            label="編曲家で絞り込む" />
         </Grid>
         <Grid container item xs={12} justifyContent="center" spacing={0}>
           <LabelCheckBox

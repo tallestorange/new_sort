@@ -23,6 +23,9 @@ interface HPSongsDatabase {
   setSongDBInitialized: (initialized: boolean) => void,
   setIncludeSingle: (includeSingle: boolean) => void,
   setIncludeAlbum: (includeAlbum: boolean) => void,
+  setEnableLyricistsSearch: (enabled: boolean) => void,
+  setEnableComposersSearch: (enabled: boolean) => void,
+  setEnableArrangersSearch: (enabled: boolean) => void,
   setDateRange: (val: DateRange) => void,
   setArtists: (val: Artist[]) => void,
   setLyricists: (val: Staff[]) => void,
@@ -64,6 +67,10 @@ export function useHPSongsDatabase(): HPSongsDatabase {
   const include_single = useRef<StoredItem<boolean>>({item: true, initialized: false});
   const include_album = useRef<StoredItem<boolean>>({item: true, initialized: false});
   const artists = useRef<StoredItem<Artist[]>>({item: [], initialized: false});
+
+  const enable_lyricists_search = useRef<boolean>(false);
+  const enable_composers_search = useRef<boolean>(false);
+  const enable_arrangers_search = useRef<boolean>(false);
 
   // 初期化処理
   useEffect(() => {
@@ -149,13 +156,13 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       if (!artist_search.has(song.songArtistName)) {
         continue;
       }
-      if (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName))) {
+      if (enable_lyricists_search.current && (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName)))) {
         continue;
       }
-      if (song.songComposerName === undefined || (song.songComposerName !== undefined && !composers_search.has(song.songComposerName))) {
+      if (enable_composers_search.current && (song.songComposerName === undefined || (song.songComposerName !== undefined && !composers_search.has(song.songComposerName)))) {
         continue;
       }
-      if (song.songArrangerName === undefined || (song.songArrangerName !== undefined && !arrangers_search.has(song.songArrangerName))) {
+      if (enable_arrangers_search.current && (song.songArrangerName === undefined || (song.songArrangerName !== undefined && !arrangers_search.has(song.songArrangerName)))) {
         continue;
       }
       result.set(key, song);
@@ -203,6 +210,21 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     arrangers.current.item = val;
     updateResult();
   }, [updateResult]);
+
+  const setEnableLyricistsSearch = useCallback((val: boolean) => {
+    enable_lyricists_search.current = val;
+    updateResult();
+  }, [updateResult]);
+
+  const setEnableComposersSearch = useCallback((val: boolean) => {
+    enable_composers_search.current = val;
+    updateResult();
+  }, [updateResult]);
+
+  const setEnableArrangersSearch = useCallback((val: boolean) => {
+    enable_arrangers_search.current = val;
+    updateResult();
+  }, [updateResult]);
   
   return {
     initialState: initialState,
@@ -214,7 +236,10 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     setArtists: setArtists,
     setLyricists: setLyricists,
     setComposers: setComposers,
-    setArrangers: setArrangers
+    setArrangers: setArrangers,
+    setEnableLyricistsSearch: setEnableLyricistsSearch,
+    setEnableComposersSearch: setEnableComposersSearch,
+    setEnableArrangersSearch: setEnableArrangersSearch
   }
 }
 
