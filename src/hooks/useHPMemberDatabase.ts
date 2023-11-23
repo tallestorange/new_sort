@@ -116,7 +116,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     };
   }
 
-  const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, birthDateFrom?: Date | null, birthDateTo?: Date | null): Map<string, Member> => {
+  const search = useCallback((v: Group[], includeOG: boolean | null, includeTrainee: boolean | null, use_artists_search: boolean, birthDateFrom?: Date | null, birthDateTo?: Date | null): Map<string, Member> => {
     const result = new Set<number>();
     for (const [key, value] of allmembers.current.item) {
       if (value.groups === undefined) {
@@ -149,7 +149,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
         }
       }
 
-      if (use_artists_search.current.item) {
+      if (use_artists_search) {
         for (const group of value.groups) {
           if (result.has(key)) {
             break
@@ -210,7 +210,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
       console.log("HPMemberDB initialize started")
       initializeAsync().then((init_params) => {
         setInitialState(init_params);
-        const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
+        const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, use_artists_search.current.item, daterange.current.item.from, daterange.current.item.to);
         setMembers(result);
       }).then(() => {
         console.log("HPMemberDB initialize finished");
@@ -244,6 +244,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     if (can_use_date_from && can_use_date_to && (!isEqual(date_from, initial_daterange.current.item.from!) || !isEqual(date_to, initial_daterange.current.item.to!))) {
       params.push(`date_from=${formatDate(date_from!, "yyyy-MM-dd")}&date_to=${formatDate(date_to!, "yyyy-MM-dd")}`);
     }
+    params.push("sort_title=");
 
     const share_url = PAGE_URL_FOR_SHARE + (params.length > 0 ? "?" : "") + params.join("&");
     return share_url;
@@ -254,7 +255,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     shareurl.current.item = share_url;
     shareurl.current.initialized = true;
 
-    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, daterange.current.item.from, daterange.current.item.to);
+    const result = search(groups.current.item, include_og.current.item, include_trainee.current.item, use_artists_search.current.item, daterange.current.item.from, daterange.current.item.to);
     setMembers(result);
   }, [search, generateShareURL]);
 
@@ -321,7 +322,7 @@ export function useHPMemberDatabase(): HPMemberDatabase {
     const share_url = generateShareURL(result, include_og, include_not_debut, date_from, date_to);
     setShareURL(share_url);
 
-    const search_result = search(result, include_og, include_not_debut, date_from, date_to);
+    const search_result = search(result, include_og, include_not_debut, true, date_from, date_to);
     setMembers(search_result);
   }, [search, generateShareURL]);
 

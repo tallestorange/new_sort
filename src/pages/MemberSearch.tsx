@@ -8,6 +8,7 @@ import { InitParams } from "../hooks/useHPMemberDatabase";
 import DateRangePicker from "../components/DateRangePicker";
 import { Group, DateRange } from "../modules/CSVLoader";
 import MultiSelectBox from "../components/AutoCompleteSample";
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   initialState: InitParams;
@@ -24,6 +25,15 @@ export default function MemberSearch(props: Props) {
   const sortTitle = useRef<string>(DEFAULT_SORT_TITLE);
   const [error, setError] = useState<boolean>(false);
   const {initialState, target_members_count, setGroups, setIncludeOG, setIncludeTrainee, setDateRangeChanged, initializeFunction, setEnableArtistsSearch} = props;
+  
+  const location = useLocation();
+
+  useEffect(() => {
+    if (initialState.use_artists_search.initialized) {
+      setEnableArtistsSearch(initialState.use_artists_search.item);
+    }
+    // eslint-disable-next-line
+  }, [location]);
 
   const navigate = useNavigate();
   const onSortButtonClicked = useCallback(() => {

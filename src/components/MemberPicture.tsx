@@ -11,10 +11,11 @@ interface Props<T> {
   name_render_function: (member: T) => string;
   profile_render_function?: (member: T) => string[];
   onClick?: any;
+  enable_image?: boolean
 }
 
 export default function MemberPicture<T extends {}>(props: Props<T>) {
-  const {member, name_render_function, profile_render_function} = props;
+  const {member, name_render_function, profile_render_function, enable_image} = props;
   const styles =
   {
     card: {
@@ -24,13 +25,13 @@ export default function MemberPicture<T extends {}>(props: Props<T>) {
 
   return (
     <Card onClick={props.onClick} style={styles.card}>
-      <MemberPictureContent<T> member={member} name_render_function={name_render_function} profile_render_function={profile_render_function} />
+      <MemberPictureContent enable_image={enable_image} member={member} name_render_function={name_render_function} profile_render_function={profile_render_function} />
     </Card>
   );
 }
 
-const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_function: (member: T) => string, profile_render_function?: (member: T) => string[]}) => {
-  const {member, name_render_function, profile_render_function} = props;
+const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_function: (member: T) => string, profile_render_function?: (member: T) => string[], enable_image?: boolean}) => {
+  const {member, name_render_function, profile_render_function, enable_image} = props;
   const memberName = name_render_function(member);
   const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
   const styles =
@@ -42,13 +43,13 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, name_render_f
 
   return (
     <CardActionArea>
-      <CardMedia
+      {enable_image && <CardMedia
         component="img"
         alt={memberName}
         image={`${IMAGE_DIR}${memberName}.${PICTURE_FORMAT}`}
         title={memberName}
         style={styles.media}
-      />
+      />}
       <CardContent>
         <Typography gutterBottom variant="h6" component="h2">
           {memberName}

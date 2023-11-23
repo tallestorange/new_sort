@@ -67,13 +67,14 @@ export default function App() {
           <Route path={`/sort_members`} element={
             <SortPage
               members={members}
-              // share_url={initialStateMember.share_url.item}
+              share_url={initialStateMember.share_url.item}
               initialized={initialized}
               name_render_function={memberNameRenderFunction}
               profile_render_function={memberProfileRenderFunction}
               initialize_function={initializeMemberDB}
               tweet_button_enabled={true}
               show_result_pictures={true}
+              enable_image
           />} />
           <Route path={`/sort_songs`} element={
             <SortPage

@@ -24,6 +24,7 @@ interface Props<T> {
   initialized: boolean;
   tweet_button_enabled?: boolean;
   show_result_pictures?: boolean;
+  enable_image?: boolean;
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
   initialize_function?: () => void;
@@ -36,7 +37,7 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T extends {}>(props: Props<T>) {
-  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function, tweet_button_enabled, show_result_pictures} = props;
+  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function, tweet_button_enabled, show_result_pictures, enable_image} = props;
 
   const location = useLocation();
   let sortName = "";
@@ -89,7 +90,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} enable_image={enable_image} sortName={sortName} sort={sort.current} name_render_function={name_render_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -105,9 +106,10 @@ function NowSortPage<T extends {}>(props: {
   name_render_function: (membeer: T) => string;
   profile_render_function?: (membeer: T) => string[];
   sort: Sorter;
+  enable_image?: boolean;
   onSorted?: (result: boolean) => void;
 }) {
-  const {sort, members, sortName, name_render_function, profile_render_function, onSorted} = props;
+  const {sort, members, sortName, name_render_function, profile_render_function, onSorted, enable_image} = props;
   const [currentRound, setCurrentRound] = useState<number>(sort.currentRound);
 
   const leftWin = useCallback(() => {
@@ -171,13 +173,17 @@ function NowSortPage<T extends {}>(props: {
           <p style={{ marginTop: 0, marginBottom: 5 }}>ラウンド{currentRound} - {sort.progress}%</p>
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture<T> member={leftMember()}
+          <MemberPicture
+            member={leftMember()}
+            enable_image={enable_image}
             name_render_function={name_render_function}
             profile_render_function={profile_render_function}
             onClick={leftWin} />
         </Grid>
         <Grid container item xs={6} justifyContent="center">
-          <MemberPicture<T> member={rightMember()}
+          <MemberPicture
+            member={rightMember()}
+            enable_image={enable_image}
             name_render_function={name_render_function}
             profile_render_function={profile_render_function}
             onClick={rightWin} />
@@ -188,7 +194,7 @@ function NowSortPage<T extends {}>(props: {
             両方勝ち
           </Button>
         </Grid>
-        <Grid container item xs={12} justifyContent="center">
+        <Grid container item xs={12} sx={{ mb: 2 }} justifyContent="center">
           <Button size="large" style={{ backgroundColor: "#444", color: "white" }}
             onClick={back}>
             ひとつ戻る
