@@ -50,6 +50,13 @@ export default function SongSearch(props: Props) {
     sortTitle.current = v;
   }, []);
 
+  const staffEqual = useCallback((a: Staff, b: Staff):boolean => {
+    return a.staffName === b.staffName;
+  }, []);
+
+  const staffDisabled = useCallback((a: Staff):boolean => {
+    return a.count === 0;
+  }, []);
 
   useEffect(() => {
     setSortName("ハロプロ楽曲ソート")
@@ -82,8 +89,8 @@ export default function SongSearch(props: Props) {
             options={initialState.all_lyricists.item}
             default_value={initialState.all_lyricists_stored.item}
             id="autocomplete-lyricists-select"
-            is_option_equal={(option, v) => { return option.staffName === v.staffName }}
-            option_disabled_func={option => option.count === 0}
+            is_option_equal={staffEqual}
+            option_disabled_func={staffDisabled}
             option_render_func={staffName}
             onValueChanged={setLyricists}
             label={initialState.all_lyricists.initialized ? "作詞家" : `作詞家(${NOW_LOADING})`}
@@ -94,8 +101,8 @@ export default function SongSearch(props: Props) {
             options={initialState.all_composers.item}
             default_value={initialState.all_composers_stored.item}
             id="autocomplete-composers-select"
-            is_option_equal={(option, v) => { return option.staffName === v.staffName }}
-            option_disabled_func={option => option.count === 0}
+            is_option_equal={staffEqual}
+            option_disabled_func={staffDisabled}
             option_render_func={staffName}
             onValueChanged={setComposers}
             label={initialState.all_lyricists.initialized ? "作曲家" : `作曲家(${NOW_LOADING})`}
@@ -106,8 +113,8 @@ export default function SongSearch(props: Props) {
             options={initialState.all_arrangers.item}
             default_value={initialState.all_arrangers_stored.item}
             id="autocomplete-arrangers-select"
-            is_option_equal={(option, v) => { return option.staffName === v.staffName }}
-            option_disabled_func={option => option.count === 0}
+            is_option_equal={staffEqual}
+            option_disabled_func={staffDisabled}
             option_render_func={staffName}
             onValueChanged={setArrangers}
             label={initialState.all_lyricists.initialized ? "編曲家" : `編曲家(${NOW_LOADING})`}
