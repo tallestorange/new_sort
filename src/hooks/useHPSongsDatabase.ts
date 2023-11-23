@@ -161,6 +161,10 @@ export function useHPSongsDatabase(): HPSongsDatabase {
     const composers_search = new Set(composers.map(v => v.staffName));
     const arrangers_search = new Set(arrangers.map(v => v.staffName));
 
+    const all_lyricists_map = new Map(all_lyricists.current.item.map(v => [v.staffName, 0]))
+    const all_composers_map = new Map(all_composers.current.item.map(v => [v.staffName, 0]))
+    const all_arrangers_map = new Map(all_arrangers.current.item.map(v => [v.staffName, 0]))
+
     for (const [key, song] of all_songs.current.item) {
       if (!(date_from <= song.releaseDate && song.releaseDate <= date_to)) {
         continue;
@@ -171,20 +175,45 @@ export function useHPSongsDatabase(): HPSongsDatabase {
       if (!include_album && song.albumID !== undefined) {
         continue;
       }
-      if (use_artists_search.current.item && !artist_search.has(song.songArtistName)) {
-        continue;
+
+      if (use_artists_search.current.item) {
+        if (!artist_search.has(song.songArtistName)) {
+          continue;
+        }
       }
-      if (use_lyricists_search.current.item && (song.songLyricistName === undefined || (song.songLyricistName !== undefined && !lyricists_search.has(song.songLyricistName)))) {
-        continue;
+
+      if (use_lyricists_search.current.item) {
+        all_lyricists_map.set(song.songLyricistName!, all_lyricists_map.get(song.songLyricistName!)! + 1);
+        if (!lyricists_search.has(song.songLyricistName)) {
+          continue;
+        }
       }
-      if (use_composers_search.current.item && (song.songComposerName === undefined || (song.songComposerName !== undefined && !composers_search.has(song.songComposerName)))) {
-        continue;
+
+      if (use_composers_search.current.item) {
+        all_composers_map.set(song.songComposerName!, all_composers_map.get(song.songComposerName!)! + 1);
+        if (!composers_search.has(song.songComposerName)) {
+          continue;
+        }
       }
-      if (use_arrangers_search.current.item && (song.songArrangerName === undefined || (song.songArrangerName !== undefined && !arrangers_search.has(song.songArrangerName)))) {
-        continue;
+
+      if (use_arrangers_search.current.item) {
+        all_arrangers_map.set(song.songArrangerName!, all_arrangers_map.get(song.songArrangerName!)! + 1);
+        if (!arrangers_search.has(song.songArrangerName)) {
+          continue;
+        }
       }
+
       result.set(key, song);
     }
+
+    const a = [...all_lyricists_map].sort((a, b) => b[1] - a[1]).map(v => {return {staffName:v[0], count:v[1]}});
+    const b = [...all_composers_map].sort((a, b) => b[1] - a[1]).map(v => {return {staffName:v[0], count:v[1]}});
+    const c = [...all_arrangers_map].sort((a, b) => b[1] - a[1]).map(v => {return {staffName:v[0], count:v[1]}});
+
+    all_lyricists.current.item = a;
+    all_composers.current.item = b;
+    all_arrangers.current.item = c;
+
     return result;
   }, []);
 

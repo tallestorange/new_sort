@@ -76,9 +76,9 @@ export interface Song {
   albumID?: number;
   singleName?: string;
   albumName?: string;
-  songLyricistName?: string;
-  songComposerName?: string;
-  songArrangerName?: string;
+  songLyricistName: string;
+  songComposerName: string;
+  songArrangerName: string;
   releaseDate: Date;
   labelName: string;
 }
@@ -294,8 +294,7 @@ const fetchExternalSongInfo = async (): Promise<{external_song_info: Map<string,
       if (songinfo.lyrics_writer === "" || songinfo.song_writer === "" || songinfo.arranger === "") {
         continue;
       }
-      
-      if (lyricists_map.has(songinfo.lyrics_writer)) {
+      if (lyricists_map.has(songinfo.lyrics_writer)) {  
         lyricists_map.set(songinfo.lyrics_writer, lyricists_map.get(songinfo.lyrics_writer)!+1)
       }
       else {
@@ -367,12 +366,14 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], songs: Map
         if (songLyricistName === "" || songComposerName === "" || songArrangerName === "") {
           continue;
         }
+        if (songLyricistName === undefined || songComposerName === undefined || songArrangerName === undefined) {
+          continue;
+        }
         song.songLyricistName = songLyricistName;
         song.songComposerName = songComposerName;
         song.songArrangerName = songArrangerName;
+        songs_unique.push(song);
       }
-
-      songs_unique.push(song);
     }
   }
   const artists = [...artists_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, artistName: a[0], count: a[1]}});
