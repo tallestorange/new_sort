@@ -60,6 +60,8 @@ export interface Member {
    * 11位以下は???表記。51位以上は空欄
    */
   week_6_rank: string;
+
+  week_8_rank: string;
 }
 
 /**
@@ -298,7 +300,7 @@ export default function useNPDatabase(): NPDatabase {
 
     let result: Map<string, Member> = new Map<string, Member>();
     for (let i of members_array.current) {
-      if (can_vote_only && i.week_5_rank > BOARDER) { continue; }
+      if (can_vote_only && (i.week_8_rank === "" || Number(i.week_8_rank) > BOARDER)) { continue; }
       if (mbti_set.has(i.mbti) && birthplace_set.has(i.birth_place) && heights_set.has(i.height) && years_set.has(i.birth_date.split('/')[0])) {
         result.set(i.name, i);
       }

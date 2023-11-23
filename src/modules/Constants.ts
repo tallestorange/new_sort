@@ -2,11 +2,11 @@ export const TITLE: string = "日プソート";
 export const HASHTAGS: string = "日プソート,日プ,日プ女子,PRODUCE101JAPANTHEGIRLS";
 export const VERSION: string = "1.0.0";
 export const IMAGE_DIR: string = "member_pics/";
-export const BOARDER: number = 50;
+export const BOARDER: number = 35;
 export const PAGE_URL: string = "https://np-sort.web.app/";
 export const SORT_PATH: string = "sort";
 export const NOW_LOADING: string = "読み込み中...";
-export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/11 ソート結果表示ページの修正)";
+export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/23 順位情報更新)";
 export const MAXIMUM_TWEET_MEMBERS_COUNT = 11;
 
 export const PREF_SORT_MAP: Map<string, number> = new Map<string, number>([

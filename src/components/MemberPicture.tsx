@@ -33,7 +33,7 @@ const MemberPictureContent = React.memo((props: {member: Member, sortConfig: Sor
     const show_week_6 = props.member.week_6_rank !== ""
     let result = ""
     if (show_week_6) {
-      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位`
+      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位→${props.member.week_8_rank}位`
     }
     else {
       result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位`
