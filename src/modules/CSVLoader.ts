@@ -5,7 +5,11 @@ import HP_DB_ALBUM from "../HP_DB/album.csv";
 import HP_DB_MEMBERS from "../HP_DB/member.csv";
 import HP_DB_JOIN from "../HP_DB/join.csv";
 import HP_DB_GROUP from "../HP_DB/group.csv";
+
 import EXT_HP_DB_SONGINFO from "../HP_EXTERNAL_DB/songinfo.csv";
+import EXT_HP_DB_SINGLE_ID from "../HP_EXTERNAL_DB/single_id.csv";
+import EXT_HP_DB_ALBUM_ID from "../HP_EXTERNAL_DB/album_id.csv";
+
 import { parseDate } from "./DateUtils";
 import max from "date-fns/max";
 import min from "date-fns/min";
@@ -76,6 +80,7 @@ export interface Song {
   albumID?: number;
   singleName?: string;
   albumName?: string;
+  productId?: string;
   songLyricistName: string;
   songComposerName: string;
   songArrangerName: string;
@@ -133,6 +138,16 @@ interface SongInfo {
   lyrics_writer: string;
   song_writer: string;
   arranger: string;
+}
+
+interface SingleID {
+  singleId: string;
+  id: string;
+}
+
+interface AlbumID {
+  albumId: string;
+  id: string;
 }
 
 export interface Artist extends UniqueItem {
@@ -277,7 +292,7 @@ export const fetchJoins = async (): Promise<Map<number, {groupID: number, joinDa
   return joinMap;
 }
 
-const fetchExternalSongInfo = async (): Promise<{external_song_info: Map<string, SongInfo>, lyricists: Staff[], composers: Staff[], arrangers: Staff[]}> => {
+const fetchExternalHPDB = async (): Promise<{external_song_info: Map<string, SongInfo>, lyricists: Staff[], composers: Staff[], arrangers: Staff[], single_ids: Map<number, string>, album_ids: Map<number, string>}> => {
   const res = new Map<string, SongInfo>();
   const songinfos = await fetchCSVAsync<SongInfo[]>(EXT_HP_DB_SONGINFO);
   const ids = new Set<string>();
@@ -320,14 +335,20 @@ const fetchExternalSongInfo = async (): Promise<{external_song_info: Map<string,
   const composers: Staff[] = [...composers_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
   const arrangers: Staff[] = [...arrangers_map].sort((a, b) => b[1] - a[1]).map((a, b) => { return {unique_id: b, staffName: a[0], count: a[1]}});
 
-  return {external_song_info: res, lyricists: lyricists, composers: composers, arrangers: arrangers};
+  const singleIDs = await fetchCSVAsync<SingleID[]>(EXT_HP_DB_SINGLE_ID);
+  const singleID_map = new Map(singleIDs.map((a) => [Number(a.singleId), a.id]));
+
+  const albumIDs = await fetchCSVAsync<AlbumID[]>(EXT_HP_DB_ALBUM_ID);
+  const albumID_map = new Map(albumIDs.map((a) => [Number(a.albumId), a.id]));
+
+  return {external_song_info: res, lyricists: lyricists, composers: composers, arrangers: arrangers, single_ids: singleID_map, album_ids: albumID_map};
 }
 
 export const initializeSongDB = async (): Promise<{artists: Artist[], songs: Map<string, Song>, date_min: Date, date_max: Date, lyricists: Staff[], composers: Staff[], arrangers: Staff[]}> => {
   const singles = await fetchSingles();
   const albums = await fetchAlbums();
   const songs = await fetchSongs(singles, albums);
-  const {external_song_info, lyricists, composers, arrangers} = await fetchExternalSongInfo();
+  const {external_song_info, lyricists, composers, arrangers, single_ids, album_ids} = await fetchExternalHPDB();
 
   let date_max = parseDate("1900/1/1")!;
   let date_min = new Date();
@@ -357,6 +378,13 @@ export const initializeSongDB = async (): Promise<{artists: Artist[], songs: Map
       }
       else {
         labels_map.set(song.labelName, labels_map.get(song.labelName)!+1);
+      }
+
+      if (song.singleID !== undefined) {
+        song.productId = single_ids.get(song.singleID);
+      }
+      else if (song.albumID !== undefined) {
+        song.productId = album_ids.get(song.albumID);
       }
 
       if (external_song_info.has(id)) {
