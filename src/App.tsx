@@ -72,6 +72,7 @@ export default function App() {
               name_render_function={memberNameRenderFunction}
               profile_render_function={memberProfileRenderFunction}
               initialize_function={initializeMemberDB}
+              image_path_function={(v) => { return `member_pics/${v.memberName}.webp` }}
               tweet_button_enabled={true}
               show_result_pictures={true}
               enable_image
@@ -84,7 +85,9 @@ export default function App() {
               profile_render_function={songProfileRenderFunction}
               initialize_function={initializeSongDB}
               tweet_button_enabled={true}
-              show_result_pictures={false}
+              show_result_pictures={true}
+              image_path_function={(v) => { return `jacket_pics/${v.productId}.webp` }}
+              enable_image
           />} />
           <Route path={`/sort_members_shared`} element={
             <SortPageShared
@@ -95,6 +98,7 @@ export default function App() {
               profile_render_function={memberProfileRenderFunction}
               set_custom_params={setExternalSortParam}
               initialize_function={initializeMemberDB}
+              image_path_function={(v) => { return `member_pics/${v.memberName}.webp` }}
           />} />
         </Routes>
       </Layout>
