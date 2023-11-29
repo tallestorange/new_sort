@@ -1,9 +1,9 @@
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface Props<T> {
   member: T;
@@ -31,26 +31,43 @@ export default function MemberPicture<T extends {}>(props: Props<T>) {
 }
 
 const MemberPictureContentBase = <T extends {}>(props: {member: T, image_path_function: (member: T) => string, name_render_function: (member: T) => string, profile_render_function?: (member: T) => string[], enable_image?: boolean}) => {
-  const {member, name_render_function, profile_render_function, enable_image, image_path_function} = props;
+  const {member, name_render_function, profile_render_function, image_path_function} = props;
   const memberName = name_render_function(member);
   const imagePath = image_path_function(member);
   const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
+  const [loading, setLoading] = useState(true);
+
   const styles =
   {
     media: {
-      height: "300px"
+      display: loading ? "none" : "flex",
+      height: "300px",
+      justifyContent: 'center',
+    },
+    circular: {
+      display: loading ? "flex" : "none",
+      height: "300px",
+      justifyContent: 'center',
+      alignItems: 'center',
     }
   };
+  
+  useEffect(() => {
+    setLoading(true);
+  }, [imagePath]);
 
   return (
     <CardActionArea>
-      {enable_image && <CardMedia
-        component="img"
-        alt={memberName}
-        image={imagePath}
-        title={memberName}
-        style={styles.media}
-      />}
+      <div style={styles.circular}>
+        <CircularProgress />
+      </div>
+      <div style={styles.media}>
+        <img 
+          src={imagePath}
+          alt="items"
+          onError={() => setLoading(false)}
+          onLoad={() => setLoading(false)} />
+      </div>
       <CardContent>
         <Typography gutterBottom variant="h6" component="h2">
           {memberName}
