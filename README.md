@@ -7,7 +7,7 @@
 [https://hpsort3.192.works/](https://hpsort3.192.works/)
 
 ある機能
--  メンバーソート
+- メンバーソート
 - 楽曲ソート
 
 実装予定
@@ -17,7 +17,7 @@
 
 ### クローン・パッケージのインストール
 ```
-git clone https://github.com/tallestorange/new_sort.git
+git clone --recursive https://github.com/tallestorange/new_sort.git
 cd ./new_sort/
 npm install
 ```
@@ -39,8 +39,10 @@ npm run build
 
 ## ライセンス
 本家様と同様にMITライセンスとします。
-ただし、public/member_pics/以下の画像、src/HP_DB/以下のデータに関してはこの限りではありません。
+ただし、**public/member_pics/ public/jacket_pics/以下の画像、src/HP_DB/ src/HP_EXTERNAL_DB/以下のデータに関してはこの限りではありません**。
 
 ## 謝辞
 
 [emolga587](https://twitter.com/emolga587)様(ハロプロソート(updated)開発者)
+
+[げんたろう](https://twitter.com/xxgentaroxx)大先生(HP_DBメンテナ)
