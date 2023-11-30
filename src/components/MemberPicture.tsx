@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 
 interface Props<T> {
@@ -36,6 +36,7 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, image_path_fu
   const imagePath = image_path_function(member);
   const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
   const [loading, setLoading] = useState(true);
+  const imgref = useRef<HTMLImageElement>(null);
 
   const styles =
   {
@@ -53,8 +54,16 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, image_path_fu
   };
   
   useEffect(() => {
-    setLoading(true);
+    if (!imgref.current?.complete) {
+      setLoading(true);
+    }
   }, [imagePath]);
+
+  useEffect(() => {
+   if (imgref.current?.complete) {
+    setLoading(false);
+   }
+  }, []);
 
   return (
     <CardActionArea>
@@ -62,7 +71,8 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, image_path_fu
         <CircularProgress />
       </div>
       <div style={styles.media}>
-        <img 
+        <img
+          ref={imgref}
           src={imagePath}
           alt="items"
           onError={() => setLoading(false)}
