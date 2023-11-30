@@ -17,7 +17,7 @@ export default function ResultPicture(props: Props) {
   {
     media: {
       width: 96,
-      height: 80,
+      height: 96,
       zoom: 1
     }
   };
@@ -44,7 +44,7 @@ export default function ResultPicture(props: Props) {
   return (
     <Grid container item xs={card_width} justifyContent="center">
       <Box m={0.5}>
-        <Card>
+        <Card style={{width: styles.media.width}}>
           <CardMedia
             component="img"
             alt={props.name}
