@@ -91,7 +91,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} enable_image={enable_image} sortName={sortName} sort={sort.current} name_render_function={name_render_function} image_path_function={image_path_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage members={members} image_path_function={image_path_function} share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} enable_image={enable_image} sortName={sortName} sort={sort.current} name_render_function={name_render_function} image_path_function={image_path_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -214,14 +214,16 @@ function NowSortPage<T extends {}>(props: {
  * @param props 
  * @returns 
  */
-function SortResultPage(props: {
+function SortResultPage<T extends {}>(props: {
   sortName: string;
   sort: Sorter;
   share_url?: string;
   tweet_button_enabled?: boolean;
   show_result_pictures?: boolean;
+  members: Map<string, T>;
+  image_path_function: (member: T) => string;
 }) {
-  const {sort, sortName, share_url, tweet_button_enabled, show_result_pictures} = props;
+  const {sort, sortName, share_url, tweet_button_enabled, show_result_pictures, members, image_path_function} = props;
 
   const getRankTable = useCallback((): JSX.Element[] => {
     const rankTable: JSX.Element[] = [];
@@ -251,13 +253,15 @@ function SortResultPage(props: {
     const result: JSX.Element[] = [];
     for (let i of sort.array) {
       if (sort.rank(i) >= min && sort.rank(i) <= max) {
+        const item = members.get(i)!;
+        const img_path = image_path_function(item);
         result.push(
-          <ResultPicture key={i} name={i} rank={sort.rank(i)}></ResultPicture>
+          <ResultPicture key={i} name={i} img_path={img_path} rank={sort.rank(i)}></ResultPicture>
         );
       }
     }
     return result;
-  }, [sort]);
+  }, [sort, image_path_function, members]);
   
   return (<Grid container alignItems="flex-start">
     <Grid container item xs={12} justifyContent="center">

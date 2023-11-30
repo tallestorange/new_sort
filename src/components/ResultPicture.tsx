@@ -4,12 +4,12 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { IMAGE_DIR, PICTURE_FORMAT } from "../modules/Constants";
 import React from 'react';
 
 interface Props {
   name: string;
   rank: number;
+  img_path: string;
 }
 
 export default function ResultPicture(props: Props) {
@@ -48,7 +48,7 @@ export default function ResultPicture(props: Props) {
           <CardMedia
             component="img"
             alt={props.name}
-            image={`${IMAGE_DIR}${props.name}.${PICTURE_FORMAT}`}
+            image={props.img_path}
             title={props.name}
             style={styles.media}
           />
