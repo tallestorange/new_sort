@@ -36,39 +36,32 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, image_path_fu
   const imagePath = image_path_function(member);
   const profiles = profile_render_function?.(member) ? profile_render_function(member) : [];
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const imgref = useRef<HTMLImageElement>(null);
 
   const styles =
   {
     media: {
-      display: loading || error ? "none" : "flex",
+      display: loading ? "none" : "flex",
       height: "300px",
       justifyContent: 'center',
     },
     circular: {
-      display: loading && !error ? "flex" : "none",
+      display: loading ? "flex" : "none",
       height: "300px",
       justifyContent: 'center',
       alignItems: 'center',
-    },
-    error: {
-      display: error ? "flex" : "none",
-      height: "300px"
     }
   };
   
   useEffect(() => {
     if (!imgref.current?.complete) {
       setLoading(true);
-      setError(false);
     }
   }, [imagePath]);
 
   useEffect(() => {
    if (imgref.current?.complete) {
     setLoading(false);
-    setError(false);
    }
   }, []);
 
@@ -82,10 +75,11 @@ const MemberPictureContentBase = <T extends {}>(props: {member: T, image_path_fu
           ref={imgref}
           src={imagePath}
           alt="items"
-          onError={() => setError(true)}
+          onError={() => {
+            setLoading(false);
+            imgref.current!.src = "NOPHOTO.webp";
+          }}
           onLoad={() => setLoading(false)} />
-      </div>
-      <div style={styles.error}>
       </div>
       <CardContent>
         <Typography gutterBottom variant="h6" component="h2">
