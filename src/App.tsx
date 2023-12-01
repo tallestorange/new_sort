@@ -75,6 +75,7 @@ export default function App() {
               image_path_function={(v) => { return `member_pics/${v.memberName}.webp` }}
               tweet_button_enabled={true}
               show_result_pictures={true}
+              result_render_functions={[]}
               enable_image
           />} />
           <Route path={`/sort_songs`} element={
@@ -87,6 +88,8 @@ export default function App() {
               tweet_button_enabled={true}
               show_result_pictures={true}
               image_path_function={(v) => { return `jacket_pics/${v.productId}.webp` }}
+              result_render_functions={[v => v.songLyricistName, v => v.songComposerName, v => v.songArrangerName]}
+              result_headers={["作詞家", "作曲家",  "編曲家"]}
               enable_image
           />} />
           <Route path={`/sort_members_shared`} element={

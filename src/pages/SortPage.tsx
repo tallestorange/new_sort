@@ -29,6 +29,8 @@ interface Props<T> {
   image_path_function: (member: T) => string;
   profile_render_function?: (membeer: T) => string[];
   initialize_function?: () => void;
+  result_render_functions: ((member: T) => string)[];
+  result_headers: string[];
 }
 
 /**
@@ -38,7 +40,7 @@ interface Props<T> {
  * @returns 
  */
 export default function SortPage<T extends {}>(props: Props<T>) {
-  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function, tweet_button_enabled, show_result_pictures, enable_image, image_path_function} = props;
+  const {members, initialized, name_render_function, profile_render_function, share_url, initialize_function, tweet_button_enabled, show_result_pictures, enable_image, image_path_function, result_render_functions, result_headers} = props;
 
   const location = useLocation();
   let sortName = "";
@@ -91,7 +93,7 @@ export default function SortPage<T extends {}>(props: Props<T>) {
   }, [members])
 
   return (
-    initialized ? result ? <SortResultPage members={members} image_path_function={image_path_function} share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} enable_image={enable_image} sortName={sortName} sort={sort.current} name_render_function={name_render_function} image_path_function={image_path_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
+    initialized ? result ? <SortResultPage members={members} result_headers={result_headers} result_render_functions={result_render_functions} image_path_function={image_path_function} share_url={full_url} show_result_pictures={show_result_pictures} tweet_button_enabled={tweet_button_enabled} sortName={sortName} sort={sort.current} /> : <NowSortPage<T> members={members} enable_image={enable_image} sortName={sortName} sort={sort.current} name_render_function={name_render_function} image_path_function={image_path_function} profile_render_function={profile_render_function} onSorted={setResult} /> :
     <div></div>
   )
 }
@@ -222,13 +224,29 @@ function SortResultPage<T extends {}>(props: {
   show_result_pictures?: boolean;
   members: Map<string, T>;
   image_path_function: (member: T) => string;
+  result_render_functions: ((member: T) => string)[];
+  result_headers: string[];
 }) {
-  const {sort, sortName, share_url, tweet_button_enabled, show_result_pictures, members, image_path_function} = props;
+  const {sort, sortName, share_url, tweet_button_enabled, show_result_pictures, members, image_path_function, result_render_functions, result_headers} = props;
 
   const getRankTable = useCallback((): JSX.Element[] => {
     const rankTable: JSX.Element[] = [];
     for (let i of sort.array) {
-      rankTable.push(<TableRow key={i}><TableCell align="left">{sort.rank(i)}位</TableCell><TableCell align="left">{i}</TableCell></TableRow>);
+      const item = members.get(i)!;
+      rankTable.push(
+        <TableRow key={i}>
+          <TableCell align="left">{sort.rank(i)}位</TableCell>
+          <TableCell align="left">{i}</TableCell>
+          {result_render_functions.map((val, idx) => {
+            console.log(val(item))
+            return (
+              <div key={idx}>
+                <TableCell align="left" sx={{display:{xs:"none",sm:"flex"}}}>{val(item)}</TableCell>
+              </div>
+            )
+          })}          
+        </TableRow>
+      );
     }
     return rankTable;
   }, [sort]);
@@ -293,6 +311,13 @@ function SortResultPage<T extends {}>(props: {
             <TableRow style={{ backgroundColor: "#444" }}>
               <TableCell style={{ color: "white", fontWeight: "bold" }}>順位</TableCell>
               <TableCell style={{ color: "white", fontWeight: "bold" }}>名前</TableCell>
+              {result_headers.map((val, idx) => {
+                return (
+                  <div key={idx}>
+                    <TableCell style={{ color: "white", fontWeight: "bold" }}>{val}</TableCell>
+                  </div>
+                )
+              })}  
             </TableRow>
           </TableHead>
           <TableBody>
