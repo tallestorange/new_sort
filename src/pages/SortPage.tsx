@@ -238,18 +238,15 @@ function SortResultPage<T extends {}>(props: {
           <TableCell align="left">{sort.rank(i)}位</TableCell>
           <TableCell align="left">{i}</TableCell>
           {result_render_functions.map((val, idx) => {
-            console.log(val(item))
             return (
-              <div key={idx}>
-                <TableCell align="left" sx={{display:{xs:"none",sm:"flex"}}}>{val(item)}</TableCell>
-              </div>
+              <TableCell key={idx} align="left" sx={{display:{xs:"none",sm:"flex"}}}>{val(item)}</TableCell>
             )
           })}          
         </TableRow>
       );
     }
     return rankTable;
-  }, [sort]);
+  }, [sort, members, result_render_functions]);
 
   const getTwitterIntentURL = useCallback((max_output: number): string => {
     const url = share_url === undefined ? PAGE_URL : share_url;
@@ -313,9 +310,7 @@ function SortResultPage<T extends {}>(props: {
               <TableCell style={{ color: "white", fontWeight: "bold" }}>名前</TableCell>
               {result_headers.map((val, idx) => {
                 return (
-                  <div key={idx}>
-                    <TableCell style={{ color: "white", fontWeight: "bold" }}>{val}</TableCell>
-                  </div>
+                  <TableCell key={idx} style={{ color: "white", fontWeight: "bold" }} sx={{display:{xs:"none",sm:"flex"}}}>{val}</TableCell>
                 )
               })}  
             </TableRow>

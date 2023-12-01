@@ -76,6 +76,7 @@ export default function App() {
               tweet_button_enabled={true}
               show_result_pictures={true}
               result_render_functions={[]}
+              result_headers={[]}
               enable_image
           />} />
           <Route path={`/sort_songs`} element={
