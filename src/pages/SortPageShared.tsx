@@ -43,5 +43,5 @@ export default function SortPageShared<T extends {}>(props: Props<T>) {
     }
   }, [members, initialized]);
 
-  return <SortPage tweet_button_enabled={true} image_path_function={image_path_function} enable_image show_result_pictures={true} share_url={share_url} sort_name={sortTitle} members={members} initialize_function={initialize_function} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
+  return <SortPage tweet_button_enabled={true} result_render_functions={[]} result_headers={[]} image_path_function={image_path_function} enable_image show_result_pictures={true} share_url={share_url} sort_name={sortTitle} members={members} initialize_function={initialize_function} initialized={initialized && initializedInternal} name_render_function={props.name_render_function} profile_render_function={props.profile_render_function} />
 }
