@@ -31,9 +31,22 @@ export default function MemberPicture(props: Props) {
 const MemberPictureContent = React.memo((props: {member: Member, sortConfig: SortSettings}) => {
   const ranking_change = ():string => {
     const show_week_6 = props.member.week_6_rank !== ""
+    const show_week_8 = props.member.week_8_rank !== ""
+    const show_week_10 = props.member.week_10_rank !== ""
+
     let result = ""
     if (show_week_6) {
-      result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位→${props.member.week_8_rank}位`
+      if (show_week_8) {
+        if (show_week_10) {
+          result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位→${props.member.week_8_rank}位→${props.member.week_10_rank}位`
+        }
+        else {
+          result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位→${props.member.week_8_rank}位`
+        }
+      }
+      else {
+        result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位→${props.member.week_6_rank}位`
+      }
     }
     else {
       result = `${props.member.week_2_rank}位→${props.member.week_3_rank}位→${props.member.week_5_rank}位`
