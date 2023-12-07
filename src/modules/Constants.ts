@@ -6,7 +6,7 @@ export const BOARDER: number = 20;
 export const PAGE_URL: string = "https://np-sort.web.app/";
 export const SORT_PATH: string = "sort";
 export const NOW_LOADING: string = "読み込み中...";
-export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/23 順位情報更新)";
+export const LATEST_CHANGE_LOG: string = "(最終更新:23/12/7 順位情報更新)";
 export const MAXIMUM_TWEET_MEMBERS_COUNT = 11;
 
 export const PREF_SORT_MAP: Map<string, number> = new Map<string, number>([
