@@ -111,7 +111,7 @@ export default function MemberSearch(props: Props) {
             valueChanged={setIncludeTrainee}
             form_id="checkbox-form-promote"
             checkbox_id="checkbox-promote"
-            label="未昇格メンバーを含む" />
+            label="未デビューメンバーのみ" />
         </Grid>
         <Grid container item xs={12} sx={{ mt: 1 }} justifyContent="center" spacing={0}>
           <MemberResultText count={error ? 0 : target_members_count} />

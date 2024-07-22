@@ -7,6 +7,6 @@ export const PAGE_URL: string = "https://hpsort3.192.works/";
 export const PAGE_URL_FOR_SHARE: string = "https://hpsort3.192.works/sort_members_shared";
 export const SORT_PATH: string = "sort";
 export const NOW_LOADING: string = "読み込み中...";
-export const LATEST_CHANGE_LOG: string = "(最終更新:23/11/30 DB更新)";
+export const LATEST_CHANGE_LOG: string = "(最終更新:24/7/23 DB更新)";
 export const MAXIMUM_TWEET_MEMBERS_COUNT: number = 10;
 export const PICTURE_FORMAT: string = "webp";

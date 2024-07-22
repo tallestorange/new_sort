@@ -132,9 +132,9 @@ export function useHPMemberDatabase(): HPMemberDatabase {
           }
         }
       }
-      // 未昇格のメンバを含むかどうか
-      if (includeTrainee === false) {
-        if (value.debutDate === undefined) {
+      // 未昇格のメンバのみにするかどうか
+      if (includeTrainee === true) {
+        if (value.debutDate !== undefined) {
           continue;
         }
       }

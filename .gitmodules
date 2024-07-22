@@ -1,6 +1,6 @@
-[submodule "src/HP_DB"]
-	path = src/HP_DB
-	url = https://github.com/tallestorange/HP_DB
 [submodule "src/HP_EXTERNAL_DB"]
 	path = src/HP_EXTERNAL_DB
 	url = https://github.com/tallestorange/HP_EXTERNAL_DB
+[submodule "src/HP_DB"]
+	path = src/HP_DB
+	url = https://github.com/tallestorange/HP_DB
